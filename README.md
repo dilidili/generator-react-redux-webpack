@@ -1,1 +1,1 @@
-# generator-react-redux-webpack
+
