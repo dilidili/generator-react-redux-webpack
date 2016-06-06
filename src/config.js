@@ -1,19 +1,21 @@
 // App config the for development environment.
-const serverURL = 'ngs-children.oss-cn-shanghai.aliyuncs.com'
+const devServerURL = 'http://isomorphic-wb.oss-cn-hangzhou.aliyuncs.com'
 
 const devConfig = {
 	debug: true,
-	apiServerUrl: serverURL,
 	api: {
+		wb: {
+			get: `${devServerURL}/wb.json`,
+		},
 	}
 }
 
 // App config the for production environment.
 const proConfig = {
-	debug: true,
-	apiServerUrl: serverURL,
-	api: {
-	}
+	// debug: false,
+	// apiServerUrl: serverURL,
+	// api: {
+	// }
 }
 
 const config = (process.env.NODE_ENV === "production") ? proConfig : devConfig

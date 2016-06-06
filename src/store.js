@@ -6,6 +6,10 @@ import {reduxReactRouter} from 'redux-router';
 import config from './config'
 import routes from './routes'
 
+if (config.debug) {
+	require('./utils/touch-emulator')
+}
+
 export const createMyStore = function(rootReducer) {
 	// syn the react router with redux store 
 	const reduxRouterEnhancer = reduxReactRouter({
