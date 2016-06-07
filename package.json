@@ -43,6 +43,7 @@
     "axios": "^0.9.1",
     "babel-polyfill": "^6.3.14",
     "classnames": "^2.2.4",
+    "css-layout": "^1.1.1",
     "history": "^2.0.0",
     "immutable": "^3.7.6",
     "react": "^0.14.0",

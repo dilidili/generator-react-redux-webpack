@@ -2,6 +2,8 @@ import React, {PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import ReactCanvas from 'react-canvas'
+import computeLayout from 'computeLayout'
+import _ from 'underscore'
 const Group = ReactCanvas.Group
 const Image = ReactCanvas.Image
 const Text = ReactCanvas.Text
@@ -14,8 +16,6 @@ const TEXT_ALPHA_SPEED_OUT_MULTIPLIER = 1.25
 const TEXT_ALPHA_SPEED_IN_MULTIPLIER = 2.6
 const IMAGE_LAYER_INDEX = 2
 const TEXT_LAYER_INDEX = 1
-
-
 const SOURCE_REGEX = /<.*>(.*)<\/.*>/
 const TITLE_REGEX = /[\u4e00-\u9fa5_@a-zA-Z0-9]+/g
 
@@ -26,7 +26,16 @@ const WB = React.createClass({
 		wb: React.PropTypes.object.isRequired,
 		scrollTop: React.PropTypes.number.isRequired
 	},
+	getInitialState: function() {
+		return {
+			layout: {},
+		}
+	},
 	componentWillMount: function() {
+		this.setState({
+			layout: this.computeLayout(),
+		})
+
 		// Pre-compute headline/excerpt text dimensions.
 		const wb = this.props.wb
 		const maxWidth = this.props.width - 2 * CONTENT_INSET
@@ -38,7 +47,6 @@ const WB = React.createClass({
 
 	// render
 	render: function() {
-		const groupStyle = this.getGroupStyle()
 		const imageStyle = this.getImageStyle()
 		let titleStyle = this.getTitleStyle()
 		let excerptStyle = this.getExcerptStyle()
@@ -49,8 +57,8 @@ const WB = React.createClass({
 		excerptStyle.height = this.props.height - excerptStyle.top - CONTENT_INSET
 
 		return (
-			<Group style={groupStyle}>
-				<Image style={imageStyle} src={this.props.wb.bmiddle_pic || ""} fadeIn={true} useBackingStore={true} />
+			<Group style={this.state.layout.getStyle()}>
+				<Image style={this.state.layout.getStyle(['image'])} src={this.props.wb.bmiddle_pic || ""} fadeIn={true} useBackingStore={true} />
 				<Group style={this.getTextGroupStyle()} useBackingStore={true}>
 					<Text style={titleStyle}>{this.getTitle()}</Text>
 					<Text style={excerptStyle}>{this.props.wb.text}</Text>
@@ -60,6 +68,40 @@ const WB = React.createClass({
 	},
 
 	// getter
+	computeLayout(){
+		const style = {
+			name: "container", // container
+			style: {
+				position: "absolute",
+				top: 0,
+				left: 0,
+				width: this.props.width,
+				height: this.props.height,
+			},
+			children: [{
+				name: "image", // image
+				style: {
+					width: this.props.width,
+					height: 0.457 * this.props.height,
+				},
+				attachStyle: {
+					backgroundColor: '#eee',
+					zIndex: IMAGE_LAYER_INDEX,
+				},
+			}, {
+				name: "text container", // text container
+				style: {
+					width: this.props.width,
+					height: (1 - 0.457) * this.props.height,
+				},
+				attachStyle: {
+					zIndex: TEXT_LAYER_INDEX,
+				}
+			}],
+		}
+		computeLayout(style)
+		return style
+	},
 	getTitle(){
 		const title = this.props.wb.text.match(TITLE_REGEX)
 		return title ? title[0] : null
@@ -68,26 +110,14 @@ const WB = React.createClass({
 		const source = SOURCE_REGEX.exec(this.props.wb.source)
 		return source? source[1]:""
 	},
-	getGroupStyle: function() {
-		return {
-			top: 0,
-			left: 0,
-			width: this.props.width,
-			height: this.props.height,
-		}
-	},
 	getImageHeight: function() {
 		return Math.round(this.props.height * 0.5)
 	},
 	getImageStyle: function() {
-		return {
-			top: 0,
-			left: 0,
-			width: this.props.width,
-			height: this.getImageHeight(),
+		return _.extend({
 			backgroundColor: '#eee',
 			zIndex: IMAGE_LAYER_INDEX
-		}
+		}, this.state.layout.children[0].layout)
 	},
 	getTitleStyle: function() {
 		return {
@@ -111,21 +141,16 @@ const WB = React.createClass({
 		}
 	},
 	getTextGroupStyle: function() {
-		const imageHeight = this.getImageHeight()
+		// change alpha and translateY with alteration of scrollTop
 		const alphaMultiplier = (this.props.scrollTop <= 0) ? -TEXT_ALPHA_SPEED_OUT_MULTIPLIER : TEXT_ALPHA_SPEED_IN_MULTIPLIER
 		let alpha = 1 - (this.props.scrollTop / this.props.height) * alphaMultiplier
 		alpha = Math.min(Math.max(alpha, 0), 1)
 		const translateY = -this.props.scrollTop * TEXT_SCROLL_SPEED_MULTIPLIER
 
-		return {
-			width: this.props.width,
-			height: this.props.height - imageHeight,
-			top: imageHeight,
-			left: 0,
+		return _.extend({
 			alpha: alpha,
 			translateY: translateY,
-			zIndex: TEXT_LAYER_INDEX,
-		}
+		}, this.state.layout.getStyle('text container'))
 	}
 
 })

@@ -53,6 +53,7 @@ module.exports = {
 		extensions: ['', '.js', '.jsx'],
 		root:[
 			path.resolve('./sass_modules/'),
+			path.resolve('./src/utils/'),
 		]
 	},
 	output: {
