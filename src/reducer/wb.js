@@ -1,5 +1,5 @@
 import {fromJS} from 'immutable'
-import {FETCH_WB_RECEIVED} from '../actions/wb'
+import {LOAD_WB} from '../actions/wb'
 
 const initialState = fromJS({
     list: [],
@@ -7,8 +7,10 @@ const initialState = fromJS({
 
 export default (state = initialState, action) => {
     switch (action.type) {
-        case FETCH_WB_RECEIVED:
-            return state.set('list', fromJS(action.payload))
+        case LOAD_WB[1]:
+        	if (action.response.status === 200) {
+	            return state.set('list', fromJS(action.response.data.statuses))
+        	}
         default:
             return state
     }

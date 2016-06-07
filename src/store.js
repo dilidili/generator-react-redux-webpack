@@ -1,4 +1,5 @@
 import thunkMiddleware from 'redux-thunk'
+import {callAPIMiddleware} from './utils/middlewares'
 import createLogger from 'redux-logger'
 import {createHistory} from 'history'
 import {createStore, applyMiddleware, compose,} from 'redux'
@@ -19,8 +20,8 @@ export const createMyStore = function(rootReducer) {
 	})
 
 	let middlewares = []
-	// middleware for async dispatch actions 
 	middlewares.push(thunkMiddleware)
+	middlewares.push(callAPIMiddleware)
 	// middlewares for debug
 	if (config.debug) {
 		// middleware that logs the global state for debug

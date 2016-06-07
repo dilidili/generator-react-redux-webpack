@@ -15,6 +15,10 @@ const TEXT_ALPHA_SPEED_IN_MULTIPLIER = 2.6
 const IMAGE_LAYER_INDEX = 2
 const TEXT_LAYER_INDEX = 1
 
+
+const SOURCE_REGEX = /<.*>(.*)<\/.*>/
+const TITLE_REGEX = /[\u4e00-\u9fa5_@a-zA-Z0-9]+/g
+
 const WB = React.createClass({
 	propTypes: {
 		width: React.PropTypes.number.isRequired,
@@ -57,8 +61,12 @@ const WB = React.createClass({
 
 	// getter
 	getTitle(){
-		const title = this.props.wb.text.match(/[\u4e00-\u9fa5_@a-zA-Z0-9]+/g)
+		const title = this.props.wb.text.match(TITLE_REGEX)
 		return title ? title[0] : null
+	},
+	getSource(){
+		const source = SOURCE_REGEX.exec(this.props.wb.source)
+		return source? source[1]:""
 	},
 	getGroupStyle: function() {
 		return {
