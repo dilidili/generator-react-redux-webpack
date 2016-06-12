@@ -2,8 +2,8 @@ import React, {PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import ReactCanvas from 'react-canvas'
-import computeLayout from 'computeLayout'
 import _ from 'underscore'
+import {FONT0} from 'styles'
 const Group = ReactCanvas.Group
 const Image = ReactCanvas.Image
 const Text = ReactCanvas.Text
@@ -32,9 +32,40 @@ const WB = React.createClass({
 		}
 	},
 	componentWillMount: function() {
-		this.setState({
-			layout: this.computeLayout(),
-		})
+		// Pre-compute style
+		this.containerStyle = {
+			top: 0,	
+			left: 0,
+			width: this.props.width,
+			height: this.props.height,
+		}
+		this.imageStyle = {
+			top: 0,	
+			left: 0,
+			width: this.props.width,
+			height: this.props.height*0.46,
+			backgroundColor: '#eee',
+			zIndex: IMAGE_LAYER_INDEX,
+		}
+		this.textGroupStyle = {
+			top: this.imageStyle.height,	
+			left: 0,
+			width: this.props.width,
+			height: this.props.height - this.imageStyle.height,
+			zIndex: TEXT_LAYER_INDEX,
+		}
+		this.sourceStyle = _.extend({
+			top: this.textGroupStyle.top + CONTENT_INSET,
+			left: CONTENT_INSET, 
+			width: this.props.width - 2*CONTENT_INSET,
+		}, FONT0)
+		this.profileGroupStyle = {
+			top: this.sourceStyle.top + this.sourceStyle.height + 7,	
+			left: CONTENT_INSET,
+			width: this.props.width - 2*CONTENT_INSET,
+			height: this.props.height * 0.067,
+			backgroundColor: "#eee",
+		}
 
 		// Pre-compute headline/excerpt text dimensions.
 		const wb = this.props.wb
@@ -47,7 +78,6 @@ const WB = React.createClass({
 
 	// render
 	render: function() {
-		const imageStyle = this.getImageStyle()
 		let titleStyle = this.getTitleStyle()
 		let excerptStyle = this.getExcerptStyle()
 
@@ -57,50 +87,23 @@ const WB = React.createClass({
 		excerptStyle.height = this.props.height - excerptStyle.top - CONTENT_INSET
 
 		return (
-			<Group style={this.state.layout.getStyle()}>
-				<Image style={this.state.layout.getStyle(['image'])} src={this.props.wb.bmiddle_pic || ""} fadeIn={true} useBackingStore={true} />
+			<Group style={this.containerStyle}>
+				<Image style={this.imageStyle} src={this.props.wb.bmiddle_pic || ""} fadeIn={true} useBackingStore={true} />
 				<Group style={this.getTextGroupStyle()} useBackingStore={true}>
-					<Text style={titleStyle}>{this.getTitle()}</Text>
-					<Text style={excerptStyle}>{this.props.wb.text}</Text>
+					<Text style={this.sourceStyle}>{`来自 ${this.getSource()}`}</Text>
+					{this.renderProfile()}
+					{/*<Text style={titleStyle}>{this.getTitle()}</Text>
+					<Text style={excerptStyle}>{this.props.wb.text}</Text>*/}
 				</Group>
 			</Group>
 		)
 	},
-
-	// getter
-	computeLayout(){
-		const style = {
-			name: "container", // container
-			style: {
-				position: "absolute",
-				top: 0,
-				left: 0,
-				width: this.props.width,
-				height: this.props.height,
-			},
-			children: [{
-				name: "image", // image
-				style: {
-					width: this.props.width,
-					height: 0.457 * this.props.height,
-				},
-				attachStyle: {
-					backgroundColor: '#eee',
-					zIndex: IMAGE_LAYER_INDEX,
-				},
-			}, {
-				name: "text container", // text container
-				style: {
-					width: this.props.width,
-					height: (1 - 0.457) * this.props.height,
-				},
-				attachStyle: {
-					zIndex: TEXT_LAYER_INDEX,
-				}
-			}],
-		}
-		computeLayout(style)
-		return style
+	renderProfile: function(){
+		return (
+			<Group style={this.profileGroupStyle}>
+				
+			</Group>
+		)
 	},
 	getTitle(){
 		const title = this.props.wb.text.match(TITLE_REGEX)
@@ -115,8 +118,6 @@ const WB = React.createClass({
 	},
 	getImageStyle: function() {
 		return _.extend({
-			backgroundColor: '#eee',
-			zIndex: IMAGE_LAYER_INDEX
 		}, this.state.layout.children[0].layout)
 	},
 	getTitleStyle: function() {
@@ -150,7 +151,7 @@ const WB = React.createClass({
 		return _.extend({
 			alpha: alpha,
 			translateY: translateY,
-		}, this.state.layout.getStyle('text container'))
+		}, this.textGroupStyle)
 	}
 
 })
