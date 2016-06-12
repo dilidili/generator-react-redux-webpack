@@ -9,3 +9,12 @@ export const FONT0 = {
 	}),
 	color: "#9a9a9a",
 }
+
+export const FONT1 = {
+	height: 14,
+	fontSize: 12,
+	fontFace: FontFace('Helvetica, sans-serif', null, {
+		weight: 400
+	}),
+	color: "#000",
+}

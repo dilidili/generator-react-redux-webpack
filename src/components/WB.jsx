@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import ReactCanvas from 'react-canvas'
 import _ from 'underscore'
-import {FONT0} from 'styles'
+import {FONT0, FONT1} from 'styles'
+import {getLeftAndWidth, getTopAndHeight, measureTextFrame} from 'frameUtils'
 const Group = ReactCanvas.Group
 const Image = ReactCanvas.Image
 const Text = ReactCanvas.Text
@@ -26,29 +27,26 @@ const WB = React.createClass({
 		wb: React.PropTypes.object.isRequired,
 		scrollTop: React.PropTypes.number.isRequired
 	},
-	getInitialState: function() {
-		return {
-			layout: {},
-		}
-	},
 	componentWillMount: function() {
+		const maxWidth = this.props.width - 2 * CONTENT_INSET
+
 		// Pre-compute style
 		this.containerStyle = {
-			top: 0,	
+			top: 0,
 			left: 0,
 			width: this.props.width,
 			height: this.props.height,
 		}
 		this.imageStyle = {
-			top: 0,	
+			top: 0,
 			left: 0,
 			width: this.props.width,
-			height: this.props.height*0.46,
+			height: this.props.height * 0.46,
 			backgroundColor: '#eee',
 			zIndex: IMAGE_LAYER_INDEX,
 		}
 		this.textGroupStyle = {
-			top: this.imageStyle.height,	
+			top: this.imageStyle.height,
 			left: 0,
 			width: this.props.width,
 			height: this.props.height - this.imageStyle.height,
@@ -56,44 +54,65 @@ const WB = React.createClass({
 		}
 		this.sourceStyle = _.extend({
 			top: this.textGroupStyle.top + CONTENT_INSET,
-			left: CONTENT_INSET, 
-			width: this.props.width - 2*CONTENT_INSET,
+			left: CONTENT_INSET,
+			width: this.props.width - 2 * CONTENT_INSET,
 		}, FONT0)
 		this.profileGroupStyle = {
-			top: this.sourceStyle.top + this.sourceStyle.height + 7,	
+			top: this.sourceStyle.top + this.sourceStyle.height + 7,
 			left: CONTENT_INSET,
-			width: this.props.width - 2*CONTENT_INSET,
+			width: this.props.width - 2 * CONTENT_INSET,
 			height: this.props.height * 0.067,
-			backgroundColor: "#eee",
 		}
-
-		// Pre-compute headline/excerpt text dimensions.
-		const wb = this.props.wb
-		const maxWidth = this.props.width - 2 * CONTENT_INSET
-		const titleStyle = this.getTitleStyle()
-		const excerptStyle = this.getExcerptStyle()
-		this.titleMetrics = measureText(this.getTitle(), maxWidth, titleStyle.fontFace, titleStyle.fontSize, titleStyle.lineHeight)
-		this.excerptMetrics = measureText(wb.text, maxWidth, excerptStyle.fontFace, excerptStyle.fontSize, excerptStyle.lineHeight)
+		this.profileAvatarStyle = {
+			top: this.profileGroupStyle.top,
+			left: CONTENT_INSET,
+			width: this.profileGroupStyle.height,
+			height: this.profileGroupStyle.height,
+			borderRadius: this.profileGroupStyle.height / 2,
+			backgroundColor: '#eee',
+		}
+		this.profileNameStyle = _.extend({
+			top: this.profileGroupStyle.top + this.profileGroupStyle.height * 0.15,
+			left: getLeftAndWidth(this.profileAvatarStyle) + 6,
+			width: this.props.width / 2,
+			height: this.profileGroupStyle.height * 0.4,
+		}, FONT1)
+		this.profileBioStyle = _.extend({
+			top: getTopAndHeight(this.profileNameStyle) + this.profileGroupStyle.height * 0.1,
+			left: this.profileNameStyle.left,
+			width: this.profileGroupStyle.width - this.profileAvatarStyle.width - 6,
+			height: this.profileNameStyle.height,
+		}, FONT0)
+		this.titleStyle = measureTextFrame(this.getTitle(), {
+			top: getTopAndHeight(this.profileGroupStyle) + CONTENT_INSET,
+			left: CONTENT_INSET,
+			width: this.props.width - 2 * CONTENT_INSET,
+			fontSize: 22,
+			lineHeight: 30,
+			fontFace: FontFace('Avenir Next Condensed, Helvetica, sans-serif', null, {
+				weight: 500
+			})
+		})
+		this.excerptStyle = measureTextFrame(this.getExcerpt(), {
+			left: CONTENT_INSET,
+			width: this.props.width - 2 * CONTENT_INSET,
+			top: getTopAndHeight(this.titleStyle)+8,
+			fontFace: FontFace('Georgia, serif'),
+			fontSize: 13,
+			lineHeight: 20,
+		})
 	},
 
 	// render
 	render: function() {
-		let titleStyle = this.getTitleStyle()
-		let excerptStyle = this.getExcerptStyle()
-
-		// Layout title and excerpt below image.
-		titleStyle.height = this.titleMetrics.height
-		excerptStyle.top = titleStyle.top + titleStyle.height + CONTENT_INSET
-		excerptStyle.height = this.props.height - excerptStyle.top - CONTENT_INSET
-
 		return (
 			<Group style={this.containerStyle}>
-				<Image style={this.imageStyle} src={this.props.wb.bmiddle_pic || ""} fadeIn={true} useBackingStore={true} />
+				<Image style={this.imageStyle} src={this.props.wb.bmiddle_pic || ""} fadeIn={true} useBackingStore={true}/>
 				<Group style={this.getTextGroupStyle()} useBackingStore={true}>
 					<Text style={this.sourceStyle}>{`来自 ${this.getSource()}`}</Text>
 					{this.renderProfile()}
-					{/*<Text style={titleStyle}>{this.getTitle()}</Text>
-					<Text style={excerptStyle}>{this.props.wb.text}</Text>*/}
+					<Text style={this.titleStyle}>{this.getTitle()}</Text>
+					<Text style={this.excerptStyle}>{this.getExcerpt()}</Text>
 				</Group>
 			</Group>
 		)
@@ -101,7 +120,9 @@ const WB = React.createClass({
 	renderProfile: function(){
 		return (
 			<Group style={this.profileGroupStyle}>
-				
+				<Image style={this.profileAvatarStyle} src={this.props.wb.user.profile_image_url || ""} fadeIn={true}/>
+				<Text style={this.profileNameStyle}>{this.props.wb.user.name}</Text>
+				<Text style={this.profileBioStyle}>{this.props.wb.user.description}</Text>
 			</Group>
 		)
 	},
@@ -113,33 +134,8 @@ const WB = React.createClass({
 		const source = SOURCE_REGEX.exec(this.props.wb.source)
 		return source? source[1]:""
 	},
-	getImageHeight: function() {
-		return Math.round(this.props.height * 0.5)
-	},
-	getImageStyle: function() {
-		return _.extend({
-		}, this.state.layout.children[0].layout)
-	},
-	getTitleStyle: function() {
-		return {
-			top: this.getImageHeight() + CONTENT_INSET,
-			left: CONTENT_INSET,
-			width: this.props.width - 2 * CONTENT_INSET,
-			fontSize: 22,
-			lineHeight: 30,
-			fontFace: FontFace('Avenir Next Condensed, Helvetica, sans-serif', null, {
-				weight: 500
-			})
-		}
-	},
-	getExcerptStyle: function() {
-		return {
-			left: CONTENT_INSET,
-			width: this.props.width - 2 * CONTENT_INSET,
-			fontFace: FontFace('Georgia, serif'),
-			fontSize: 15,
-			lineHeight: 23
-		}
+	getExcerpt: function() {
+		return this.props.wb.text || ""
 	},
 	getTextGroupStyle: function() {
 		// change alpha and translateY with alteration of scrollTop

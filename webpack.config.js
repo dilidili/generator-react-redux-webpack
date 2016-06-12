@@ -54,6 +54,7 @@ module.exports = {
 		root:[
 			path.resolve('./sass_modules/'),
 			path.resolve('./src/utils/'),
+			path.resolve('./src/react-canvas/'),
 		]
 	},
 	output: {
