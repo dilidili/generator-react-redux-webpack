@@ -177,6 +177,7 @@ var Surface = React.createClass({
   },
 
   handleTouchStart: function (e) {
+    e.preventDefault()
     var hitTarget = hitTest(e, this.node, this.refs.canvas);
     var touch;
     if (hitTarget) {
@@ -191,10 +192,12 @@ var Surface = React.createClass({
   },
 
   handleTouchMove: function (e) {
+    e.preventDefault()
     this.hitTest(e);
   },
 
   handleTouchEnd: function (e) {
+    e.preventDefault()
     // touchend events do not generate a pageX/pageY so we rely
     // on the currently captured touch targets.
     if (!this._touches) {
@@ -213,14 +216,17 @@ var Surface = React.createClass({
   },
 
   handleClick: function (e) {
+    e.preventDefault()
     this.hitTest(e);
   },
 
   handleContextMenu: function (e) {
+    e.preventDefault()
     this.hitTest(e);
   },
 
   handleDoubleClick: function (e) {
+    e.preventDefault()
     this.hitTest(e);
   },
 

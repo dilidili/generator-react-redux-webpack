@@ -4,6 +4,7 @@ import {bindActionCreators} from 'redux'
 import ReactCanvas from 'react-canvas'
 import _ from 'underscore'
 import {FONT0, FONT1} from 'styles'
+import logoURL from '../public/images/logo.jpg'
 import {getLeftAndWidth, getTopAndHeight, measureTextFrame} from 'frameUtils'
 const Group = ReactCanvas.Group
 const Image = ReactCanvas.Image
@@ -107,7 +108,9 @@ const WB = React.createClass({
 	render: function() {
 		return (
 			<Group style={this.containerStyle}>
-				<Image style={this.imageStyle} src={this.props.wb.bmiddle_pic || ""} fadeIn={true} useBackingStore={true}/>
+				<Image style={this.imageStyle} src={this.props.wb.bmiddle_pic || logoURL} fadeIn={true} useBackingStore={true}/>
+				<Image style={this.profileAvatarStyle} src={this.props.wb.user.profile_image_url || ""} fadeIn={true} useBackingStore={true}/>
+
 				<Group style={this.getTextGroupStyle()} useBackingStore={true}>
 					<Text style={this.sourceStyle}>{`来自 ${this.getSource()}`}</Text>
 					{this.renderProfile()}
@@ -120,7 +123,6 @@ const WB = React.createClass({
 	renderProfile: function(){
 		return (
 			<Group style={this.profileGroupStyle}>
-				<Image style={this.profileAvatarStyle} src={this.props.wb.user.profile_image_url || ""} fadeIn={true}/>
 				<Text style={this.profileNameStyle}>{this.props.wb.user.name}</Text>
 				<Text style={this.profileBioStyle}>{this.props.wb.user.description}</Text>
 			</Group>
