@@ -9,6 +9,9 @@ import {createMyStore} from './store'
 import {reducer} from './reducer'
 import {Provider} from 'react-redux'
 import {Router, browserHistory} from 'react-router'
+import i18n from 'i18n'
+
+i18n()
 
 // create the app store
 const store = createMyStore(reducer)
