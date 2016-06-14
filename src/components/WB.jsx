@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import ReactCanvas from 'react-canvas'
 import _ from 'underscore'
+import moment from 'moment'
 import {FONT0, FONT1} from 'styles'
 import logoURL from '../public/images/logo.jpg'
 import {getLeftAndWidth, getTopAndHeight, measureTextFrame} from 'frameUtils'
@@ -29,6 +30,77 @@ const WB = React.createClass({
 		scrollTop: React.PropTypes.number.isRequired
 	},
 	componentWillMount: function() {
+		this.updateStyle()
+		this.updateContent()
+	},
+	componentWillUpdate: function(nextProps, nextState) {
+		if (nextProps.width !== this.props.width || nextProps.height !== this.props.height) {
+			this.updateStyle()
+		}
+
+		if (nextProps.wb !== this.props.wb) {
+			this.updateContent()
+		}
+	},
+
+	// render
+	render: function() {
+		return (
+			<Group style={this.containerStyle}>
+				<Image style={this.imageStyle} src={this.props.wb.bmiddle_pic || logoURL} fadeIn={false} useBackingStore={true}/>
+				<Group style={this.getTextGroupStyle()} useBackingStore={true}>
+					<Text style={this.sourceStyle}>{`来自 ${this._source}`}</Text>
+					<Text style={this.timeStyle}>{this._time}</Text>
+					{this.renderProfile()}
+					<Text style={this.titleStyle}>{this._title}</Text>
+					<Text style={this.excerptStyle}>{this._excerpt}</Text>
+				</Group>
+				<Image style={this.profileAvatarStyle} src={this.props.wb.user.profile_image_url || ""} fadeIn={false} useBackingStore={true}/>
+			</Group>
+		)
+	},
+	renderProfile: function(){
+		return (
+			<Group style={this.profileGroupStyle}>
+				<Text style={this.profileNameStyle}>{this.props.wb.user.name}</Text>
+				<Text style={this.profileBioStyle}>{this.props.wb.user.description}</Text>
+			</Group>
+		)
+	},
+
+	// getter
+	getTitle(){
+		const title = this.props.wb.text.match(TITLE_REGEX)
+		return title ? title[0] : null
+	},
+	getSource(){
+		const source = SOURCE_REGEX.exec(this.props.wb.source)
+		return source? source[1]:""
+	},
+	getExcerpt: function() {
+		return this.props.wb.text || ""
+	},
+	getTime: function() {
+		const time = new Date(this.props.wb.created_at)
+		if ((Date.now() - time.getTime()) / (1000 * 60 * 60 * 24) > 2) {
+			return moment(time).format("YYYY-M-D hh:mm:ss")	
+		}
+
+		return moment(time).fromNow() || ""
+	},
+	getTextGroupStyle: function() {
+		// change alpha and translateY with alteration of scrollTop
+		const alphaMultiplier = (this.props.scrollTop <= 0) ? -TEXT_ALPHA_SPEED_OUT_MULTIPLIER : TEXT_ALPHA_SPEED_IN_MULTIPLIER
+		let alpha = 1 - (this.props.scrollTop / this.props.height) * alphaMultiplier
+		alpha = Math.min(Math.max(alpha, 0), 1)
+		const translateY = -this.props.scrollTop * TEXT_SCROLL_SPEED_MULTIPLIER
+
+		return _.extend({
+			alpha: alpha,
+			translateY: translateY,
+		}, this.textGroupStyle)
+	},
+	updateStyle: function() {
 		const maxWidth = this.props.width - 2 * CONTENT_INSET
 
 		// Pre-compute style
@@ -54,12 +126,18 @@ const WB = React.createClass({
 			zIndex: TEXT_LAYER_INDEX,
 		}
 		this.sourceStyle = _.extend({
-			top: this.textGroupStyle.top + CONTENT_INSET,
+			top: this.textGroupStyle.top + CONTENT_INSET - 3,
 			left: CONTENT_INSET,
 			width: this.props.width - 2 * CONTENT_INSET,
 		}, FONT0)
+		this.timeStyle = _.extend({
+			top: this.textGroupStyle.top + CONTENT_INSET - 3,
+			left: CONTENT_INSET,
+			width: this.props.width - 2 * CONTENT_INSET,
+			textAlign: 'right',
+		}, FONT0) 
 		this.profileGroupStyle = {
-			top: this.sourceStyle.top + this.sourceStyle.height + 7,
+			top: this.sourceStyle.top + this.sourceStyle.height + 13,
 			left: CONTENT_INSET,
 			width: this.props.width - 2 * CONTENT_INSET,
 			height: this.props.height * 0.067,
@@ -71,6 +149,7 @@ const WB = React.createClass({
 			height: this.profileGroupStyle.height,
 			borderRadius: this.profileGroupStyle.height / 2,
 			backgroundColor: '#eee',
+			zIndex: IMAGE_LAYER_INDEX,
 		}
 		this.profileNameStyle = _.extend({
 			top: this.profileGroupStyle.top + this.profileGroupStyle.height * 0.15,
@@ -103,55 +182,12 @@ const WB = React.createClass({
 			lineHeight: 20,
 		})
 	},
-
-	// render
-	render: function() {
-		return (
-			<Group style={this.containerStyle}>
-				<Image style={this.imageStyle} src={this.props.wb.bmiddle_pic || logoURL} fadeIn={true} useBackingStore={true}/>
-				<Image style={this.profileAvatarStyle} src={this.props.wb.user.profile_image_url || ""} fadeIn={true} useBackingStore={true}/>
-
-				<Group style={this.getTextGroupStyle()} useBackingStore={true}>
-					<Text style={this.sourceStyle}>{`来自 ${this.getSource()}`}</Text>
-					{this.renderProfile()}
-					<Text style={this.titleStyle}>{this.getTitle()}</Text>
-					<Text style={this.excerptStyle}>{this.getExcerpt()}</Text>
-				</Group>
-			</Group>
-		)
+	updateContent: function(){
+		this._source = this.getSource()
+		this._title = this.getTitle()
+		this._time = this.getTime()
+		this._excerpt = this.getExcerpt()
 	},
-	renderProfile: function(){
-		return (
-			<Group style={this.profileGroupStyle}>
-				<Text style={this.profileNameStyle}>{this.props.wb.user.name}</Text>
-				<Text style={this.profileBioStyle}>{this.props.wb.user.description}</Text>
-			</Group>
-		)
-	},
-	getTitle(){
-		const title = this.props.wb.text.match(TITLE_REGEX)
-		return title ? title[0] : null
-	},
-	getSource(){
-		const source = SOURCE_REGEX.exec(this.props.wb.source)
-		return source? source[1]:""
-	},
-	getExcerpt: function() {
-		return this.props.wb.text || ""
-	},
-	getTextGroupStyle: function() {
-		// change alpha and translateY with alteration of scrollTop
-		const alphaMultiplier = (this.props.scrollTop <= 0) ? -TEXT_ALPHA_SPEED_OUT_MULTIPLIER : TEXT_ALPHA_SPEED_IN_MULTIPLIER
-		let alpha = 1 - (this.props.scrollTop / this.props.height) * alphaMultiplier
-		alpha = Math.min(Math.max(alpha, 0), 1)
-		const translateY = -this.props.scrollTop * TEXT_SCROLL_SPEED_MULTIPLIER
-
-		return _.extend({
-			alpha: alpha,
-			translateY: translateY,
-		}, this.textGroupStyle)
-	}
-
 })
 
 export default WB

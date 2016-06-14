@@ -46,6 +46,7 @@
     "css-layout": "^1.1.1",
     "history": "^2.0.0",
     "immutable": "^3.7.6",
+    "moment": "^2.13.0",
     "react": "^0.14.0",
     "react-addons-css-transition-group": "^15.0.2",
     "react-document-title": "^2.0.1",
