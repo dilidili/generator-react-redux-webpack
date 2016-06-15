@@ -46,14 +46,13 @@ const WB = React.createClass({
 		return (
 			<Group style={this.containerStyle}>
 				<WBImage style={this.imageStyle} wb={this.props.wb}></WBImage>
-				<Group style={this.getTextGroupStyle()} useBackingStore={true}>
+				<Group style={this.getTextGroupStyle()}>
 					<Text style={this.sourceStyle}>{`来自 ${this._source}`}</Text>
 					<Text style={this.timeStyle}>{this._time}</Text>
 					{this.renderProfile()}
 					<Text style={this.titleStyle}>{this._title}</Text>
 					<Text style={this.excerptStyle}>{this._excerpt}</Text>
 				</Group>
-				<Image style={this.profileAvatarStyle} src={this.props.wb.user.profile_image_url || ""} fadeIn={false} useBackingStore={true}/>
 			</Group>
 		)
 	},
@@ -62,6 +61,7 @@ const WB = React.createClass({
 			<Group style={this.profileGroupStyle}>
 				<Text style={this.profileNameStyle}>{this.props.wb.user.name}</Text>
 				<Text style={this.profileBioStyle}>{this.props.wb.user.description}</Text>
+				<Image style={this.profileAvatarStyle} src={this.props.wb.user.profile_image_url || ""} fadeIn={true} useBackingStore={true}/>
 			</Group>
 		)
 	},

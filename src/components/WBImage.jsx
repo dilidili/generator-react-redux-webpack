@@ -54,7 +54,7 @@ const WBImage = React.createClass({
 			<Group style={this._multiLayout.frame}>
 				{
 					_.map(this.props.wb.pic_urls, (url, index)=>{
-						return <Image key={url.thumbnail_pic} style={this._multiLayout[index]} src={url.thumbnail_pic} fadeIn={false} useBackingStore={true}></Image>
+						return <Image key={url.thumbnail_pic} style={this._multiLayout[index]} src={url.thumbnail_pic} fadeIn={true} useBackingStore={true}></Image>
 					})
 				}	
 			</Group>
@@ -63,10 +63,10 @@ const WBImage = React.createClass({
 	updateRender: function(){
 		switch(this.props.wb.pic_urls.length){
 			case 0: 
-				this._render = <Image style={this.props.style} src={logoURL} fadeIn={false} useBackingStore={true}/>
+				this._render = <Image style={this.props.style} src={logoURL} fadeIn={true} useBackingStore={true}/>
 				break
 			case 1:
-				this._render = <Image style={this.props.style} src={this.props.wb.bmiddle_pic} fadeIn={false} useBackingStore={true}/>
+				this._render = <Image style={this.props.style} src={this.props.wb.bmiddle_pic} fadeIn={true} useBackingStore={true}/>
 				break
 			default:
 				this._render = this.renderMultiPic()
