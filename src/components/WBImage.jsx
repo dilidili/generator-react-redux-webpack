@@ -49,8 +49,8 @@ const WBImage = React.createClass({
 		if ( pic_length > 1) {
 			this._multiLayout = calculateMultiLayout(this.props.style, pic_length)	
 		}
+		this.updateRender()
 	},
-
 	renderMultiPic: function(){
 		return (
 			<Group style={this._multiLayout.frame}>
@@ -62,17 +62,21 @@ const WBImage = React.createClass({
 			</Group>
 		)
 	},
-	render: function(){
-		// do not container any picture
-		if (this.props.wb.pic_urls.length === 0) {
-			return <Image style={this.props.style} src={logoURL} fadeIn={false} useBackingStore={true}/>
-		}else if (this.props.wb.pic_urls.length === 1) {
-			// just contains one picture	
-			return <Image style={this.props.style} src={this.props.wb.bmiddle_pic} fadeIn={false} useBackingStore={true}/>
-		}else{
-			// contains multi-pacture
-			return this.renderMultiPic()
+	updateRender: function(){
+		switch(this.props.wb.pic_urls.length){
+			case 0: 
+				this._render = <Image style={this.props.style} src={logoURL} fadeIn={false} useBackingStore={true}/>
+				break
+			case 1:
+				this._render = <Image style={this.props.style} src={this.props.wb.bmiddle_pic} fadeIn={false} useBackingStore={true}/>
+				break
+			default:
+				this._render = this.renderMultiPic()
+				break
 		}
+	},
+	render: function(){
+		return this._render
 	},
 })
 
