@@ -103,7 +103,7 @@ const WBListComponent = React.createClass({
 		return (
 			<div>
 				<ReactCanvas.Surface top={0} left={0} width={size.width} height={size.height}>
-					{this.renderHeader()}
+					{/*this.renderHeader()*/}
 					<ReactCanvas.ListView
 						style={this.getListViewStyle()}
 						snapping={true}

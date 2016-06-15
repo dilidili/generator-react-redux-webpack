@@ -1,11 +1,9 @@
 import React, {PropTypes} from 'react'
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
 import ReactCanvas from 'react-canvas'
 import _ from 'underscore'
 import moment from 'moment'
 import {FONT0, FONT1} from 'styles'
-import logoURL from '../public/images/logo.jpg'
+import WBImage from './WBImage'
 import {getLeftAndWidth, getTopAndHeight, measureTextFrame} from 'frameUtils'
 const Group = ReactCanvas.Group
 const Image = ReactCanvas.Image
@@ -47,7 +45,7 @@ const WB = React.createClass({
 	render: function() {
 		return (
 			<Group style={this.containerStyle}>
-				<Image style={this.imageStyle} src={this.props.wb.bmiddle_pic || logoURL} fadeIn={false} useBackingStore={true}/>
+				<WBImage style={this.imageStyle} wb={this.props.wb}></WBImage>
 				<Group style={this.getTextGroupStyle()} useBackingStore={true}>
 					<Text style={this.sourceStyle}>{`来自 ${this._source}`}</Text>
 					<Text style={this.timeStyle}>{this._time}</Text>
@@ -114,7 +112,7 @@ const WB = React.createClass({
 			top: 0,
 			left: 0,
 			width: this.props.width,
-			height: this.props.height * 0.46,
+			height: this.props.width,
 			backgroundColor: '#eee',
 			zIndex: IMAGE_LAYER_INDEX,
 		}
