@@ -14,22 +14,20 @@ function calculateMultiLayout(style, count) {
 		height,
 	} = style
 
-	const sideWidth = Math.min(width, height)
-	const picWidth = (sideWidth - 4 * PIC_PADDING) / 3
-	const baseTop = top + (height - sideWidth) / 2
-	const baseLeft = left + (width - sideWidth) / 2
+	const picWidth = (width - 4 * PIC_PADDING) / 3
+	const picHeight = (height - 4 * PIC_PADDING) / 3
 
 	const layout = []
 	let r, c
 	_.each(_.range(count), function(index) {
-		r = ~~(index / 3)
-		c = index % 3
+		r = ~~(index / 4)
+		c = index % 4
 
 		layout.push({
-			left: baseLeft + c * picWidth + 2 * c * PIC_PADDING,
-			top: baseTop + r * picWidth + 2 * r * PIC_PADDING,
+			left: c * picWidth + 2 * c * PIC_PADDING,
+			top: r * picHeight + 2 * r * PIC_PADDING,
 			width: picWidth,
-			height: picWidth,
+			height: picHeight,
 		})
 	})
 	layout.frame = _.extend({

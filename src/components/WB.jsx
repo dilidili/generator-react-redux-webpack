@@ -112,7 +112,7 @@ const WB = React.createClass({
 			top: 0,
 			left: 0,
 			width: this.props.width,
-			height: this.props.width,
+			height: this.props.height * 0.46,
 			backgroundColor: '#eee',
 			zIndex: IMAGE_LAYER_INDEX,
 		}
