@@ -1,6 +1,7 @@
 var webpack = require('webpack')
 var CleanPlugin = require('clean-webpack-plugin')
 var ExtractPlugin = require('extract-text-webpack-plugin')
+var autoprefixer = require('autoprefixer')
 var path = require('path')
 
 // plugins
@@ -26,15 +27,9 @@ module.exports = {
 			test: /\.jsx?$/,
 			exclude: /node_modules/,
 			loaders: ['react-hot', 'babel?presets[]=react,presets[]=es2015']
-		}, {
-			test: /\.css$/,
-			loaders: [
-				'style',
-				'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]'
-			]
-		}, {
+		},{
 			test: /\.scss$/,
-			loaders: ["style", "css", "sass"]
+			loaders: ["style", "css", "sass", "postcss"]
 		}, {
 			test: /\.svg$/,
 			loader: 'svg-inline'
@@ -49,12 +44,16 @@ module.exports = {
 			{loader: "transform/cacheable?brfs"}
 		]
 	},
+	postcss: function() {
+		return [autoprefixer]
+	},
 	resolve: {
 		extensions: ['', '.js', '.jsx'],
 		root:[
 			path.resolve('./sass_modules/'),
 			path.resolve('./src/utils/'),
 			path.resolve('./src/react-canvas/'),
+			path.resolve('./src/public/'),
 		]
 	},
 	output: {
