@@ -6,7 +6,7 @@ import {ReduxRouter} from 'redux-router'
 
 const routes = <ReduxRouter>
 	<Route path="/" component={AppContainer}>
-		<IndexRoute component={HomeContainer}></IndexRoute>
+		<Route path="home" component={HomeContainer}></Route>
 	</Route>
 </ReduxRouter>
 
