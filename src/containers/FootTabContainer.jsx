@@ -8,6 +8,7 @@ import messageIcon from 'images/message.svg'
 import meIcon from 'images/me.svg'
 import InlineSVG from 'svg-inline-react'
 import {push} from 'redux-router'
+import classNames from 'classnames'
 import _ from 'underscore'
 
 const TAB_CONTENT = [{
@@ -32,6 +33,7 @@ const FootTabComponent = React.createClass({
 	// Handler
 	handleClickTab: function(){
 		arguments[1].preventDefault()
+		arguments[1].stopPropagation()
 		this.props.push(arguments[0])
 	},
 
@@ -43,9 +45,10 @@ const FootTabComponent = React.createClass({
 				{
 					_.map(TAB_CONTENT, (v, k)=>{
 						// highlight current tab 
-						const color = v.pathname.startsWith(this.props.pathname)?"#1da1f2":"#8899a6"
+						const isCurrentTab = v.pathname.startsWith(this.props.pathname)
+						const color = isCurrentTab?"#1da1f2":"#8899a6"
 
-						return <div key={k} className={styles.tab}
+						return <div key={k} className={classNames(styles.tab, isCurrentTab?styles.tabClicked:"")}
 									onClick={this.handleClickTab.bind(this, v.pathname)}
 									onTouchStart={this.handleClickTab.bind(this, v.pathname)}
 								>

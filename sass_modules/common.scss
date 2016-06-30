@@ -1,3 +1,5 @@
+@import '_animation';
+
 html, body {
   margin: 0;
   padding: 0;
@@ -25,3 +27,5 @@ div{
   max-width: 414px;
   max-height: 736px;
 }
+
+$border-dark: 1pt rgba(0, 0, 0, 0.2) solid;
