@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react'
 import ReactCanvas from 'react-canvas'
 import _ from 'underscore'
-import logoURL from '../public/images/logo.jpg'
+import logoURL from '../../public/images/logo.jpg'
 const Group = ReactCanvas.Group
 const Image = ReactCanvas.Image
 const PIC_PADDING = 1

@@ -4,12 +4,6 @@ html, body {
   margin: 0;
   padding: 0;
   font: 16px Helvetica, sans-serif;
-  @media screen and (max-height: 570px) {
-    font-size: 12px;
-  };
-  @media screen and (min-height: 670px) {
-    font-size: 20px;
-  };
   height: 100%;
   width: 100%;
   overflow: hidden;
