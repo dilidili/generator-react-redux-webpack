@@ -67,5 +67,5 @@ module.exports = {
 		historyApiFallback: true
 	},
 	plugins: plugins,
-	devtool: 'source-map',
+	devtool: 'eval',
 }

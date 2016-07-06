@@ -1,9 +1,5 @@
 import React from 'react'
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
 import styles from './Header.scss'
-import InlineSVG from 'svg-inline-react'
-import logoIcon from '../../public/images/me.svg'
 
 const Header = React.createClass({
 	render: function(){

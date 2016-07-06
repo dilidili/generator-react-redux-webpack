@@ -96,14 +96,19 @@ const TweetList = React.createClass({
 
 		return (
 			<div>
-				<Infinite
-					containerHeight={window.innerHeight}
-					elementHeight={40}
-				>
-					{_.map(_.range(1200), v=><div key={v} style={{height: 30}}>{v}</div>)}
-				</Infinite>
+				<Tweet></Tweet>
 			</div>
 		)
+		// return (
+		// 	<div>
+		// 		<Infinite
+		// 			containerHeight={window.innerHeight}
+		// 			elementHeight={40}
+		// 		>
+		// 			{_.map(_.range(1200), v=><div key={v} style={{height: 30}}>{v}</div>)}
+		// 		</Infinite>
+		// 	</div>
+		// )
 	},
 })
 
