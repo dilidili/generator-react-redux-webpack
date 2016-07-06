@@ -13,7 +13,7 @@ import i18n from 'i18n'
 i18n()
 
 // initialize some necessary constants for react-canvas layout
-window.fontSize = window.innerHeight > 570 ? (window.innerHeight < 670 ? 16 : 20) : 12
+window.fontSize = window.innerHeight > 570 ? (window.innerHeight < 670 ? 16 : 18) : 13
 document.getElementById('react-root').setAttribute("style", `font-size: ${window.fontSize}px`);
 
 const store = createMyStore(reducer)
