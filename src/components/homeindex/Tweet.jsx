@@ -1,14 +1,21 @@
 import React from 'react'
+import styles from './Tweet.scss'
+
+export function getTweetHeight(){
+
+}
 
 const Tweet = React.createClass({
 	getDefaultProps(){
-		return {
-			avatar: 'http://isomorphic-wb.oss-cn-hangzhou.aliyuncs.com/avatar.jpeg',
-		}
+		return {}
 	},	
 
 	render: function(){
-		return null
+		return <div className={styles.container}>
+			<div className={styles.content}>
+
+			</div>	
+		</div> 
 	},
 })
 
