@@ -8,9 +8,7 @@ const Tweet = React.createClass({
 	},	
 
 	render: function(){
-		return (
-				
-		)
+		return null
 	},
 })
 

@@ -5,9 +5,9 @@ import {VelocityComponent} from 'velocity-react'
 const Image = React.createClass({
 	getDefaultProps(){
 		return {
-			src: 'http://isomorphic-wb.oss-cn-hangzhou.aliyuncs.com/avatar.jpeg',
-			width: 400,
-			height: 400,
+			src: '',
+			width: 200,
+			height: 200,
 		}
 	},
 	getInitialState(){
@@ -49,7 +49,7 @@ const Image = React.createClass({
 			animation: {
 				opacity: [0, 1],
 			},
-			duration: 5200,
+			duration: 300,
 			runOnMount: true,
 		} : null
 	},
@@ -58,7 +58,7 @@ const Image = React.createClass({
 			animation: {
 				opacity: [1, 0],
 			},
-			duration: 5200,
+			duration: 300,
 			runOnMount: true,
 		} : null
 	},

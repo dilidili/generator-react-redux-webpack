@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-// import Tweet from './Tweet'
+import Tweet from './Tweet'
 import styles from './TweetList.scss'
 import classNames from 'classnames'
 import Infinite from 'react-infinite'
