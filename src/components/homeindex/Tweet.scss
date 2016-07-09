@@ -28,5 +28,20 @@
 				@extend .u-light-font;
 			}
 		}
+
+		:local(.content){
+			height: auto;
+			line-height: 1.3em;
+		}
+
+		:local(.footer){
+			padding-top: 0.7em;
+			:local(.icon){
+				fill: #8899a6;
+				height: 1.2em;
+				width: 1.2em;
+				margin-right: 1.4em;
+			}	
+		}
 	}
 }
