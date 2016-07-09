@@ -58,8 +58,8 @@ const TweetList = React.createClass({
 					containerHeight={window.innerHeight}
 					elementHeight={40}
 					useWindowAsScrollContainer={false}
-					preloadBatchSize={Infinite.containerHeightScaleFactor(3)}
-					preloadAdditionalHeight={Infinite.containerHeightScaleFactor(6)}
+					preloadBatchSize={Infinite.containerHeightScaleFactor(0.8)}
+					preloadAdditionalHeight={Infinite.containerHeightScaleFactor(0.8)}
 				>
 					{_.map(this.props.list, (v, k)=>this.renderTweet(k))}
 				</Infinite>
