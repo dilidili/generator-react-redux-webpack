@@ -37,25 +37,11 @@ const TweetList = React.createClass({
 
 	// Utils
 	computeStateFromProps(props){
-		const {
-			width,
-			fontSize,
-			lineHeight,
-		} = this.getTweetContentStyle()
-
-		const heightList = _.map(props.list, v=>{
-			return measureText(v.tweet, width, fontSize, lineHeight).height	
+		const heightList = _.map(props.list, v => {
+			return getTweetHeight(v)
 		})
-
 		return {
 			heightList,
-		}
-	},
-	getTweetContentStyle(){
-		return {
-			width: window.innerHeight*CONTENT_SCALE,
-			fontSize: window.fontSize*1.1,
-			lineHeight: window.fontSize*1.3,
 		}
 	},
 

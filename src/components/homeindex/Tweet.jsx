@@ -1,8 +1,8 @@
 import React from 'react'
 import styles from './Tweet.scss'
 
-export function getTweetHeight(){
-
+export function getTweetHeight(info){
+	console.log(info)
 }
 
 const Tweet = React.createClass({
