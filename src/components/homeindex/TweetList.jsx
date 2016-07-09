@@ -6,7 +6,7 @@ import Infinite from 'react-infinite'
 import _ from 'underscore'
 
 const defaultProps = {
-	list: [{
+	list: _.map(_.range(100), () => ({
 		user: "Artour Babaev",
 		tweet: "is there a way to watch nanyang ingame without lag i remember i used to able to watch china games without any lag now its just always laggy",
 		timestamp: new Date('Sun Jun 05 14:53:39 +0800 2016'),
@@ -17,7 +17,7 @@ const defaultProps = {
 		like: {
 			count: 332,
 		},
-	}],
+	})),
 }
 
 const TweetList = React.createClass({
@@ -35,7 +35,7 @@ const TweetList = React.createClass({
 	// Utils
 	computeStateFromProps(props){
 		const heightList = _.map(props.list, v => {
-			return getTweetHeight(v)
+			return ~~getTweetHeight(v)
 		})
 		return {
 			heightList,
@@ -43,9 +43,9 @@ const TweetList = React.createClass({
 	},
 
 	// Render
-	renderTweet: function(index, scrollTop){
+	renderTweet: function(index){
 	    return (
-			<Tweet tweet={this.props.list[index]} height={this.state.heightList[index]}/>
+			<Tweet key={index} tweet={this.props.list[index]} height={this.state.heightList[index]}/>
 	    )
 	},
 	render: function(){
@@ -54,19 +54,17 @@ const TweetList = React.createClass({
 
 		return (
 			<div>
-				{this.renderTweet(0)}	
+				<Infinite
+					containerHeight={window.innerHeight}
+					elementHeight={40}
+					useWindowAsScrollContainer={false}
+					preloadBatchSize={Infinite.containerHeightScaleFactor(3)}
+					preloadAdditionalHeight={Infinite.containerHeightScaleFactor(6)}
+				>
+					{_.map(this.props.list, (v, k)=>this.renderTweet(k))}
+				</Infinite>
 			</div>
 		)
-		// return (
-		// 	<div>
-		// 		<Infinite
-		// 			containerHeight={window.innerHeight}
-		// 			elementHeight={40}
-		// 		>
-		// 			{_.map(_.range(1200), v=><div key={v} style={{height: 30}}>{v}</div>)}
-		// 		</Infinite>
-		// 	</div>
-		// )
 	},
 })
 
