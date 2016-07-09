@@ -3,6 +3,7 @@ window.fontSize = window.innerHeight > 570 ? (window.innerHeight < 670 ? 16 : 18
 document.getElementById('react-root').setAttribute("style", `font-size: ${window.fontSize}px`);
 
 import 'babel-polyfill'
+import 'my-polyfill'
 import 'common.scss' 
 import 'velocity-animate'
 import 'velocity-animate/velocity.ui'
