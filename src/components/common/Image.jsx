@@ -1,8 +1,14 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import _ from 'underscore'
 import {VelocityComponent} from 'velocity-react'
 
 const Image = React.createClass({
+	propTypes: {
+		src: PropTypes.string.isRequired,
+		width: PropTypes.number,	
+		height: PropTypes.number,	
+		className: PropTypes.string,
+	},
 	getDefaultProps(){
 		return {
 			src: '',
@@ -72,10 +78,10 @@ const Image = React.createClass({
 		const imageStyle = this.getImageStyle()	
 
 		return (
-			<div style={{width: width, height: height, position: 'relative', overflow: 'hidden'}}>
+			<div className={this.props.className} style={{width: width, height: height, position: 'relative', overflow: 'hidden'}}>
 				{/* a gray div stuffs the contianer when image is unloaded */}
 				<VelocityComponent {...this.getGrayStuffAnimation()}>
-					<div style={{backgroundColor: '#efefef', position: 'absolute', zIndex:2}}></div>
+					<div className={this.props.className} style={{backgroundColor: '#efefef', position: 'absolute', zIndex:2}}></div>
 				</VelocityComponent>
 				<VelocityComponent {...this.getImageAnimation()}>
 					<img 
@@ -84,6 +90,7 @@ const Image = React.createClass({
 						height={height}
 						onLoad={this.handleLoad}
 						style={imageStyle}
+						className={this.props.className}
 					>
 					</img>
 				</VelocityComponent>

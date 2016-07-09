@@ -21,7 +21,6 @@ function getCacheKey(text, width, fontSize, lineHeight) {
  * @return {Object} Measured text size with `width` and `height` members.
  */
 module.exports = function measureText(text, width, fontSize, lineHeight) {
-  console.log(arguments)
   var cacheKey = getCacheKey(text, width, fontSize, lineHeight);
   var cached = _cache[cacheKey];
   if (cached) {

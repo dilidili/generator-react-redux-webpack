@@ -4,9 +4,6 @@ import styles from './TweetList.scss'
 import classNames from 'classnames'
 import Infinite from 'react-infinite'
 import _ from 'underscore'
-import measureText from 'measureText'
-
-const CONTENT_SCALE = 2/3
 
 const defaultProps = {
 	list: [{
@@ -47,10 +44,8 @@ const TweetList = React.createClass({
 
 	// Render
 	renderTweet: function(index, scrollTop){
-		const tweet = this.props.list[index] 
-
 	    return (
-			<Tweet tweet={tweet}/>
+			<Tweet tweet={this.props.list[index]} height={this.state.heightList[index]}/>
 	    )
 	},
 	render: function(){

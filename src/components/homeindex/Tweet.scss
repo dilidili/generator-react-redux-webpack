@@ -1,9 +1,32 @@
+@import '~common.scss';
+
 :local(.container){
+	position: relative;
+	border-bottom: 1px rgba(0, 0, 0, 0.1) solid;
+	width: 100%;
 	display: flex;
-	align-items: cneter;
-	padding: 1em;
+
+	:local(.avatar){
+		border-radius: 5px;
+		margin-right: 1em;
+		flex-shrink: 0,	
+	}
 
 	:local(.content){
+		display: flex;	
+		flex-direction: column;
 
+		:local(.header){
+			:local(.userName){
+				float: left; 
+				@extend .u-bold-font;
+				width: auto;
+			}	
+			:local(.date){
+				float: right;
+				width: auto;
+				@extend .u-light-font;
+			}
+		}
 	}
 }
