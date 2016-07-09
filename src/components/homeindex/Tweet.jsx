@@ -1,6 +1,8 @@
 import React from 'react'
 import styles from './Tweet.scss'
 
+// get height of tweet according to the content. 
+// react-infinite will use the result to define the tweet list.
 export function getTweetHeight(info){
 	console.log(info)
 }
