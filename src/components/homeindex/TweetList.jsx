@@ -6,7 +6,7 @@ import Infinite from 'react-infinite'
 import _ from 'underscore'
 
 const defaultProps = {
-	list: _.map(_.range(100), () => ({
+	list: _.map(_.range(25), () => ({
 		user: "Artour Babaev",
 		tweet: "is there a way to watch nanyang ingame without lag i remember i used to able to watch china games without any lag now its just always laggy",
 		timestamp: new Date('Sun Jun 05 14:53:39 +0800 2016'),
@@ -55,11 +55,11 @@ const TweetList = React.createClass({
 		return (
 			<div>
 				<Infinite
-					containerHeight={window.innerHeight}
+					containerHeight={500}
 					elementHeight={40}
 					useWindowAsScrollContainer={false}
-					preloadBatchSize={Infinite.containerHeightScaleFactor(0.8)}
-					preloadAdditionalHeight={Infinite.containerHeightScaleFactor(0.8)}
+					preloadBatchSize={Infinite.containerHeightScaleFactor(3)}
+					preloadAdditionalHeight={Infinite.containerHeightScaleFactor(3)}
 				>
 					{_.map(this.props.list, (v, k)=>this.renderTweet(k))}
 				</Infinite>

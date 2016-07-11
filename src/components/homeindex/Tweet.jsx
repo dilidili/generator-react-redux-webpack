@@ -38,7 +38,7 @@ const Tweet = React.createClass({
 		} = this.props.tweet
 
 		return <div className={styles.container} style={{height: this.props.height, padding: heightConfig.padding}}>
-			{/* <Image width={window.fontSize*3} height={window.fontSize*3} src={avatar} className={styles.avatar}></Image> */}
+			<Image width={window.fontSize*3} height={window.fontSize*3} src={avatar} className={styles.avatar}></Image>
 			<div className={styles.content}>
 				{/* header */}	
 				<div className={styles.header} style={{height: heightConfig.header}}>
