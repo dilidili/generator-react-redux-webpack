@@ -5,13 +5,14 @@ var assign = require('object-assign');
 var Scroller = require('scroller');
 var Group = require('./Group');
 var clamp = require('./clamp');
+import _ from 'underscore'
 
 var ListView = React.createClass({
 
   propTypes: {
     style: React.PropTypes.object,
-    numberOfItemsGetter: React.PropTypes.func.isRequired,
-    itemHeightGetter: React.PropTypes.func.isRequired,
+    numberOfItems: React.PropTypes.number.isRequired,
+    itemHeightArray: React.PropTypes.array.isRequired,
     itemGetter: React.PropTypes.func.isRequired,
     snapping: React.PropTypes.bool,
     scrollingDeceleration: React.PropTypes.number,
@@ -23,7 +24,7 @@ var ListView = React.createClass({
     return {
       style: { left: 0, top: 0, width: 0, height: 0 },
       snapping: false,
-      scrollingDeceleration: 0.95,
+      scrollingDeceleration: 0.85,
       scrollingPenetrationAcceleration: 0.08
     };
   },
@@ -34,9 +35,10 @@ var ListView = React.createClass({
     };
   },
 
-  componentDidMount: function () {
+  componentWillMount: function () {
     this.createScroller();
     this.updateScrollingDimensions();
+    this.updateScrollTopFrameArray();
   },
 
   render: function () {
@@ -55,13 +57,13 @@ var ListView = React.createClass({
 
   renderItem: function (itemIndex) {
     var item = this.props.itemGetter(itemIndex, this.state.scrollTop);
-    var itemHeight = this.props.itemHeightGetter();
+    var itemHeight = this.props.itemHeightArray[itemIndex];
     var style = {
       top: 0,
       left: 0,
       width: this.props.style.width,
       height: itemHeight,
-      translateY: (itemIndex * itemHeight) - this.state.scrollTop,
+      translateY: this._accumulateToScrollTop[itemIndex] - this.state.scrollTop,
       zIndex: itemIndex
     };
 
@@ -77,6 +79,7 @@ var ListView = React.createClass({
 
   handleTouchStart: function (e) {
     if (this.scroller) {
+      e.preventDefault();
       this.scroller.doTouchStart(e.touches, e.timeStamp);
     }
   },
@@ -121,19 +124,26 @@ var ListView = React.createClass({
     var width = this.props.style.width;
     var height = this.props.style.height;
     var scrollWidth = width;
-    var scrollHeight = this.props.numberOfItemsGetter() * this.props.itemHeightGetter();
+    var scrollHeight = _.reduce(this.props.itemHeightArray, (memo, num)=>memo+num, 0);
     this.scroller.setDimensions(width, height, scrollWidth, scrollHeight);
+  },
+
+  updateScrollTopFrameArray(){
+    // Calculate the scrollTop of every item. 
+    let temp = 0
+    return this._accumulateToScrollTop = _.map(this.props.itemHeightArray, v => {
+      temp += v
+      return temp - v
+    })
   },
 
   getVisibleItemIndexes: function () {
     var itemIndexes = [];
-    var itemHeight = this.props.itemHeightGetter();
-    var itemCount = this.props.numberOfItemsGetter();
     var scrollTop = this.state.scrollTop;
     var itemScrollTop = 0;
 
-    for (var index=0; index < itemCount; index++) {
-      itemScrollTop = (index * itemHeight) - scrollTop;
+    for (var index = 0; index < this.props.numberOfItems; index++) {
+      itemScrollTop = this._accumulateToScrollTop[index] - scrollTop;
 
       // Item is completely off-screen bottom
       if (itemScrollTop >= this.props.style.height) {
@@ -166,7 +176,7 @@ var ListView = React.createClass({
     // Find the page whose estimated end scrollTop is closest to 0.
     var closestZeroDelta = Infinity;
     var pageHeight = this.props.itemHeightGetter();
-    var pageCount = this.props.numberOfItemsGetter();
+    var pageCount = this.props.numberOfItems;
     var pageScrollTop;
 
     for (var pageIndex=0, len=pageCount; pageIndex < len; pageIndex++) {

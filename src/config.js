@@ -1,5 +1,6 @@
 // App config the for development environment.
 const devServerURL = 'http://isomorphic-wb.oss-cn-hangzhou.aliyuncs.com'
+const isProduction = process.env.NODE_ENV === "production"
 
 const devConfig = {
 	debug: true,
@@ -18,5 +19,9 @@ const proConfig = {
 	// }
 }
 
-const config = (process.env.NODE_ENV === "production") ? proConfig : devConfig
+const config = isProduction ? proConfig : devConfig
+if (!isProduction) {
+	require('touch-emulator')()
+}
+
 export default config
