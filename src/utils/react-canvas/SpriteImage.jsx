@@ -115,9 +115,17 @@ var Image = React.createClass({
   },
 
   handleClick: function(){
-    if (this.state.loaded) {
-      this._animationStartTime = Date.now();
-      this._pendingAnimationFrame = requestAnimationFrame(this.stepThroughAnimation);
+    if (this.state.loaded && !this._pendingAnimationFrame) {
+      // start frame from head to tail
+      if (this.state.frameIndex === this.props.frameCount-1) {
+        this.setState({
+          frameIndex: 0,
+        })
+      }else{
+        // move back to head 
+        this._animationStartTime = Date.now();
+        this._pendingAnimationFrame = requestAnimationFrame(this.stepThroughAnimation);
+      }
     }
   },
 
@@ -127,7 +135,7 @@ var Image = React.createClass({
       frameIndex: nextIndex
     })
 
-    if (nextIndex < this.props.frameCount) {
+    if (nextIndex < this.props.frameCount-1) {
       this._pendingAnimationFrame = requestAnimationFrame(this.stepThroughAnimation);
     }
   }
