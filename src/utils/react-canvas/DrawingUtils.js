@@ -159,6 +159,10 @@ function drawRenderLayer (ctx, layer) {
       customDrawFunc = drawImageRenderLayer;
       break;
 
+    case 'image-sprite':
+      // customDrawFunc = drawSpriteImageRenderLayer;
+      break;
+
     case 'text':
       customDrawFunc = drawTextRenderLayer;
       break;

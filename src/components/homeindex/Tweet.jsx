@@ -1,13 +1,13 @@
 import React, {PropTypes} from 'react'
-import styles from './Tweet.scss'
-import measureText from 'measureText'
 import moment from 'moment' 
 import {Comment, Repost} from 'svg'
+import likeImage from 'images/like.png'
 import Group from 'react-canvas/Group'
 import Text from 'react-canvas/Text'
 import Image from 'react-canvas/Image'
-import measure from 'react-canvas/measureText'
+import measureText from 'react-canvas/measureText'
 import FontFace from 'react-canvas/FontFace'
+import SpriteImage from 'react-canvas/SpriteImage'
 import PureRenderMixin from 'react/lib/ReactComponentWithPureRenderMixin'
 
 const em = window.fontSize
@@ -22,24 +22,27 @@ const Tweet = React.createClass({
 	},
 	mixins: [PureRenderMixin],
 	statics: {
-		getTweetStyle() {
+		getTweetStyle(tweet) {
 			const containerStyle = getContainerStyle()
 			const avatarStyle = getAvatarStyle()
 			const contentStyle = getContentStyle(containerStyle, avatarStyle)
 			const userNameStyle = getUserNameStyle(contentStyle)
-			const dateTimeStyle = getDateTimeStyle(contentStyle)
+			const dateTimeStyle = getDateTimeStyle(contentStyle, tweet.timestamp)
+			const tweetStyle = getTweetStyle(userNameStyle, contentStyle, tweet.tweet)
 
 			// compute container height, coz the height of textarea element needs metric to know their height.
-			contentStyle.height = Math.max(userNameStyle.height, dateTimeStyle.height)
-			containerStyle.height = Math.max(avatarStyle.height, contentStyle.height) + 12 * PADDING
+			contentStyle.height = tweetStyle.top + tweetStyle.height
+			const likeStyle = getLikeStyle(contentStyle)
+			containerStyle.height = Math.max(avatarStyle.height, contentStyle.height) + likeStyle.height + 2 * PADDING
 
 			return {
 				containerStyle,
 				contentStyle,
 				avatarStyle,
-				avatarStyle,
 				userNameStyle,
 				dateTimeStyle,
+				tweetStyle,
+				likeStyle,
 			}
 		},
 	},
@@ -58,29 +61,11 @@ const Tweet = React.createClass({
 	        <Image style={style.avatarStyle} src={avatar} useBackingStore={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{user}</Text>
-	        	<Text style={style.dateTimeStyle}>一个月前</Text>
+	        	<Text style={style.dateTimeStyle}>{moment(timestamp).fromNow()}</Text>
+	        	<Text style={style.tweetStyle}>{tweet}</Text>
 	        </Group>
+    		<SpriteImage style={style.likeStyle} src={likeImage} useBackingStore={true}></SpriteImage>	
 		</Group>
-
-		// return <div className={styles.container} style={{height: this.props.height, padding: heightConfig.padding}}>
-		// 	<Image width={window.fontSize*3} height={window.fontSize*3} src={avatar} className={styles.avatar}></Image>
-		// 	<div className={styles.content}>
-		// 		{/* header */}	
-		// 		<div className={styles.header} style={{height: heightConfig.header}}>
-		// 			<div className={styles.userName}>{user}</div>
-		// 			<div className={styles.date}>{moment(timestamp).fromNow()}</div>
-		// 		</div>
-		// 		{/* content */}	
-		// 		<div className={styles.content}>
-		// 			{tweet}
-		// 		</div>
-		// 		{/* footer */}	
-		// 		<div className={styles.footer} style={{height: heightConfig.footer}}>
-		// 			<Comment className={styles.icon}></Comment>
-		// 			<Repost className={styles.icon}></Repost>
-		// 		</div>
-		// 	</div>
-		// </div> 
 	},
 })
 
@@ -101,7 +86,6 @@ function getContentStyle(containerStyle, avatarStyle) {
 		translateY: PADDING,
 		width: containerStyle.width - left - PADDING,
 		height: 0,
-		backgroundColor: "#eee"
 	}
 }
 function getAvatarStyle() {
@@ -120,17 +104,17 @@ function getUserNameStyle(contentStyle) {
 		height: 1.2 * em,
 		width: contentStyle.width,
 		fontSize: em,
-		lineHeight: em * 1.2,
+		lineHeight: em,
 		fontFace: FONT_BOLD,
 	}
 }
-function getDateTimeStyle(contentStyle) {
-	const fontSize = em * 0.8
+function getDateTimeStyle(contentStyle, timestamp) {
+	const fontSize = 0.8*em
 	const lineHeight = em
-	const metrics = measure('一个月前', contentStyle.width, FONT_NORMAL, fontSize, lineHeight)
+	const metrics = measureText(moment(timestamp).fromNow(), contentStyle.width, FONT_NORMAL, fontSize, lineHeight)
 
 	return {
-		top: 0,
+		top: 0.1*em,
 		left: contentStyle.width - metrics.width,
 		height: metrics.height,
 		width: metrics.width,
@@ -138,6 +122,30 @@ function getDateTimeStyle(contentStyle) {
 		fontFace: FONT_NORMAL,
 		fontSize,
 		lineHeight,
+	}
+}
+function getTweetStyle(userNameStyle, contentStyle, tweet){
+	const fontSize = em
+	const lineHeight = 1.5*em
+	const metrics = measureText(tweet, contentStyle.width, FONT_NORMAL, fontSize, lineHeight)
+
+	return {
+		top: userNameStyle.top+userNameStyle.height+PADDING,
+		left: 0,
+		height: metrics.height,
+		width: metrics.width,
+		fontFace: FONT_NORMAL,
+		fontSize,
+		lineHeight,
+	}
+}
+function getLikeStyle(contentStyle){
+	return {
+		left: contentStyle.translateX,
+		top: contentStyle.translateY + contentStyle.height + 0.2*PADDING,
+		width: 2.5*em,
+		height: 2.5*em,	
+		zIndex: 2,
 	}
 }
 

@@ -47,7 +47,7 @@ const TweetList = React.createClass({
 	// Utils
 	computeStyleFromProps(props){
 		const tweetsStyle = _.map(props.list, tweet => {
-			return Tweet.getTweetStyle()
+			return Tweet.getTweetStyle(tweet)
 		})
 		return {
 			tweetsStyle,
