@@ -33,7 +33,7 @@ const Tweet = React.createClass({
 			// compute container height, coz the height of textarea element needs metric to know their height.
 			contentStyle.height = tweetStyle.top + tweetStyle.height
 			const likeStyle = getLikeStyle(contentStyle)
-			containerStyle.height = Math.max(avatarStyle.height, contentStyle.height) + likeStyle.height + 2 * PADDING
+			containerStyle.height = likeStyle.top + likeStyle.height - 0.5*em
 
 			return {
 				containerStyle,
@@ -141,10 +141,10 @@ function getTweetStyle(userNameStyle, contentStyle, tweet){
 }
 function getLikeStyle(contentStyle){
 	return {
-		left: contentStyle.translateX,
-		top: contentStyle.translateY + contentStyle.height + 0.2*PADDING,
-		width: 2.5*em,
-		height: 2.5*em,	
+		left: contentStyle.translateX - 1.5*em,
+		top: contentStyle.translateY + contentStyle.height - 0.6*em,
+		width: 4*em,
+		height: 4*em,	
 		zIndex: 2,
 	}
 }

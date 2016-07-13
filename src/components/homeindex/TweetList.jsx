@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react'
 import Tweet from './Tweet'
-import styles from './TweetList.scss'
 import classNames from 'classnames'
 import _ from 'underscore'
 import Surface from 'react-canvas/Surface' 
