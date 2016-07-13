@@ -9,44 +9,54 @@ import Image from 'react-canvas/Image'
 import measure from 'react-canvas/measureText'
 import FontFace from 'react-canvas/FontFace'
 
-// get height of tweet according to the content. 
-// react-infinite will use the result to define the tweet list.
-export function getTweetHeight(info){
-	const HEIGHT_CONFIG = getHeightConfig()
-
-	const textContentHeight = measureText(info.tweet, window.innerWidth-5.4*window.fontSize, window.fontSize, window.fontSize*1.3).height
-	return 2*HEIGHT_CONFIG.padding + HEIGHT_CONFIG.header + HEIGHT_CONFIG.footer + textContentHeight
-}
-function getHeightConfig(){
-	return {
-		padding: 0.7 * window.fontSize,
-		header: 1.5 * window.fontSize,
-		footer: 1.6 * window.fontSize,
-	}
-}
+const em = window.fontSize
+const PADDING = 0.7 * em
+const FONT_BOLD = FontFace('Helvetica, sans-serif', null, {weight: 500})
+const FONT_NORMAL = FontFace('Helvetica, sans-serif', null, {weight: 300})
 
 const Tweet = React.createClass({
 	propTypes: {
-		height: PropTypes.number.isRequired, // the height of this tweet
-		tweet: PropTypes.object.isRequired, // the content of this tweet 
+		tweet: PropTypes.object.isRequired, // The content of this tweet.
+		style: PropTypes.object.isRequired, // The total style of this component, generated from Tweet.getTweetStyle.
 	},
-	componentWillMount(){
-		this.updateStyle()
-	},
+	statics: {
+		getTweetStyle() {
+			const containerStyle = getContainerStyle()
+			const avatarStyle = getAvatarStyle()
+			const contentStyle = getContentStyle(containerStyle, avatarStyle)
+			const userNameStyle = getUserNameStyle(contentStyle)
+			const dateTimeStyle = getDateTimeStyle(contentStyle)
 
+			// compute container height, coz the height of textarea element needs metric to know their height.
+			contentStyle.height = Math.max(userNameStyle.height, dateTimeStyle.height)
+			containerStyle.height = Math.max(avatarStyle.height, contentStyle.height) + 2 * PADDING
+
+			return {
+				containerStyle,
+				contentStyle,
+				avatarStyle,
+				avatarStyle,
+				userNameStyle,
+				dateTimeStyle,
+			}
+		},
+	},
 	render: function(){
 		const {
-			avatar,
-			user,
-			timestamp,
-			tweet,
-		} = this.props.tweet
+			style,
+			tweet: {
+				avatar,
+				user,
+				timestamp,
+				tweet,
+			}
+		} = this.props
 
-		return <Group style={this._containerStyle}>
-	        <Image style={this._avatarStyle} src={avatar} />
-	        <Group style={this._contentStyle}>
-	        	<Text style={this._usernameStyle}>{user}</Text>
-	        	<Text style={this._datatimeStyle}>一个月前</Text>
+		return <Group style={style.containerStyle}>
+	        <Image style={style.avatarStyle} src={avatar} />
+	        <Group style={style.contentStyle}>
+	        	<Text style={style.userNameStyle}>{user}</Text>
+	        	<Text style={style.dateTimeStyle}>一个月前</Text>
 	        </Group>
 		</Group>
 
@@ -70,77 +80,63 @@ const Tweet = React.createClass({
 		// 	</div>
 		// </div> 
 	},
-
-	// Style
-	updateStyle(){
-		this._PADDING = getHeightConfig().padding
-		this._FONT_FACE = 
-
-		this._containerStyle = this.getContainerStyle()
-		this._avatarStyle = this.getAvatarStyle()
-		this._contentStyle = this.getContentStyle()
-		this._usernameStyle = this.getUserNameStyle()
-		this._datatimeStyle = this.getDateTimeStyle()
-	},
-	getContainerStyle(){
-		return {
-			width: window.innerWidth, 
-			height: this.props.height,
-			borderColor: '#e0e0e0',
-		}
-	},
-	getContentStyle(){
-		const left = 1.6*this._PADDING + this._avatarStyle.width
-		return {
-			top: 0,
-			left: 0,
-			translateX: left, 
-			translateY: this._PADDING, 
-			width: this._containerStyle.width - left - this._PADDING,
-			height: this._containerStyle.height - this._PADDING,
-			backgroundColor: "#eee"
-		}
-	},
-	getAvatarStyle(){
-		return {
-			borderRadius: 5,
-			left: this._PADDING,
-			top: this._PADDING,
-			width: window.fontSize*3,
-			height: window.fontSize*3,
-		}
-	},
-	getUserNameStyle(){
-		return {
-			top: 0,
-			left: 0,
-			height: 1.2*window.fontSize,
-			width: this._contentStyle.width,	
-			fontSize: window.fontSize,
-			lineHeight: window.fontSize*1.2,	
-			fontFace: FontFace('Helvetica, sans-serif', null, {weight: 500}),
-		}
-	},
-	getDateTimeStyle(){
-		const fontFace = FontFace('Helvetica, sans-serif', null, {weight: 300})
-		const fontSize = window.fontSize*0.8
-		const lineHeight = window.fontSize
-		// const metrics = measure('一个月前', this._contentStyle.width, fontFace, fontSize, lineHeight)
-
-		return {
-			top: 0,
-			// left: this._contentStyle.width-metrics.width,
-			// height: metrics.height,
-			// width: metrics.width,	
-			left: 0,
-			height: 20,
-			width: 30,
-			color: '#909498',
-			fontSize,
-			lineHeight,
-			fontFace,
-		}
-	}
 })
+
+// Style getter
+function getContainerStyle() {
+	return {
+		width: window.innerWidth,
+		height: 0,
+		borderColor: '#e0e0e0',
+	}
+}
+function getContentStyle(containerStyle, avatarStyle) {
+	const left = 1.6 * PADDING + avatarStyle.width
+	return {
+		top: 0,
+		left: 0,
+		translateX: left,
+		translateY: PADDING,
+		width: containerStyle.width - left - PADDING,
+		height: 0,
+		backgroundColor: "#eee"
+	}
+}
+function getAvatarStyle() {
+	return {
+		borderRadius: 5,
+		left: PADDING,
+		top: PADDING,
+		width: em * 3,
+		height: em * 3,
+	}
+}
+function getUserNameStyle(contentStyle) {
+	return {
+		top: 0,
+		left: 0,
+		height: 1.2 * em,
+		width: contentStyle.width*0.3,
+		fontSize: em,
+		lineHeight: em * 1.2,
+		fontFace: FONT_BOLD,
+	}
+}
+function getDateTimeStyle(contentStyle) {
+	const fontSize = em * 0.8
+	const lineHeight = em
+	const metrics = measure('一个月前', contentStyle.width, FONT_NORMAL, fontSize, lineHeight)
+
+	return {
+		top: 0,
+		left: contentStyle.width - metrics.width,
+		height: metrics.height,
+		width: metrics.width,
+		color: '#909498',
+		fontFace: FONT_NORMAL,
+		fontSize,
+		lineHeight,
+	}
+}
 
 export default Tweet 

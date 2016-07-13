@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import Tweet, {getTweetHeight} from './Tweet'
+import Tweet from './Tweet'
 import styles from './TweetList.scss'
 import classNames from 'classnames'
 import _ from 'underscore'
@@ -7,7 +7,7 @@ import Surface from 'react-canvas/Surface'
 import ListView from 'react-canvas/ListView' 
 
 const defaultProps = {
-	list: _.map(_.range(25), () => ({
+	list: _.map(_.range(50), () => ({
 		user: "Artour Babaev",
 		tweet: _.sample(["is there a way to watch nanyang ingame without lag i remember i used to able to watch china games without any lag now its just always laggy",
 				"is there a way to watch nanyang ingame without lag i remember i used to able to watch china games without any lag now its just always laggy e to watch china games without any lag now its just always laggy e to watch china games without any lag now its just always laggy e to watch china games without any lag now its just always laggy",
@@ -33,7 +33,7 @@ const TweetList = React.createClass({
 		return defaultProps
 	},
 	getInitialState: function(){
-		return this.computeStateFromProps(this.props)
+		return this.computeStyleFromProps(this.props)
 	},
 	componentWillMount(){
 		this._canvasFrame = {
@@ -45,31 +45,32 @@ const TweetList = React.createClass({
 	},
 
 	// Utils
-	computeStateFromProps(props){
-		const heightList = _.map(props.list, v => {
-			return ~~getTweetHeight(v)
+	computeStyleFromProps(props){
+		const tweetsStyle = _.map(props.list, tweet => {
+			return Tweet.getTweetStyle()
 		})
 		return {
-			heightList,
+			tweetsStyle,
 		}
 	},
 
 	// Render
 	renderTweet: function(index){
 	    return (
-			<Tweet key={index} tweet={this.props.list[index]} height={this.state.heightList[index]}/>
+			<Tweet key={index} tweet={this.props.list[index]} style={this.state.tweetsStyle[index]}/>
 	    )
 	},
 	render: function(){
-		const {size, list} = this.props
+		const {list} = this.props
 		if (list.length<=0) return null
+
 		return (
 			<div>
 				<Surface {...this._canvasFrame}>
 					<ListView
 						style={this._canvasFrame}
 						numberOfItems={this.props.list.length}
-						itemHeightArray={this.state.heightList}
+						itemHeightArray={_.map(this.state.tweetsStyle, v=>v.containerStyle.height)}
 						itemGetter={this.renderTweet}
 					>
 							

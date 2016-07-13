@@ -1,7 +1,3 @@
-// initialize some necessary constants for react-canvas layout
-window.fontSize = window.innerHeight > 570 ? (window.innerHeight < 670 ? 16 : 18) : 13
-document.getElementById('react-root').setAttribute("style", `font-size: ${window.fontSize}px`);
-
 import 'babel-polyfill'
 import 'common.scss' 
 import 'velocity-animate'
