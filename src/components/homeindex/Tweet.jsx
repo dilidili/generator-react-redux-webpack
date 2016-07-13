@@ -58,7 +58,7 @@ const Tweet = React.createClass({
 		} = this.props
 
 		return <Group style={style.containerStyle}>
-	        <Image style={style.avatarStyle} src={avatar} useBackingStore={true}/>
+	        <Image style={style.avatarStyle} src={avatar} useBackingStore={true} fadeIn={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{user}</Text>
 	        	<Text style={style.dateTimeStyle}>{moment(timestamp).fromNow()}</Text>
@@ -95,6 +95,7 @@ function getAvatarStyle() {
 		top: PADDING,
 		width: em * 3,
 		height: em * 3,
+		backgroundColor: "#eee",
 	}
 }
 function getUserNameStyle(contentStyle) {

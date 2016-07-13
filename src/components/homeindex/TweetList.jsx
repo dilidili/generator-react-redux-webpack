@@ -5,23 +5,23 @@ import _ from 'underscore'
 import Surface from 'react-canvas/Surface' 
 import ListView from 'react-canvas/ListView' 
 
-const defaultProps = {
-	list: _.map(_.range(50), () => ({
-		user: "Artour Babaev",
-		tweet: _.sample(["is there a way to watch nanyang ingame without lag i remember i used to able to watch china games without any lag now its just always laggy",
-				"is there a way to watch nanyang ingame without lag i remember i used to able to watch china games without any lag now its just always laggy e to watch china games without any lag now its just always laggy e to watch china games without any lag now its just always laggy e to watch china games without any lag now its just always laggy",
-				"e to watch china games without any lag now its just always laggy",
-			]),
-		timestamp: new Date('Sun Jun 05 14:53:39 +0800 2016'),
-		avatar: 'http://isomorphic-wb.oss-cn-hangzhou.aliyuncs.com/avatar.jpeg',
-		retweet: {
-			count: 40,
-		},
-		like: {
-			count: 332,
-		},
-	})),
-}
+// const defaultList = {
+// 	list: _.map(_.range(50), () => ({
+// 		user: "Artour Babaev",
+// 		tweet: _.sample(["is there a way to watch nanyang ingame without lag i remember i used to able to watch china games without any lag now its just always laggy",
+// 				"is there a way to watch nanyang ingame without lag i remember i used to able to watch china games without any lag now its just always laggy e to watch china games without any lag now its just always laggy e to watch china games without any lag now its just always laggy e to watch china games without any lag now its just always laggy",
+// 				"e to watch china games without any lag now its just always laggy",
+// 			]),
+// 		timestamp: new Date('Sun Jun 05 14:53:39 +0800 2016'),
+// 		avatar: 'http://isomorphic-wb.oss-cn-hangzhou.aliyuncs.com/avatar.jpeg',
+// 		retweet: {
+// 			count: 40,
+// 		},
+// 		like: {
+// 			count: 332,
+// 		},
+// 	})),
+// }
 
 const TweetList = React.createClass({
 	// Lifecycle
@@ -29,10 +29,13 @@ const TweetList = React.createClass({
 		list: PropTypes.array,
 	},
 	getDefaultProps: function(){
-		return defaultProps
+		return []
 	},
 	getInitialState: function(){
 		return this.computeStyleFromProps(this.props)
+	},
+	componentWillReceiveProps(nextProps){
+		this.setState(this.computeStyleFromProps(nextProps))
 	},
 	componentWillMount(){
 		this._canvasFrame = {
