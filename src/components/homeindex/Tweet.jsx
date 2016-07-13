@@ -8,6 +8,7 @@ import Text from 'react-canvas/Text'
 import Image from 'react-canvas/Image'
 import measure from 'react-canvas/measureText'
 import FontFace from 'react-canvas/FontFace'
+import PureRenderMixin from 'react/lib/ReactComponentWithPureRenderMixin'
 
 const em = window.fontSize
 const PADDING = 0.7 * em
@@ -19,6 +20,7 @@ const Tweet = React.createClass({
 		tweet: PropTypes.object.isRequired, // The content of this tweet.
 		style: PropTypes.object.isRequired, // The total style of this component, generated from Tweet.getTweetStyle.
 	},
+	mixins: [PureRenderMixin],
 	statics: {
 		getTweetStyle() {
 			const containerStyle = getContainerStyle()
@@ -29,7 +31,7 @@ const Tweet = React.createClass({
 
 			// compute container height, coz the height of textarea element needs metric to know their height.
 			contentStyle.height = Math.max(userNameStyle.height, dateTimeStyle.height)
-			containerStyle.height = Math.max(avatarStyle.height, contentStyle.height) + 2 * PADDING
+			containerStyle.height = Math.max(avatarStyle.height, contentStyle.height) + 12 * PADDING
 
 			return {
 				containerStyle,
@@ -53,8 +55,8 @@ const Tweet = React.createClass({
 		} = this.props
 
 		return <Group style={style.containerStyle}>
-	        <Image style={style.avatarStyle} src={avatar} />
-	        <Group style={style.contentStyle}>
+	        <Image style={style.avatarStyle} src={avatar} useBackingStore={true}/>
+	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{user}</Text>
 	        	<Text style={style.dateTimeStyle}>一个月前</Text>
 	        </Group>
@@ -116,7 +118,7 @@ function getUserNameStyle(contentStyle) {
 		top: 0,
 		left: 0,
 		height: 1.2 * em,
-		width: contentStyle.width*0.3,
+		width: contentStyle.width,
 		fontSize: em,
 		lineHeight: em * 1.2,
 		fontFace: FONT_BOLD,
