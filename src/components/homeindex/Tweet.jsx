@@ -64,7 +64,7 @@ const Tweet = React.createClass({
 	        	<Text style={style.dateTimeStyle}>{moment(timestamp).fromNow()}</Text>
 	        	<Text style={style.tweetStyle}>{tweet}</Text>
 	        </Group>
-    		<SpriteImage style={style.likeStyle} src={likeImage} useBackingStore={true}></SpriteImage>	
+    		<SpriteImage style={style.likeStyle} src={likeImage} frameCount={29}></SpriteImage>	
 		</Group>
 	},
 })

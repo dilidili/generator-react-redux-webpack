@@ -159,8 +159,8 @@ function drawRenderLayer (ctx, layer) {
       customDrawFunc = drawImageRenderLayer;
       break;
 
-    case 'image-sprite':
-      // customDrawFunc = drawSpriteImageRenderLayer;
+    case 'sprite-image':
+      customDrawFunc = drawSpriteImageRenderLayer;
       break;
 
     case 'text':
@@ -383,6 +383,20 @@ function drawImageRenderLayer (ctx, layer) {
   }
 
   CanvasUtils.drawImage(ctx, image, layer.frame.x, layer.frame.y, layer.frame.width, layer.frame.height);
+}
+
+function drawSpriteImageRenderLayer(ctx, layer){
+  if (!layer.imageUrl) {
+    return;
+  }
+
+  // Don't draw until loaded
+  var image = ImageCache.get(layer.imageUrl);
+  if (!image.isLoaded()) {
+    return;
+  }
+
+  CanvasUtils.drawSpriteImage(ctx, image, layer.frame.x, layer.frame.y, layer.frame.width, layer.frame.height, layer._originalStyle.frameIndex, layer._originalStyle.frameCount);
 }
 
 /**

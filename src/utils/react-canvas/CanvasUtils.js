@@ -5,6 +5,42 @@ var clamp = require('./clamp');
 var measureText = require('./measureText');
 
 /**
+ * Draw an sprite image into a <canvas>. This operation requires that the image
+ * already be loaded.
+ *
+ * @param {CanvasContext} ctx
+ * @param {Image} image The source image (from ImageCache.get())
+ * @param {Number} x The x-coordinate to begin drawing
+ * @param {Number} y The y-coordinate to begin drawing
+ * @param {Number} width The desired width
+ * @param {Number} height The desired height
+ * @param {Number} currentFrame The index of current frame
+ * @param {Number} FRAME_COUNT The total number of frames
+ */
+function drawSpriteImage (ctx, image, x, y, width, height, currentFrame, FRAME_COUNT) {
+  const actualSize = {
+    width: image.getWidth(),
+    height: image.getHeight()
+  };
+
+  // Clip the image to rectangle (sx, sy, sw, sh).
+  const sw = ~~(actualSize.width/FRAME_COUNT);
+  const sh = ~~(actualSize.height);
+  const sx = ~~(sw*currentFrame);
+  const sy = 0;
+
+  // Scale the image to dimensions (dw, dh).
+  const dw = ~~width;
+  const dh = ~~height;
+
+  // Draw the image on the canvas at coordinates (dx, dy).
+  const dx = ~~x;
+  const dy = ~~y;
+
+  ctx.drawImage(image.getRawImage(), sx, sy, sw, sh, dx, dy, dw, dh);
+}
+
+/**
  * Draw an image into a <canvas>. This operation requires that the image
  * already be loaded.
  *
@@ -201,5 +237,6 @@ module.exports = {
   drawImage: drawImage,
   drawText: drawText,
   drawGradient: drawGradient,
+  drawSpriteImage,
 };
 
