@@ -58,7 +58,7 @@ const Tweet = React.createClass({
 			}
 		} = this.props
 
-		return <Group style={style.containerStyle} onTouchStart={this.handleClick}>
+		return <Group style={style.containerStyle}>
 	        <Image style={style.avatarStyle} src={avatar} useBackingStore={true} fadeIn={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{user}</Text>
@@ -70,7 +70,8 @@ const Tweet = React.createClass({
 	},
 
 	// Handler
-	handleClick(){
+	handleClick(evt){
+		console.log('ah')
 		this.props.push(`/home/tweet/${this.props.tweet.id}`)	
 	}
 })

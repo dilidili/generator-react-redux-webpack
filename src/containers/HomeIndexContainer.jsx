@@ -31,7 +31,7 @@ const HomeIndexComponent = React.createClass({
 
 	// Motion props
 	getMotionProps() {
-		const currentMotion = this.props.currentView === TWEET_VIEW ? 1 : 0
+		const currentMotion = this.props.currentView[0] === TWEET_VIEW ? 1 : 0
 
 		return {
 			defaultStyle: {

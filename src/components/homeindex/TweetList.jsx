@@ -74,7 +74,7 @@ const TweetList = React.createClass({
 
 		return (
 			<div>
-				<Surface {...this._canvasFrame}>
+				<Surface  {...this._canvasFrame}>
 					<ListView
 						style={this._canvasFrame}
 						numberOfItems={this.props.list.length}
