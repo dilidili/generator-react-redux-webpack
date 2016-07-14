@@ -42,7 +42,7 @@ const FootTabComponent = React.createClass({
 				{
 					_.map(TAB_CONTENT, (v, k)=>{
 						// highlight current tab 
-						const isCurrentTab = v.pathname.startsWith(this.props.pathname)
+						const isCurrentTab = this.props.pathname.startsWith(v.pathname)
 						const color = isCurrentTab?"#1da1f2":"#8899a6"
 						const Icon = v.icon
 

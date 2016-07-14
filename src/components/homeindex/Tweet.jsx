@@ -19,6 +19,7 @@ const Tweet = React.createClass({
 	propTypes: {
 		tweet: PropTypes.object.isRequired, // The content of this tweet.
 		style: PropTypes.object.isRequired, // The total style of this component, generated from Tweet.getTweetStyle.
+		push: PropTypes.func.isRequired, // Change the route
 	},
 	mixins: [PureRenderMixin],
 	statics: {
@@ -57,7 +58,7 @@ const Tweet = React.createClass({
 			}
 		} = this.props
 
-		return <Group style={style.containerStyle}>
+		return <Group style={style.containerStyle} onTouchStart={this.handleClick}>
 	        <Image style={style.avatarStyle} src={avatar} useBackingStore={true} fadeIn={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{user}</Text>
@@ -67,6 +68,11 @@ const Tweet = React.createClass({
     		<SpriteImage style={style.likeStyle} src={likeImage} frameCount={29}></SpriteImage>	
 		</Group>
 	},
+
+	// Handler
+	handleClick(){
+		this.props.push(`/home/tweet/${this.props.tweet.id}`)	
+	}
 })
 
 // Style getter

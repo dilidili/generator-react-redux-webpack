@@ -20,16 +20,20 @@ import ListView from 'react-canvas/ListView'
 // 		like: {
 // 			count: 332,
 // 		},
+// 		id: "3996901369751053",
 // 	})),
 // }
 
 const TweetList = React.createClass({
 	// Lifecycle
 	propTypes: {
+		push: PropTypes.func.isRequired,
 		list: PropTypes.array,
 	},
 	getDefaultProps: function(){
-		return []
+		return {
+			list: [],
+		}
 	},
 	getInitialState: function(){
 		return this.computeStyleFromProps(this.props)
@@ -59,12 +63,14 @@ const TweetList = React.createClass({
 	// Render
 	renderTweet: function(index){
 	    return (
-			<Tweet key={index} tweet={this.props.list[index]} style={this.state.tweetsStyle[index]}/>
+			<Tweet key={index} tweet={this.props.list[index]} style={this.state.tweetsStyle[index]} push={this.props.push}/>
 	    )
 	},
 	render: function(){
 		const {list} = this.props
 		if (list.length<=0) return null
+
+		console.log(this.props.leaveMotion)
 
 		return (
 			<div>
@@ -75,7 +81,6 @@ const TweetList = React.createClass({
 						itemHeightArray={_.map(this.state.tweetsStyle, v=>v.containerStyle.height)}
 						itemGetter={this.renderTweet}
 					>
-							
 					</ListView>
 				</Surface>
 			</div>

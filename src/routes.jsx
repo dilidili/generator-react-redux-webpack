@@ -10,6 +10,7 @@ const routes = <ReduxRouter>
 	<Route path="/" component={AppContainer}>
 		<Route path="home" component={HomeContainer}>
 			<IndexRoute component={HomeIndexContainer}></IndexRoute>
+			<Route path="tweet/:tid" component={HomeIndexContainer}></Route>
 		</Route>
 		<Route path="notification" component={HomeContainer}></Route>
 		<Route path="message" component={HomeContainer}></Route>
