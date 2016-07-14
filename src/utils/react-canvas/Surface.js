@@ -175,7 +175,13 @@ var Surface = React.createClass({
       hitTarget[hitTest.getHitHandle(e.type)](e);
     }
   },
-
+  triggerEvent(hitTarget, handlerName, e){
+    let target = hitTarget
+    do {
+      target[handlerName] && target[handlerName](e)
+      target = target.parentLayer
+    } while (target)
+  },
   handleTouchStart: function (e) {
     e.preventDefault()
     var hitTarget = hitTest(e, this.node, this.refs.canvas);
@@ -187,7 +193,8 @@ var Surface = React.createClass({
         touch = e.touches[i];
         this._touches[touch.identifier] = hitTarget;
       }
-      hitTarget[hitTest.getHitHandle(e.type)](e);
+
+      this.triggerEvent(hitTarget, hitTest.getHitHandle(e.type), e)
     }
   },
 
