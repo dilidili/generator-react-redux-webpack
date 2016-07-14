@@ -50,7 +50,7 @@ var Image = React.createClass({
 
   getDefaultProps(){
     return {
-      animationDuration: 1000,
+      animationDuration: 600,
     }
   },
 

@@ -24,7 +24,7 @@ var ListView = React.createClass({
     return {
       style: { left: 0, top: 0, width: 0, height: 0 },
       snapping: false,
-      scrollingDeceleration: 0.85,
+      scrollingDeceleration: 0.95,
       scrollingPenetrationAcceleration: 0.08
     };
   },
