@@ -72,7 +72,7 @@ const Tweet = React.createClass({
 	// Handler
 	handleClick(evt){
 		console.log('ah')
-		this.props.push(`/home/tweet/${this.props.tweet.id}`)	
+		// this.props.push(`/home/tweet/${this.props.tweet.id}`)	
 	}
 })
 

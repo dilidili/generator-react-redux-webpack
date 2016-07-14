@@ -79,14 +79,12 @@ var ListView = React.createClass({
 
   handleTouchStart: function (e) {
     if (this.scroller) {
-      e.preventDefault();
       this.scroller.doTouchStart(e.touches, e.timeStamp);
     }
   },
 
   handleTouchMove: function (e) {
     if (this.scroller) {
-      e.preventDefault();
       this.scroller.doTouchMove(e.touches, e.timeStamp, e.scale);
     }
   },

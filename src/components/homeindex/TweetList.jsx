@@ -70,8 +70,6 @@ const TweetList = React.createClass({
 		const {list} = this.props
 		if (list.length<=0) return null
 
-		console.log(this.props.leaveMotion)
-
 		return (
 			<div>
 				<Surface  {...this._canvasFrame}>

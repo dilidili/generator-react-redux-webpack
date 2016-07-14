@@ -115,9 +115,6 @@ var Image = React.createClass({
   },
 
   handleClick: function(evt){
-    evt.preventDefault()
-    evt.stopPropagation()
-
     if (this.state.loaded && !this._pendingAnimationFrame) {
       if (this.state.frameIndex === this.props.frameCount-1) {
         // move back to head 
