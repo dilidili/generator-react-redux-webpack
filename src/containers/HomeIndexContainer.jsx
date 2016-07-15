@@ -19,12 +19,7 @@ const HomeIndexComponent = React.createClass({
 		return (
 			<div>
 				<Header></Header>
-
-				<Motion {...this.getMotionProps()}>
-					{interpolatedStyle => <div>
-						<TweetList list={this.props.tweet} push={this.props.push} leaveMotion={interpolatedStyle.motion}></TweetList>
-					</div>}
-				</Motion>
+				<TweetList list={this.props.tweet} push={this.props.push}></TweetList>
 			</div>
 		)
 	},

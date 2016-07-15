@@ -4,6 +4,8 @@ import classNames from 'classnames'
 import _ from 'underscore'
 import Surface from 'react-canvas/Surface' 
 import ListView from 'react-canvas/ListView' 
+import styles from './TweetList.scss'
+import {VelocityComponent} from 'velocity-react'
 
 // const defaultList = {
 // 	list: _.map(_.range(50), () => ({
@@ -29,10 +31,12 @@ const TweetList = React.createClass({
 	propTypes: {
 		push: PropTypes.func.isRequired,
 		list: PropTypes.array,
+		leaveMotion: PropTypes.number,
 	},
 	getDefaultProps: function(){
 		return {
 			list: [],
+			leaveMotion: 0,
 		}
 	},
 	getInitialState: function(){
@@ -59,6 +63,12 @@ const TweetList = React.createClass({
 			tweetsStyle,
 		}
 	},
+	getContainerStyle(){
+		return {
+			position: 'relative',
+			left: -this.props.leaveMotion*300,
+		}
+	},
 
 	// Render
 	renderTweet: function(index){
@@ -71,17 +81,19 @@ const TweetList = React.createClass({
 		if (list.length<=0) return null
 
 		return (
-			<div>
-				<Surface  {...this._canvasFrame}>
-					<ListView
-						style={this._canvasFrame}
-						numberOfItems={this.props.list.length}
-						itemHeightArray={_.map(this.state.tweetsStyle, v=>v.containerStyle.height)}
-						itemGetter={this.renderTweet}
-					>
-					</ListView>
-				</Surface>
-			</div>
+			<VelocityComponent animation={{translateX: -200}} duration={500} runOnMount={true}>
+				<div className={styles.container} style={this.getContainerStyle()}>
+					<Surface  {...this._canvasFrame}>
+						<ListView
+							style={this._canvasFrame}
+							numberOfItems={this.props.list.length}
+							itemHeightArray={_.map(this.state.tweetsStyle, v=>v.containerStyle.height)}
+							itemGetter={this.renderTweet}
+						>
+						</ListView>
+					</Surface>
+				</div>
+			</VelocityComponent>
 		)
 	},
 })

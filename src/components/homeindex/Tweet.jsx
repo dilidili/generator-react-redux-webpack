@@ -22,6 +22,7 @@ const Tweet = React.createClass({
 		push: PropTypes.func.isRequired, // Change the route
 	},
 	mixins: [PureRenderMixin],
+	_touchClick: null, // For identifing the touch click and touch drag.
 	statics: {
 		getTweetStyle(tweet) {
 			const containerStyle = getContainerStyle()
@@ -47,6 +48,23 @@ const Tweet = React.createClass({
 			}
 		},
 	},
+
+	// Hanlder
+	handleTouchStart(){
+		this._touchClick = true
+	},
+	handleTouchMove(){
+		this._touchClick = false
+	},
+	handleTouchEnd(){
+		if (this._touchClick) {
+			this._touchClick = false
+
+			// Navigate to tweet detail page
+			this.props.push(`/home/tweet/${this.props.tweet.id}`)	
+		}
+	},
+
 	render: function(){
 		const {
 			style,
@@ -58,7 +76,7 @@ const Tweet = React.createClass({
 			}
 		} = this.props
 
-		return <Group style={style.containerStyle}>
+		return <Group style={style.containerStyle} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd}>
 	        <Image style={style.avatarStyle} src={avatar} useBackingStore={true} fadeIn={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{user}</Text>
@@ -68,12 +86,6 @@ const Tweet = React.createClass({
     		<SpriteImage style={style.likeStyle} src={likeImage} frameCount={29}></SpriteImage>	
 		</Group>
 	},
-
-	// Handler
-	handleClick(evt){
-		console.log('ah')
-		// this.props.push(`/home/tweet/${this.props.tweet.id}`)	
-	}
 })
 
 // Style getter

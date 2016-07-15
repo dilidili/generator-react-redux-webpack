@@ -172,7 +172,7 @@ var Surface = React.createClass({
   hitTest: function (e) {
     var hitTarget = hitTest(e, this.node, this.refs.canvas);
     if (hitTarget) {
-      hitTarget[hitTest.getHitHandle(e.type)](e);
+      this.triggerEvent(hitTarget, hitTest.getHitHandle(e.type), e)
     }
   },
   triggerEvent(hitTarget, handlerName, e){
@@ -216,7 +216,7 @@ var Surface = React.createClass({
     for (var i=0, len=e.changedTouches.length; i < len; i++) {
       hitTarget = this._touches[e.changedTouches[i].identifier];
       if (hitTarget && hitTarget[hitHandle]) {
-        hitTarget[hitHandle](e);
+        this.triggerEvent(hitTarget, hitHandle, e)
       }
       delete this._touches[e.changedTouches[i].identifier];
     }
