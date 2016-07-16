@@ -6,7 +6,6 @@ import Header from '../components/homeindex/Header'
 import TweetList from '../components/homeindex/TweetList'
 import {push} from 'redux-router'
 import _ from 'underscore'
-import {Motion, spring} from 'react-motion'
 
 const LIST_VIEW = "LIST_VIEW"
 const TWEET_VIEW = "TWEET_VIEW"
@@ -19,23 +18,9 @@ const HomeIndexComponent = React.createClass({
 		return (
 			<div>
 				<Header></Header>
-				<TweetList list={this.props.tweet} push={this.props.push}></TweetList>
+				<TweetList list={this.props.tweet} push={this.props.push} isPresent={this.props.currentView[0]===LIST_VIEW}></TweetList>
 			</div>
 		)
-	},
-
-	// Motion props
-	getMotionProps() {
-		const currentMotion = this.props.currentView[0] === TWEET_VIEW ? 1 : 0
-
-		return {
-			defaultStyle: {
-				motion: currentMotion,
-			},
-			style: {
-				motion: spring(currentMotion)
-			},
-		}
 	},
 })
 
@@ -65,7 +50,7 @@ function mapStateToProps(state){
 			},
 			id: v.idstr,
 		})),
-		currentView,
+		currentView, // as [THE_PRESENT_VIEW, data]
     }
 }
 

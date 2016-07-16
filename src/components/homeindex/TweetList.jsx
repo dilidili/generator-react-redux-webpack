@@ -26,17 +26,31 @@ import {VelocityComponent} from 'velocity-react'
 // 	})),
 // }
 
+// Animation
+const presentAnimation = {
+	translateX: "0",
+	overlay: {
+		opacity: 0,
+	},
+}
+const hideAnimation = {
+	translateX: -window.fontSize*5,
+	overlay: {
+		opacity: 0.2,
+	},
+}
+
 const TweetList = React.createClass({
 	// Lifecycle
 	propTypes: {
 		push: PropTypes.func.isRequired,
 		list: PropTypes.array,
-		leaveMotion: PropTypes.number,
+		isPresent: PropTypes.bool, 
 	},
 	getDefaultProps: function(){
 		return {
 			list: [],
-			leaveMotion: 0,
+			isPresent: true,
 		}
 	},
 	getInitialState: function(){
@@ -63,12 +77,6 @@ const TweetList = React.createClass({
 			tweetsStyle,
 		}
 	},
-	getContainerStyle(){
-		return {
-			position: 'relative',
-			left: -this.props.leaveMotion*300,
-		}
-	},
 
 	// Render
 	renderTweet: function(index){
@@ -77,12 +85,22 @@ const TweetList = React.createClass({
 	    )
 	},
 	render: function(){
-		const {list} = this.props
+		const {
+			list,
+			isPresent,
+		} = this.props
 		if (list.length<=0) return null
 
+		const transitionAnimation = isPresent ? presentAnimation : hideAnimation
+
 		return (
-			<VelocityComponent animation={{translateX: -200}} duration={500} runOnMount={true}>
-				<div className={styles.container} style={this.getContainerStyle()}>
+			<VelocityComponent animation={transitionAnimation} duration={300}>
+				<div className={styles.container}>
+					<VelocityComponent animation={transitionAnimation.overlay} duration={300}>
+						{/* an overlay appears when click someone tweet */}
+						<div style={{backgroundColor: "black", position:"absolute", top:0, left:0, display: isPresent?'none':'block'}}></div>
+					</VelocityComponent>
+
 					<Surface  {...this._canvasFrame}>
 						<ListView
 							style={this._canvasFrame}

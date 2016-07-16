@@ -6,8 +6,10 @@ var Scroller = require('scroller');
 var Group = require('./Group');
 var clamp = require('./clamp');
 import _ from 'underscore'
+import PureRenderMixin from 'react/lib/ReactComponentWithPureRenderMixin'
 
 var ListView = React.createClass({
+  mixins: [PureRenderMixin],
 
   propTypes: {
     style: React.PropTypes.object,

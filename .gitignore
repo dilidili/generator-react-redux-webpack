@@ -1,4 +1,5 @@
 !node_modules/react-canvas/
 node_modules/*/
+dist/build/*
 *.DS_Store
 npm-debug.log

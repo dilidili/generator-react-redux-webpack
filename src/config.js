@@ -1,7 +1,8 @@
 // App config the for development environment.
 const devServerURL = 'http://isomorphic-wb.oss-cn-hangzhou.aliyuncs.com'
 const proServerURL = 'http://api.weibo.com/2'
-const isProduction = process.env.NODE_ENV === "production"
+// const isProduction = process.env.NODE_ENV === "production"
+const isProduction = false
 
 const devConfig = {
 	debug: true,
