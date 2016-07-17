@@ -4,6 +4,7 @@ import {bindActionCreators} from 'redux'
 import {fetchTweet} from '../actions/tweet'
 import Header from '../components/homeindex/Header'
 import TweetList from '../components/homeindex/TweetList'
+import TweetDetail from '../containers/homeindex/TweetDetail'
 import {push} from 'redux-router'
 import _ from 'underscore'
 
@@ -15,10 +16,17 @@ const HomeIndexComponent = React.createClass({
 		this.props.fetchTweet()
 	},
 	render: function(){
+		const {
+			currentView
+		} = this.props
+
 		return (
 			<div>
 				<Header></Header>
-				<TweetList list={this.props.tweet} push={this.props.push} isPresent={this.props.currentView[0]===LIST_VIEW}></TweetList>
+				<div style={{height: window.contentHeight, position: 'relative'}}>
+					<TweetList list={this.props.tweet} push={this.props.push} isPresent={currentView[0]===LIST_VIEW}></TweetList>
+					<TweetDetail tid={currentView[1]}></TweetDetail>
+				</div>
 			</div>
 		)
 	},
@@ -35,21 +43,8 @@ function mapStateToProps(state){
 		currentView = [TWEET_VIEW, route.params.tid]
 	}
 
-    return {
-		tweet: _.map(state.getIn(['tweet', 'list']), v=>({
-			user: v.user.name,
-			tweet: v.text,
-			timestamp: new Date(v.created_at),
-			avatar: v.user.profile_image_url,
-			avatar: v.user.profile_image_url,
-			retweet: {
-				count: v.reposts_count,
-			},
-			like: {
-				count: v.attitudes_count,
-			},
-			id: v.idstr,
-		})),
+	return {
+		tweet: state.getIn(['tweet', 'list']),
 		currentView, // as [THE_PRESENT_VIEW, data]
     }
 }

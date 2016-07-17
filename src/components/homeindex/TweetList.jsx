@@ -4,7 +4,6 @@ import classNames from 'classnames'
 import _ from 'underscore'
 import Surface from 'react-canvas/Surface' 
 import ListView from 'react-canvas/ListView' 
-import styles from './TweetList.scss'
 import {VelocityComponent} from 'velocity-react'
 
 // const defaultList = {
@@ -44,7 +43,7 @@ const TweetList = React.createClass({
 	// Lifecycle
 	propTypes: {
 		push: PropTypes.func.isRequired,
-		list: PropTypes.array,
+		list: PropTypes.object,
 		isPresent: PropTypes.bool, 
 	},
 	getDefaultProps: function(){
@@ -64,24 +63,21 @@ const TweetList = React.createClass({
 			top: 0,
 			left: 0,
 			width: window.innerWidth,
-			height: ~~(window.innerHeight - 8.2 * window.fontSize),
+			height: window.contentHeight,
 		}
 	},
 
 	// Utils
 	computeStyleFromProps(props){
-		const tweetsStyle = _.map(props.list, tweet => {
-			return Tweet.getTweetStyle(tweet)
-		})
 		return {
-			tweetsStyle,
+			tweetsStyle: props.list.map(v => Tweet.getTweetStyle(v)),
 		}
 	},
 
 	// Render
 	renderTweet: function(index){
 	    return (
-			<Tweet key={index} tweet={this.props.list[index]} style={this.state.tweetsStyle[index]} push={this.props.push}/>
+			<Tweet key={index} tweet={this.props.list.get(index)} style={this.state.tweetsStyle.get(index)} push={this.props.push}/>
 	    )
 	},
 	render: function(){
@@ -89,13 +85,14 @@ const TweetList = React.createClass({
 			list,
 			isPresent,
 		} = this.props
-		if (list.length<=0) return null
+		if (list.size<=0) return null
 
 		const transitionAnimation = isPresent ? presentAnimation : hideAnimation
 
+
 		return (
 			<VelocityComponent animation={transitionAnimation} duration={300}>
-				<div className={styles.container}>
+				<div>
 					<VelocityComponent animation={transitionAnimation.overlay} duration={300}>
 						{/* an overlay appears when click someone tweet */}
 						<div style={{backgroundColor: "black", position:"absolute", top:0, left:0, display: isPresent?'none':'block'}}></div>
@@ -104,8 +101,8 @@ const TweetList = React.createClass({
 					<Surface  {...this._canvasFrame}>
 						<ListView
 							style={this._canvasFrame}
-							numberOfItems={this.props.list.length}
-							itemHeightArray={_.map(this.state.tweetsStyle, v=>v.containerStyle.height)}
+							numberOfItems={this.props.list.size}
+							itemHeightArray={_.map(this.state.tweetsStyle.toArray(), v=>Math.round(v.containerStyle.height))}
 							itemGetter={this.renderTweet}
 						>
 						</ListView>

@@ -29,8 +29,8 @@ const Tweet = React.createClass({
 			const avatarStyle = getAvatarStyle()
 			const contentStyle = getContentStyle(containerStyle, avatarStyle)
 			const userNameStyle = getUserNameStyle(contentStyle)
-			const dateTimeStyle = getDateTimeStyle(contentStyle, tweet.timestamp)
-			const tweetStyle = getTweetStyle(userNameStyle, contentStyle, tweet.tweet)
+			const dateTimeStyle = getDateTimeStyle(contentStyle, tweet.get('timestamp'))
+			const tweetStyle = getTweetStyle(userNameStyle, contentStyle, tweet.get('tweet'))
 
 			// compute container height, coz the height of textarea element needs metric to know their height.
 			contentStyle.height = tweetStyle.top + tweetStyle.height
@@ -61,27 +61,22 @@ const Tweet = React.createClass({
 			this._touchClick = false
 
 			// Navigate to tweet detail page
-			this.props.push(`/home/tweet/${this.props.tweet.id}`)	
+			this.props.push(`/home/tweet/${this.props.tweet.get('id')}`)	
 		}
 	},
 
 	render: function(){
 		const {
 			style,
-			tweet: {
-				avatar,
-				user,
-				timestamp,
-				tweet,
-			}
+			tweet,
 		} = this.props
 
 		return <Group style={style.containerStyle} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd}>
-	        <Image style={style.avatarStyle} src={avatar} useBackingStore={true} fadeIn={true}/>
+	        <Image style={style.avatarStyle} src={tweet.get('avatar')} useBackingStore={true} fadeIn={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
-	        	<Text style={style.userNameStyle}>{user}</Text>
-	        	<Text style={style.dateTimeStyle}>{moment(timestamp).fromNow()}</Text>
-	        	<Text style={style.tweetStyle}>{tweet}</Text>
+	        	<Text style={style.userNameStyle}>{tweet.get('user')}</Text>
+	        	<Text style={style.dateTimeStyle}>{moment(tweet.get('timestamp')).fromNow()}</Text>
+	        	<Text style={style.tweetStyle}>{tweet.get('tweet')}</Text>
 	        </Group>
     		<SpriteImage style={style.likeStyle} src={likeImage} frameCount={29}></SpriteImage>	
 		</Group>
