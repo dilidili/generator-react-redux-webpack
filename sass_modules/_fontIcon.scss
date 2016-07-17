@@ -1,0 +1,32 @@
+@font-face {
+    font-family: 'rosettaicons';
+    src: url('~rosetta-icons-Regular.woff');
+    font-style: normal;
+    font-weight: normal
+}
+
+.Icon {
+    background: transparent;
+    display: inline-block;
+    font-style: normal;
+    vertical-align: baseline;
+    position: relative;
+    line-height: 1;
+}
+
+.Icon:after, .Icon:before {
+    display: block;
+    font-family: "rosettaicons";
+    font-weight: normal;
+    font-style: normal;
+    text-align: center;
+    -webkit-font-smoothing: antialiased;
+}
+
+.Icon--retweet:before{
+    content: "\f152";
+}
+
+.Icon--follow:before{
+    content: "\f175";
+}

@@ -1,6 +1,86 @@
+@import "~common.scss";
+
 :local(.container){
 	position: absolute;
 	top: 0;
 	left: 0;
 	z-index: 2;
+	background-color: white;
+	display: flex;	
+	flex-direction: column;
+
+	:local(.mainContent){
+		display: flex;	
+		flex-direction: column;
+		height: auto;
+		align-items: center;
+		padding: 0.9em;
+		border-top: $border-dark;
+		border-bottom: $border-dark;
+
+		&>div{
+			height: auto;
+		}
+
+		:local(.retweetLabel){
+			@extend .u-light-font;
+			display: inline-block;
+			line-height: 1;
+			margin-left: 5em;
+			.Icon{
+				padding-right: 0.2em;
+			}
+		}		
+	}
+
+	:local(.avatarGroup){
+		height: auto;
+		display: flex;
+		align-items: center;
+		margin-top: 0.9em;
+
+		img{
+			height: 3em;
+			width: 3em;
+			flex-shrink: 0;
+			border-radius: 5px; 
+		}
+		p{
+			@extend .u-bold-font;
+			margin-left: 0.5em;
+		}
+		button{
+			padding: 0.1em 0.6em;
+			font-size: 1.4em;
+			margin-left: auto;
+			align-self: flex-start;
+		}
+	}
+
+	:local(.textGroup){
+		@extend .u-text-group;
+		margin-top: 1em;
+	}
+
+	:local(.timestamp){
+		padding-top: 0.8em;
+		@extend .u-light-font;
+	}
+
+	:local(.status){
+		border-top: $border-light;
+		border-bottom: $border-light;
+		@extend .u-light-font;	
+		margin-top: 0.9em;
+
+		&>p{
+			float: left;
+			margin: 0.8em 0.4em 0.8em 0;
+
+			:local(.count){
+				color: black;
+				font-weight: bold;
+			}
+		}
+	}
 }
