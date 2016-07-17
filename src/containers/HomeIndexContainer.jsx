@@ -25,7 +25,7 @@ const HomeIndexComponent = React.createClass({
 				<Header></Header>
 				<div style={{height: window.contentHeight, position: 'relative'}}>
 					<TweetList list={this.props.tweet} push={this.props.push} isPresent={currentView[0]===LIST_VIEW}></TweetList>
-					<TweetDetail tid={currentView[1]}></TweetDetail>
+					<TweetDetail tid={currentView[1]} isPresent={currentView[0]===TWEET_VIEW}></TweetDetail>
 				</div>
 			</div>
 		)
