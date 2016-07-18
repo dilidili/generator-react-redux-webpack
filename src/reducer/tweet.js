@@ -26,11 +26,18 @@ export function getTweetDetail(list, tid){
 }
 
 function formatTweetList(rawData) {
-    return List(rawData).map(v => Map({
+    return List(rawData).map(v => formatTweet(v))
+}
+
+function formatTweet(v) {
+    if (!v) return null
+
+    return Map({
         user: v.user.name,
         tweet: v.text,
         timestamp: new Date(v.created_at),
         avatar: v.user.profile_image_url,
+        retweeted: formatTweet(v.retweeted_status),
         retweet: {
             count: v.reposts_count,
         },
@@ -38,5 +45,5 @@ function formatTweetList(rawData) {
             count: v.attitudes_count,
         },
         id: v.id,
-    }))
+    })
 }

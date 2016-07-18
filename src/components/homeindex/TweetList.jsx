@@ -89,7 +89,6 @@ const TweetList = React.createClass({
 
 		const transitionAnimation = isPresent ? presentAnimation : hideAnimation
 
-
 		return (
 			<VelocityComponent animation={transitionAnimation} duration={300}>
 				<div>

@@ -25,12 +25,16 @@ const Tweet = React.createClass({
 	_touchClick: null, // For identifing the touch click and touch drag.
 	statics: {
 		getTweetStyle(tweet) {
+			const isRetweeted = !!tweet.get('retweeted')
+			const presentTweet = isRetweeted?tweet.get('retweeted'):tweet
+
 			const containerStyle = getContainerStyle()
-			const avatarStyle = getAvatarStyle()
+			const retweetLabelStyle = getRetweetLabelStyle(containerStyle, isRetweeted?`来自 ${tweet.get('user')} 的转发`:"")
+			const avatarStyle = getAvatarStyle(retweetLabelStyle)
 			const contentStyle = getContentStyle(containerStyle, avatarStyle)
 			const userNameStyle = getUserNameStyle(contentStyle)
-			const dateTimeStyle = getDateTimeStyle(contentStyle, tweet.get('timestamp'))
-			const tweetStyle = getTweetStyle(userNameStyle, contentStyle, tweet.get('tweet'))
+			const dateTimeStyle = getDateTimeStyle(contentStyle, presentTweet.get('timestamp'))
+			const tweetStyle = getTweetStyle(userNameStyle, contentStyle, presentTweet.get('tweet'))
 
 			// compute container height, coz the height of textarea element needs metric to know their height.
 			contentStyle.height = tweetStyle.top + tweetStyle.height
@@ -45,6 +49,7 @@ const Tweet = React.createClass({
 				dateTimeStyle,
 				tweetStyle,
 				likeStyle,
+				retweetLabelStyle,
 			}
 		},
 	},
@@ -65,18 +70,22 @@ const Tweet = React.createClass({
 		}
 	},
 
+	// Render
 	render: function(){
 		const {
 			style,
 			tweet,
 		} = this.props
-
+		// When there is a Tweet that retweet another Tweet, show the one retweeted.
+		const isRetweeted = !!tweet.get('retweeted')
+		const presentTweet = isRetweeted?tweet.get('retweeted'):tweet
 		return <Group style={style.containerStyle} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd}>
-	        <Image style={style.avatarStyle} src={tweet.get('avatar')} useBackingStore={true} fadeIn={true}/>
+        	<Text style={style.retweetLabelStyle}>{isRetweeted?`来自 ${tweet.get('user')} 的转发`:""}</Text>
+	        <Image style={style.avatarStyle} src={presentTweet.get('avatar')} useBackingStore={true} fadeIn={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
-	        	<Text style={style.userNameStyle}>{tweet.get('user')}</Text>
-	        	<Text style={style.dateTimeStyle}>{moment(tweet.get('timestamp')).fromNow()}</Text>
-	        	<Text style={style.tweetStyle}>{tweet.get('tweet')}</Text>
+	        	<Text style={style.userNameStyle}>{presentTweet.get('user')}</Text>
+	        	<Text style={style.dateTimeStyle}>{moment(presentTweet.get('timestamp')).fromNow()}</Text>
+	        	<Text style={style.tweetStyle}>{presentTweet.get('tweet')}</Text>
 	        </Group>
     		<SpriteImage style={style.likeStyle} src={likeImage} frameCount={29}></SpriteImage>	
 		</Group>
@@ -97,16 +106,32 @@ function getContentStyle(containerStyle, avatarStyle) {
 		top: 0,
 		left: 0,
 		translateX: left,
-		translateY: PADDING,
+		translateY: avatarStyle.top,
 		width: containerStyle.width - left - PADDING,
 		height: 0,
 	}
 }
-function getAvatarStyle() {
+function getRetweetLabelStyle(containerStyle, label){
+	const fontSize = 0.8*em
+	const lineHeight = em
+	const metrics = measureText(label, containerStyle.width, FONT_NORMAL, fontSize, lineHeight)
+
+	return {
+		top: PADDING,
+		left: PADDING,
+		height: !!label?metrics.height:0,
+		width: metrics.width,
+		color: '#909498',
+		fontFace: FONT_NORMAL,
+		fontSize,
+		lineHeight,
+	}
+}
+function getAvatarStyle(getAvatarStyle) {
 	return {
 		borderRadius: 5,
 		left: PADDING,
-		top: PADDING,
+		top: PADDING + getAvatarStyle.top + getAvatarStyle.height,
 		width: em * 3,
 		height: em * 3,
 		backgroundColor: "#eee",
