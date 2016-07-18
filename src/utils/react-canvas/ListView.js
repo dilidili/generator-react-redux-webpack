@@ -1,10 +1,8 @@
 'use strict';
 
 var React = require('react');
-var assign = require('object-assign');
 var Scroller = require('scroller');
 var Group = require('./Group');
-var clamp = require('./clamp');
 import _ from 'underscore'
 import PureRenderMixin from 'react/lib/ReactComponentWithPureRenderMixin'
 

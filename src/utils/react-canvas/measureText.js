@@ -1,6 +1,5 @@
 'use strict';
 
-var FontFace = require('./FontFace');
 var FontUtils = require('./FontUtils');
 var LineBreaker = require('linebreak');
 
@@ -43,7 +42,6 @@ module.exports = function measureText (text, width, fontFace, fontSize, lineHeig
   var measuredSize = {};
   var textMetrics;
   var lastMeasuredWidth;
-  var words;
   var tryLine;
   var currentLine;
   var breaker;

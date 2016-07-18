@@ -85,7 +85,6 @@ var Image = React.createClass({
   },
 
   render: function () {
-    var rawImage;
     var imageStyle = assign({}, this.props.style);
     var style = assign({}, this.props.style);
     var backgroundStyle = assign({}, this.props.style);

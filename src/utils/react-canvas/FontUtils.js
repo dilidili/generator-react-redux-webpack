@@ -1,7 +1,5 @@
 'use strict';
 
-var FontFace = require('./FontFace');
-
 var _useNativeImpl = (typeof window.FontFace !== 'undefined');
 var _pendingFonts = {};
 var _loadedFonts = {};

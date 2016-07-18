@@ -7,9 +7,9 @@ export function fetchTweet() {
     return {
         types: LOAD_TWEET,
         callAPI: () => axios.get(config.api.tweet.get, {
-        	params: {
-	        	access_token: config.token, 
-        	},
+            params: {
+                access_token: config.token,
+            },
         }),
         payload: {
             timestamp: Date.now(),

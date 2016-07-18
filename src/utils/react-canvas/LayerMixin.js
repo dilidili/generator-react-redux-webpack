@@ -4,7 +4,6 @@
 // https://github.com/reactjs/react-art
 
 var FrameUtils = require('./FrameUtils');
-var DrawingUtils = require('./DrawingUtils');
 var EventTypes = require('./EventTypes');
 
 var LAYER_GUID = 0;

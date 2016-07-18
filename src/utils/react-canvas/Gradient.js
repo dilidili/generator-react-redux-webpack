@@ -1,6 +1,5 @@
 'use strict';
 
-var React = require('react');
 var createComponent = require('./createComponent');
 var LayerMixin = require('./LayerMixin');
 
@@ -21,8 +20,7 @@ var Gradient = createComponent('Gradient', LayerMixin, {
   },
 
   receiveComponent: function (nextComponent, transaction, context) {
-    var prevProps = this._currentElement.props;
-    var props = nextComponent.props;
+    var props = nextComponent.propsReact;
     this.applyGradientProps({}, props);
     this._currentElement = nextComponent;
     this.node.invalidateLayout();

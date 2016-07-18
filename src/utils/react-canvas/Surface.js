@@ -2,13 +2,11 @@
 
 var React = require('react');
 var ReactUpdates = require('react/lib/ReactUpdates');
-var invariant = require('fbjs/lib/invariant');
 var ContainerMixin = require('./ContainerMixin');
 var RenderLayer = require('./RenderLayer');
 var FrameUtils = require('./FrameUtils');
 var DrawingUtils = require('./DrawingUtils');
 var hitTest = require('./hitTest');
-var layoutNode = require('./layoutNode');
 
 /**
  * Surface is a standard React component and acts as the main drawing canvas.
@@ -116,10 +114,6 @@ var Surface = React.createClass({
   // =======
 
   getContext: function () {
-    ('production' !== process.env.NODE_ENV ? invariant(
-      this.isMounted(),
-      'Tried to access drawing context on an unmounted Surface.'
-    ) : invariant(this.isMounted()));
     return this.refs.canvas.getContext('2d');
   },
 
@@ -157,11 +151,7 @@ var Surface = React.createClass({
   },
 
   draw: function () {
-    var layout;
     if (this.node) {
-      if (this.props.enableCSSLayout) {
-        layout = layoutNode(this.node);
-      }
       DrawingUtils.drawRenderLayer(this.getContext(), this.node);
     }
   },

@@ -3,7 +3,6 @@
 var createComponent = require('./createComponent');
 var ContainerMixin = require('./ContainerMixin');
 var LayerMixin = require('./LayerMixin');
-var RenderLayer = require('./RenderLayer');
 
 var Group = createComponent('Group', LayerMixin, ContainerMixin, {
 

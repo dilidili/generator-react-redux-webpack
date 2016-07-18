@@ -3,7 +3,6 @@
 // Adapted from ReactART:
 // https://github.com/reactjs/react-art
 
-var React = require('react');
 var ReactMultiChild = require('react/lib/ReactMultiChild');
 var assign = require('object-assign');
 var emptyObject = require('fbjs/lib/emptyObject');

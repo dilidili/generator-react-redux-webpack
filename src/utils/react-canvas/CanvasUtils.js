@@ -1,6 +1,5 @@
 'use strict';
 
-var FontFace = require('./FontFace');
 var clamp = require('./clamp');
 var measureText = require('./measureText');
 
@@ -147,7 +146,7 @@ function drawText (ctx, text, x, y, width, height, fontFace, options) {
   var currX = x;
   var currY = y;
   var currText;
-  var options = options || {};
+  options = options || {};
 
   options.fontSize = options.fontSize || 16;
   options.lineHeight = options.lineHeight || 18;

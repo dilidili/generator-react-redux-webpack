@@ -3,7 +3,6 @@
 var ImageCache = require('./ImageCache');
 var FontUtils = require('./FontUtils');
 var FontFace = require('./FontFace');
-var FrameUtils = require('./FrameUtils');
 var CanvasUtils = require('./CanvasUtils');
 var Canvas = require('./Canvas');
 
@@ -45,21 +44,6 @@ function invalidateBackingStore (id) {
  */
 function invalidateAllBackingStores () {
   _backingStores = [];
-}
-
-/**
- * Find the nearest backing store ancestor for a given layer.
- *
- * @param {RenderLayer} layer
- */
-function getBackingStoreAncestor (layer) {
-  while (layer) {
-    if (layer.backingStoreId) {
-      return layer;
-    }
-    layer = layer.parentLayer;
-  }
-  return null;
 }
 
 /**
