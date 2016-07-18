@@ -29,7 +29,7 @@ const Tweet = React.createClass({
 			const presentTweet = isRetweeted?tweet.get('retweeted'):tweet
 
 			const containerStyle = getContainerStyle()
-			const retweetLabelStyle = getRetweetLabelStyle(containerStyle, isRetweeted?`来自 ${tweet.get('user')} 的转发`:"")
+			const retweetLabelStyle = getRetweetLabelStyle(containerStyle, isRetweeted?`${String.fromCharCode("0xf152")} 来自${tweet.get('user')}的转发`:"")
 			const avatarStyle = getAvatarStyle(retweetLabelStyle)
 			const contentStyle = getContentStyle(containerStyle, avatarStyle)
 			const userNameStyle = getUserNameStyle(contentStyle)
@@ -80,7 +80,7 @@ const Tweet = React.createClass({
 		const isRetweeted = !!tweet.get('retweeted')
 		const presentTweet = isRetweeted?tweet.get('retweeted'):tweet
 		return <Group style={style.containerStyle} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd}>
-        	<Text style={style.retweetLabelStyle}>{isRetweeted?`来自 ${tweet.get('user')} 的转发`:""}</Text>
+        	<Text style={style.retweetLabelStyle}>{isRetweeted?`${String.fromCharCode("0xf152")} 来自${tweet.get('user')}的转发`:""}</Text>
 	        <Image style={style.avatarStyle} src={presentTweet.get('avatar')} useBackingStore={true} fadeIn={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{presentTweet.get('user')}</Text>
@@ -114,15 +114,16 @@ function getContentStyle(containerStyle, avatarStyle) {
 function getRetweetLabelStyle(containerStyle, label){
 	const fontSize = 0.8*em
 	const lineHeight = em
-	const metrics = measureText(label, containerStyle.width, FONT_NORMAL, fontSize, lineHeight)
+	const font = FontFace('rosettaicons', null, {weight: 300})
+	const metrics = measureText(label, containerStyle.width, font, fontSize, lineHeight)
 
 	return {
 		top: PADDING,
-		left: PADDING,
+		left: PADDING + 2.4*em,
 		height: !!label?metrics.height:0,
 		width: metrics.width,
 		color: '#909498',
-		fontFace: FONT_NORMAL,
+		fontFace: font,
 		fontSize,
 		lineHeight,
 	}
