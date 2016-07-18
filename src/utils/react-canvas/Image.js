@@ -71,6 +71,12 @@ var Image = React.createClass({
     }
   },
 
+  componentDidUpdate: function (prevProps, prevState) {
+    if (this.refs.image) {
+      this.refs.image.invalidateLayout();
+    }
+  },
+
   componentWillUnmount: function () {
     if (this._pendingAnimationFrame) {
       cancelAnimationFrame(this._pendingAnimationFrame);
@@ -78,9 +84,23 @@ var Image = React.createClass({
     ImageCache.get(this.props.src).removeListener('load', this.handleImageLoad);
   },
 
-  componentDidUpdate: function (prevProps, prevState) {
-    if (this.refs.image) {
-      this.refs.image.invalidateLayout();
+  handleImageLoad: function () {
+    var imageAlpha = 1;
+    if (this.props.fadeIn) {
+      imageAlpha = 0;
+      this._animationStartTime = Date.now();
+      this._pendingAnimationFrame = requestAnimationFrame(this.stepThroughAnimation);
+    }
+    this.setState({ loaded: true, imageAlpha: imageAlpha });
+  },
+
+  stepThroughAnimation: function () {
+    var fadeInDuration = this.props.fadeInDuration || FADE_DURATION;
+    var alpha = Easing.easeInCubic((Date.now() - this._animationStartTime) / fadeInDuration);
+    alpha = clamp(alpha, 0, 1);
+    this.setState({ imageAlpha: alpha });
+    if (alpha < 1) {
+      this._pendingAnimationFrame = requestAnimationFrame(this.stepThroughAnimation);
     }
   },
 
@@ -105,27 +125,6 @@ var Image = React.createClass({
       )
     );
   },
-
-  handleImageLoad: function () {
-    var imageAlpha = 1;
-    if (this.props.fadeIn) {
-      imageAlpha = 0;
-      this._animationStartTime = Date.now();
-      this._pendingAnimationFrame = requestAnimationFrame(this.stepThroughAnimation);
-    }
-    this.setState({ loaded: true, imageAlpha: imageAlpha });
-  },
-
-  stepThroughAnimation: function () {
-    var fadeInDuration = this.props.fadeInDuration || FADE_DURATION;
-    var alpha = Easing.easeInCubic((Date.now() - this._animationStartTime) / fadeInDuration);
-    alpha = clamp(alpha, 0, 1);
-    this.setState({ imageAlpha: alpha });
-    if (alpha < 1) {
-      this._pendingAnimationFrame = requestAnimationFrame(this.stepThroughAnimation);
-    }
-  }
-
 });
 
 module.exports = Image;

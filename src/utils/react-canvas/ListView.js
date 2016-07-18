@@ -7,8 +7,6 @@ import _ from 'underscore'
 import PureRenderMixin from 'react/lib/ReactComponentWithPureRenderMixin'
 
 var ListView = React.createClass({
-  mixins: [PureRenderMixin],
-
   propTypes: {
     style: React.PropTypes.object,
     numberOfItems: React.PropTypes.number.isRequired,
@@ -18,6 +16,8 @@ var ListView = React.createClass({
     scrollingPenetrationAcceleration: React.PropTypes.number,
     onScroll: React.PropTypes.func
   },
+
+  mixins: [PureRenderMixin],
 
   getDefaultProps: function () {
     return {

@@ -28,6 +28,15 @@ module.exports = {
         "no-cond-assign": "off",
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error",
+        "react/no-danger": "error",
+        "react/no-did-mount-set-state": "error",
+        "react/no-did-update-set-state": "error",
+        "react/no-direct-mutation-state": "error",
+        "react/prefer-stateless-function": "error",
+        "react/prop-types": "error",
+        "react/wrap-multilines": "error",
+        "react/jsx-handler-names": "error",
+        "react/jsx-indent": [2, "tab"],
     },
     "settings": {
         "react": {
