@@ -21,7 +21,6 @@ export default (state = initialState, action) => {
 // Utils
 export function getTweetDetail(list, tid){
     tid = Number.parseInt(tid)
-
     return list.find((v, k)=>v.get('id')===tid)
 }
 
@@ -38,12 +37,12 @@ function formatTweet(v) {
         timestamp: new Date(v.created_at),
         avatar: v.user.profile_image_url,
         retweeted: formatTweet(v.retweeted_status),
-        retweet: {
+        retweet: Map({
             count: v.reposts_count,
-        },
-        like: {
+        }),
+        like: Map({
             count: v.attitudes_count,
-        },
+        }),
         id: v.id,
     })
 }
