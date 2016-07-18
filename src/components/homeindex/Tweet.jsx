@@ -63,7 +63,8 @@ const Tweet = React.createClass({
 		this._touchClick = false
 	},
 	handleTouchEnd(){
-		if (this._touchClick && (Date.now() - this._touchStartTime) < 150) {
+		const timeDelta = Date.now() - this._touchStartTime
+		if (this._touchClick && (timeDelta < 70 || timeDelta > 300)) {
 			this._touchClick = false
 
 			// Navigate to tweet detail page
@@ -85,7 +86,7 @@ const Tweet = React.createClass({
 	        <Image style={style.avatarStyle} src={presentTweet.get('avatar')} useBackingStore={true} fadeIn={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{presentTweet.get('user')}</Text>
-	        	<Text style={style.dateTimeStyle}>{moment(presentTweet.get('timestamp')).fromNow()}</Text>
+	        	<Text style={style.dateTimeStyle}>{moment(tweet.get('timestamp')).fromNow()}</Text>
 	        	<Text style={style.tweetStyle}>{presentTweet.get('tweet')}</Text>
 	        </Group>
     		<SpriteImage style={style.likeStyle} src={likeImage} frameCount={29}></SpriteImage>	

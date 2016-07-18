@@ -3,6 +3,7 @@ import styles from './TweetDetail.scss'
 import {connect} from 'react-redux'
 import {getTweetDetail} from '../../reducer/tweet'
 import {VelocityComponent} from 'velocity-react'
+import moment from 'moment'
 
 // Animation
 const presentAnimation = {
@@ -62,7 +63,7 @@ const TweetDetail = React.createClass({
 					{presentTweet.get('tweet')}
 				</div>
 
-				<div className={styles.timestamp}>7/13/16, 05:34</div>
+				<div className={styles.timestamp}>{moment(presentTweet.get('timestamp')).fromNow()}</div>
 
 				<div className={styles.status}>
 					<p><span className={styles.count}>{presentTweet.getIn(['retweet', 'count'])}</span> 转发</p>
