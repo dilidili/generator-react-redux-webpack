@@ -9,7 +9,6 @@ const publicPath = path.resolve(__dirname, 'dist')
 // We point to our static assets
 app.use(express.static(publicPath))
 app.get('*', function(req, res) {
-	// res.sendfile('./dist/index.html')
 	res.sendFile(path.join(__dirname, './dist/index.html'))
 })
 

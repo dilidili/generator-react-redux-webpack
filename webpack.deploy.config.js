@@ -75,6 +75,9 @@ module.exports = {
 				'file?hash=sha512&digest=hex&name=[hash].[ext]',
 				'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false',
 			]
+		},{
+			test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
+			loader: 'file-loader'
 		}],
 		postLoaders: [{
 			loader: "transform/cacheable?brfs",
@@ -94,7 +97,7 @@ module.exports = {
 	},
 	output: {
 		path: __dirname + '/dist/build',
-		publicPath: '/',
+		publicPath: '/build/',
 		filename: 'bundle.js'
 	},
 	plugins: plugins,
