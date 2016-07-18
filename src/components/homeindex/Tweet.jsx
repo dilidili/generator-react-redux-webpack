@@ -57,12 +57,13 @@ const Tweet = React.createClass({
 	// Hanlder
 	handleTouchStart(){
 		this._touchClick = true
+		this._touchStartTime = Date.now()
 	},
 	handleTouchMove(){
 		this._touchClick = false
 	},
 	handleTouchEnd(){
-		if (this._touchClick) {
+		if (this._touchClick && (Date.now() - this._touchStartTime) < 150) {
 			this._touchClick = false
 
 			// Navigate to tweet detail page

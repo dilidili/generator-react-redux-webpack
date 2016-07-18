@@ -25,6 +25,18 @@ const TweetDetail = React.createClass({
 			tid: "",
 		}
 	},
+	getInitialState() {
+		return {
+			// Asynchronizing this.props.tid with this.state.tid 
+			// to maintain the image of last Tweet page when we move back to Tweets list.
+			tid: this.props.tid,
+		}
+	},
+	componentWillReceiveProps(nextProps) {
+		this.setState({
+			tid: !!nextProps.tid ? nextProps.tid : this.props.tid
+		})
+	},
 
 	// Renders
 	renderContent(tweet){
@@ -62,10 +74,10 @@ const TweetDetail = React.createClass({
 
 	render: function(){
 		const {
-			tid,
 			list,
 			isPresent,
 		} = this.props
+		const tid = this.state.tid
 		const tweet = getTweetDetail(list, tid)
 
 		return (
