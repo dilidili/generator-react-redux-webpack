@@ -23,7 +23,8 @@ var Surface = React.createClass({
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
     scale: React.PropTypes.number.isRequired,
-    enableCSSLayout: React.PropTypes.bool
+    enableCSSLayout: React.PropTypes.bool,
+    children: React.PropTypes.element.isRequired,
   },
 
   getDefaultProps: function () {

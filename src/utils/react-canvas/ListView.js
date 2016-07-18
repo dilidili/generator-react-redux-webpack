@@ -14,7 +14,6 @@ var ListView = React.createClass({
     numberOfItems: React.PropTypes.number.isRequired,
     itemHeightArray: React.PropTypes.array.isRequired,
     itemGetter: React.PropTypes.func.isRequired,
-    snapping: React.PropTypes.bool,
     scrollingDeceleration: React.PropTypes.number,
     scrollingPenetrationAcceleration: React.PropTypes.number,
     onScroll: React.PropTypes.func
@@ -23,7 +22,6 @@ var ListView = React.createClass({
   getDefaultProps: function () {
     return {
       style: { left: 0, top: 0, width: 0, height: 0 },
-      snapping: false,
       scrollingDeceleration: 0.95,
       scrollingPenetrationAcceleration: 0.08
     };
@@ -92,9 +90,6 @@ var ListView = React.createClass({
   handleTouchEnd: function (e) {
     if (this.scroller) {
       this.scroller.doTouchEnd(e.timeStamp);
-      if (this.props.snapping) {
-        this.updateScrollingDeceleration();
-      }
     }
   },
 
@@ -159,36 +154,6 @@ var ListView = React.createClass({
 
     return itemIndexes;
   },
-
-  updateScrollingDeceleration: function () {
-    var currVelocity = this.scroller.__decelerationVelocityY;
-    var currScrollTop = this.state.scrollTop;
-    var targetScrollTop = 0;
-    var estimatedEndScrollTop = currScrollTop;
-
-    while (Math.abs(currVelocity).toFixed(6) > 0) {
-      estimatedEndScrollTop += currVelocity;
-      currVelocity *= this.props.scrollingDeceleration;
-    }
-
-    // Find the page whose estimated end scrollTop is closest to 0.
-    var closestZeroDelta = Infinity;
-    var pageHeight = this.props.itemHeightGetter();
-    var pageCount = this.props.numberOfItems;
-    var pageScrollTop;
-
-    for (var pageIndex=0, len=pageCount; pageIndex < len; pageIndex++) {
-      pageScrollTop = (pageHeight * pageIndex) - estimatedEndScrollTop;
-      if (Math.abs(pageScrollTop) < closestZeroDelta) {
-        closestZeroDelta = Math.abs(pageScrollTop);
-        targetScrollTop = pageHeight * pageIndex;
-      }
-    }
-
-    this.scroller.__minDecelerationScrollTop = targetScrollTop;
-    this.scroller.__maxDecelerationScrollTop = targetScrollTop;
-  }
-
 });
 
 module.exports = ListView;

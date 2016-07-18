@@ -12,7 +12,7 @@ plugins = [
 		name: 'main',
 		children: true,
 		minChunks: 2
-	})
+	}),
 ]
 
 module.exports = {
