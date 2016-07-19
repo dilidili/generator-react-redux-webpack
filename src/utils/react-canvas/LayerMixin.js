@@ -7,6 +7,7 @@ var FrameUtils = require('./FrameUtils');
 var EventTypes = require('./EventTypes');
 
 var LAYER_GUID = 0;
+var BACKING_STORE_GUID = 0;
 
 var LayerMixin = {
 
@@ -68,8 +69,11 @@ var LayerMixin = {
     layer.shadowOffsetY = style.shadowOffsetY;
 
     // Generate backing store ID as needed.
-    if (props.useBackingStore) {
-      layer.backingStoreId = this._layerId;
+    if (prevProps.useBackingStore && !props.useBackingStore) {
+      layer.backingStoreId = null;
+    }
+    if (!prevProps.useBackingStore && props.useBackingStore) {
+      layer.backingStoreId = BACKING_STORE_GUID++
     }
 
     // Register events

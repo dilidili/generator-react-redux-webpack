@@ -64,7 +64,7 @@ const Tweet = React.createClass({
 	},
 	handleTouchEnd(){
 		const timeDelta = Date.now() - this._touchStartTime
-		if (this._touchClick && (timeDelta < 70 || timeDelta > 300)) {
+		if (this._touchClick && (timeDelta < 80 || timeDelta > 300)) {
 			this._touchClick = false
 
 			// Navigate to tweet detail page
@@ -83,7 +83,7 @@ const Tweet = React.createClass({
 		const presentTweet = isRetweeted?tweet.get('retweeted'):tweet
 		return <Group style={style.containerStyle} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd}>
         	{isRetweeted?<Text style={style.retweetLabelStyle} useBackingStore={true}>{isRetweeted?`${String.fromCharCode("0xf152")} 来自${tweet.get('user')}的转发`:""}</Text>:null}
-	        <Image style={style.avatarStyle} src={presentTweet.get('avatar')} useBackingStore={true} fadeIn={true}/>
+	        <Image style={style.avatarStyle} src={presentTweet.get('avatar')} useBackingStore={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{presentTweet.get('user')}</Text>
 	        	<Text style={style.dateTimeStyle}>{moment(tweet.get('timestamp')).fromNow()}</Text>

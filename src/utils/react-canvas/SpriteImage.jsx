@@ -59,6 +59,7 @@ var Image = React.createClass({
     return {
       loaded: loaded,
       frameIndex: 0,
+      lastFrameIndex: -1, // for setting usingBackingStore flag
     };
   },
 
@@ -92,7 +93,10 @@ var Image = React.createClass({
     var rawImage;
     var imageStyle = assign({}, this.props.style);
     var style = assign({}, this.props.style);
-    var useBackingStore = this.state.loaded ? this.props.useBackingStore : false;
+    var useBackingStore = this.state.loaded &&
+      this.props.useBackingStore &&
+      (this.state.frameIndex === 0 || this.state.frameIndex === this.props.frameCount - 1) &&
+      this.state.lastFrameIndex === -1
 
     // Hide the image until loaded.
     imageStyle.alpha = this.state.loaded ? 1 : 0;
@@ -132,7 +136,8 @@ var Image = React.createClass({
   stepThroughAnimation: function() {
     const nextIndex = ~~((Date.now() - this._animationStartTime) * this.props.frameCount / this.props.animationDuration)
     this.setState({
-      frameIndex: nextIndex
+      frameIndex: nextIndex,
+      lastFrameIndex: this.state.frameIndex,
     })
     this._pendingAnimationFrame = null
 
