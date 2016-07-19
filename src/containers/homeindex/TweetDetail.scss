@@ -9,13 +9,21 @@
 	display: flex;	
 	flex-direction: column;
 
+	:local(.replyEntry){
+		height: 2.2em;	
+		line-height: 2.2em;
+		padding-left: 1em;
+		@extend .u-light-font;
+		border-bottom: $border-light;
+		background-color: #f9fafd;
+	}
+
 	:local(.mainContent){
 		display: flex;	
 		flex-direction: column;
 		height: auto;
 		align-items: center;
 		padding: 0.9em;
-		border-top: $border-dark;
 		border-bottom: $border-dark;
 
 		&>div{

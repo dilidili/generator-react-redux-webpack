@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react'
 import styles from './TweetDetail.scss'
 import {connect} from 'react-redux'
 import {getTweetDetail} from '../../reducer/tweet'
+import PullToRefreshEnhancer from '../../enhancers/PullToRefreshEnhancer' 
 import {VelocityComponent} from 'velocity-react'
 import moment from 'moment'
 
@@ -19,6 +20,7 @@ const TweetDetail = React.createClass({
 	propTypes: {
 		tid: PropTypes.string,
 		isPresent: PropTypes.bool,
+		children: PropTypes.element,
 	},
 	getDefaultProps() {
 		return {
@@ -40,6 +42,16 @@ const TweetDetail = React.createClass({
 	},
 
 	// Renders
+	renderTimelineEntry(tweet){
+		if (!tweet) return
+
+		const replyList = tweet.get('tweet').split("//@")
+		if (replyList.length>1) {
+			return <div className={styles.replyEntry}>{`${tweet.get('user')} 回复了`}</div>
+		}else{
+			return null
+		}
+	},
 	renderContent(tweet){
 		if (!tweet) return null
 
@@ -48,6 +60,7 @@ const TweetDetail = React.createClass({
 
 		return (
 			<div className={styles.mainContent}>
+
 				{/* retweeted label */}
 				{isRetweeted?<div className={styles.retweetLabel}><span className="Icon Icon--retweet"></span>{` ${tweet.get('user')} 转发了`}</div>:null}
 
@@ -85,6 +98,12 @@ const TweetDetail = React.createClass({
 			<VelocityComponent animation={isPresent?presentAnimation:hideAnimation} duration={300}>
 				{/* hide the detail page initially, thus set the opacity of it to 0 */}
 				<div className={styles.container} style={{opacity: 0}}>
+					{/* pull-to-update content */}
+					{this.props.children}
+
+					{/* reply timeline entry*/}
+					{this.renderTimelineEntry(tweet)}
+
 					{this.renderContent(tweet)}		
 				</div>
 			</VelocityComponent>
@@ -97,11 +116,13 @@ function mapStateToProps(state) {
 		list: state.getIn(['tweet', 'list'])
 	}
 }
-
 function mapDispatchToProps(dispatch) {
 	return {
 
 	}
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(TweetDetail)
+export default PullToRefreshEnhancer(
+	{},
+	null,
+	connect(mapStateToProps, mapDispatchToProps)(TweetDetail)
+)
