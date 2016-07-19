@@ -5,6 +5,7 @@ import {getTweetDetail} from '../../reducer/tweet'
 import PullToRefreshEnhancer from '../../enhancers/PullToRefreshEnhancer' 
 import {VelocityComponent} from 'velocity-react'
 import moment from 'moment'
+import _ from 'underscore'
 
 // Animation
 const presentAnimation = {
@@ -21,6 +22,10 @@ const TweetDetail = React.createClass({
 		tid: PropTypes.string,
 		isPresent: PropTypes.bool,
 		children: PropTypes.element,
+		onTouchStart: PropTypes.func,
+		onTouchMove: PropTypes.func,
+		onTouchEnd: PropTypes.func,
+		style: PropTypes.object,
 	},
 	getDefaultProps() {
 		return {
@@ -90,6 +95,7 @@ const TweetDetail = React.createClass({
 		const {
 			list,
 			isPresent,
+			style,
 		} = this.props
 		const tid = this.state.tid
 		const tweet = getTweetDetail(list, tid)
@@ -97,7 +103,12 @@ const TweetDetail = React.createClass({
 		return (
 			<VelocityComponent animation={isPresent?presentAnimation:hideAnimation} duration={300}>
 				{/* hide the detail page initially, thus set the opacity of it to 0 */}
-				<div className={styles.container} style={{opacity: 0}}>
+				<div className={styles.container} 
+					style={_.extend({opacity: 0}, style)} 
+					onTouchStart={this.props.onTouchStart}
+					onTouchMove={this.props.onTouchMove}
+					onTouchEnd={this.props.onTouchEnd}
+				>
 					{/* pull-to-update content */}
 					{this.props.children}
 
@@ -122,7 +133,6 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 export default PullToRefreshEnhancer(
-	{},
 	null,
 	connect(mapStateToProps, mapDispatchToProps)(TweetDetail)
 )
