@@ -8,6 +8,14 @@ var Canvas = require('./Canvas');
 
 // Global backing store <canvas> cache
 var _backingStores = [];
+for (var i = Canvas.poolSize - 1; i >= 0; i--) {
+  // Create a new backing store, we haven't yet reached the pooling limit
+  _backingStores.push({
+    id: null,
+    layer: null,
+    canvas: new Canvas(0, 0, 1)
+  });
+}
 
 /**
  * Maintain a cache of backing <canvas> for RenderLayer's which are accessible

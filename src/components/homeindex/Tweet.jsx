@@ -82,14 +82,14 @@ const Tweet = React.createClass({
 		const isRetweeted = !!tweet.get('retweeted')
 		const presentTweet = isRetweeted?tweet.get('retweeted'):tweet
 		return <Group style={style.containerStyle} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd}>
-        	<Text style={style.retweetLabelStyle}>{isRetweeted?`${String.fromCharCode("0xf152")} 来自${tweet.get('user')}的转发`:""}</Text>
+        	{isRetweeted?<Text style={style.retweetLabelStyle} useBackingStore={true}>{isRetweeted?`${String.fromCharCode("0xf152")} 来自${tweet.get('user')}的转发`:""}</Text>:null}
 	        <Image style={style.avatarStyle} src={presentTweet.get('avatar')} useBackingStore={true} fadeIn={true}/>
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{presentTweet.get('user')}</Text>
 	        	<Text style={style.dateTimeStyle}>{moment(tweet.get('timestamp')).fromNow()}</Text>
 	        	<Text style={style.tweetStyle}>{presentTweet.get('tweet')}</Text>
 	        </Group>
-    		<SpriteImage style={style.likeStyle} src={likeImage} frameCount={29}></SpriteImage>	
+	        <SpriteImage style={style.likeStyle} src={likeImage} frameCount={29} useBackingStore={true}></SpriteImage>
 		</Group>
 	},
 })
@@ -122,8 +122,8 @@ function getRetweetLabelStyle(containerStyle, label){
 	return {
 		top: PADDING,
 		left: PADDING + 2.4*em,
-		height: !!label?metrics.height:0,
-		width: metrics.width,
+		height: !!label?lineHeight:0,
+		width: containerStyle.width,
 		color: '#909498',
 		fontFace: font,
 		fontSize,
