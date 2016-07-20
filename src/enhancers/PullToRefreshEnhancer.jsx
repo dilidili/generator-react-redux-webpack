@@ -4,6 +4,8 @@ import {bindActionCreators} from 'redux'
 import styles from './PullToRefreshEnhancer.scss'
 import _ from 'underscore'
 import {Motion, spring} from 'react-motion'
+import {fetchTweetDetailTimeline} from '../actions/tweet'
+import timerMixin from 'react-timer-mixin'
 
 const SPINNER_CONTAINER_HEIGHT = 3 * window.fontSize
 const SPINNER_RADIUS = SPINNER_CONTAINER_HEIGHT / 4
@@ -16,9 +18,14 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 	const EnhanciveComponent = React.createClass({
 		getInitialState(){
 			return {
-				pullDistance: 0, // The length of the ConcreteCompoment moves down, 
+				pullDistance: 0, // The distance of the ConcreteCompoment moves down
+				loadingSpinnerCounter: 0, // Refer to componentWillReceiveProps
 			}
 		},
+		_lastTouchY: 0,
+		_loadingTimelineToken: 0, // Identify each loading request's state
+		mixins: [timerMixin],
+
 		componentWillMount() {
 			// Precompute spinner petal layout datas
 			this.PETAL_DELTA = SPINNER_CONTAINER_HEIGHT * Math.PI / 12 // spinner consists of 12 petals
@@ -65,6 +72,30 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 				}
 			})
 		},
+		componentWillReceiveProps(nextProps){
+			if (!this.props.isLoading && nextProps.isLoading) {
+				this.setState({
+					loadingSpinnerCounter: 0,
+				})
+
+				// start loading, move the spinner petal moves forward with a certain frequency.
+				this._intervalId = this.setInterval(function(){
+					this.setState({
+						loadingSpinnerCounter: this.state.loadingSpinnerCounter + 1,
+					})
+				}.bind(this), 80)
+			}
+
+			if (this.props.isLoading && !nextProps.isLoading) {
+				// stop the spinner and fold its container until end the current loop
+				this.setTimeout(function() {
+					this.clearInterval(this._intervalId)
+					this.setState({
+						pullDistance: 0,
+					})
+				}.bind(this), 12 - (6 + this.state.loadingSpinnerCounter) % 12)
+			}
+		},
 
 		// Handler
 		handleTouchStart(evt){
@@ -73,29 +104,38 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 		handleTouchMove(evt){
 			evt.preventDefault()
 
-			this.setState({
-				pullDistance: this.state.pullDistance + evt.touches[0].clientY/2 - this._lastTouchY/2
-			})
-			this._lastTouchY = evt.touches[0].clientY
+			if (evt.touches[0].clientY - this._lastTouchY > 10 && !this.props.isLoading) {
+				this.setState({
+					pullDistance: SPINNER_CONTAINER_HEIGHT,
+				})
+
+				this._loadingTimelineToken = Date.now()
+				this.props.fetchTweetDetailTimeline(this._loadingTimelineToken)
+			}
 		},
 		handleTouchEnd(evt){
-			this.setState({
-				pullDistance: SPINNER_CONTAINER_HEIGHT,
-			})
+			// this.setState({
+			// 	pullDistance: SPINNER_CONTAINER_HEIGHT,
+			// })
 		},
 
 		// Render
 		renderSpinner(deltaHeight){
 			// the petal index of the current spinner head
-			let headIndex = ~~ (deltaHeight / this.THRESHOLD_DELTA)
+			let headIndex = ~~ (deltaHeight / this.THRESHOLD_DELTA) + this.state.loadingSpinnerCounter
 			let opacityArray = _.map(_.range(this.PETAL_COUNT), v=>0)
 
+
+			if (!this.props.isLoading && this.props.token === this._loadingTimelineToken) {
+				// loading complete
+				
+			}	
 			// calulate the color of each petal
 			if (true) {
-				// when petal march
+				// when petal march and sp
 				_.each(_.range(6), v => {
 					const index = headIndex - v < this.PARABOLIC_PETAL_COUNT ? headIndex - v : this.PARABOLIC_PETAL_COUNT + (headIndex - v - this.PARABOLIC_PETAL_COUNT) % 12
-					opacityArray[index] = 0.6 * v * 0.1
+					opacityArray[index] = 0.6 - v * 0.1
 				})
 			}
 
@@ -154,10 +194,15 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 	})
 
 	function mapStateToProps(state) {
-		return {}
+		return {
+			isLoading: state.getIn(['tweet', 'loadingDetailTimeline', 'isLoading']),
+			token: state.getIn(['tweet', 'loadingDetailTimeline', 'token']),
+		}
 	}
 	function mapDispatchToProps(dispatch) {
-		return {}
+		return {
+			fetchTweetDetailTimeline: bindActionCreators(fetchTweetDetailTimeline, dispatch),
+		}
 	}
 	return connect(mapStateToProps, mapDispatchToProps)(EnhanciveComponent)
 }

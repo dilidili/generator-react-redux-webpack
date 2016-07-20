@@ -1,8 +1,13 @@
 import {Map, List} from 'immutable'
 import {LOAD_TWEET} from '../actions/tweet'
+import {LOAD_TWEET_DETAIL_TIMELINE} from '../actions/tweet'
 
 const initialState = Map({
     list: List([]),
+    loadingDetailTimeline: Map({
+        isLoading: false,
+        token: 0,
+    }),
 })
 
 export default (state = initialState, action) => {
@@ -13,6 +18,11 @@ export default (state = initialState, action) => {
                 return state.update('list', list => list.mergeDeepWith((prev, next) => next, formatTweetList(action.response.data.statuses)))
             }
             return state
+
+        case LOAD_TWEET_DETAIL_TIMELINE[0]:
+            return state.setIn(['loadingDetailTimeline', 'isLoading'], true).setIn(['loadingDetailTimeline', 'token'], action.token)
+        case LOAD_TWEET_DETAIL_TIMELINE[1]:
+            return state.setIn(['loadingDetailTimeline', 'isLoading'], false).setIn(['loadingDetailTimeline', 'token'], action.token)
         default:
             return state
     }
