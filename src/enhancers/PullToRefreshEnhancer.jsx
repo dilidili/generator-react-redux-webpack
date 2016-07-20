@@ -24,6 +24,7 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 			this.PETAL_DELTA = SPINNER_CONTAINER_HEIGHT * Math.PI / 12 // spinner consists of 12 petals
 			this.PARABOLIC_PETAL_COUNT = Math.round(window.innerWidth / (2 * this.PETAL_DELTA))
 			this.PETAL_COUNT = this.PARABOLIC_PETAL_COUNT * 2 + 12
+			this.THRESHOLD_DELTA = SPINNER_CONTAINER_HEIGHT * 2 / this.PETAL_COUNT
 
 			// Calculate position and threshoud for every spinner petal
 			const k = SPINNER_CONTAINER_HEIGHT / Math.pow(window.innerWidth, 2)
@@ -38,33 +39,29 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 					const y = k * x * x
 					position = [x, y]
 					rotateZ = - 90 + k_z * x * x
-					
+
 				// one spinner contains 12 petals
 				} else if (index < this.PARABOLIC_PETAL_COUNT + 12) {
 					// petals on spinner
-					index = index - this.PARABOLIC_PETAL_COUNT
-					const radians = index * Math.PI / 6
+					const relativeIndex = index - this.PARABOLIC_PETAL_COUNT
+					const radians = relativeIndex * Math.PI / 6
 					position = [
 						window.innerWidth / 2 + Math.sin(radians) * SPINNER_RADIUS,
 						SPINNER_CONTAINER_HEIGHT / 4 + (1 - Math.cos(radians)) * SPINNER_RADIUS,
 					]
-					rotateZ = index * 30
+					rotateZ = relativeIndex * 30
 				} else {
 					// petals leave
-					index = 2 * this.PARABOLIC_PETAL_COUNT + 12 - index - 1
-					const x = index * this.PETAL_DELTA
+					const relativeIndex = 2 * this.PARABOLIC_PETAL_COUNT + 12 - index - 1
+					const x = relativeIndex * this.PETAL_DELTA
 					const y = k * x * x
 					position = [window.innerWidth - x, y]
 					rotateZ = 90 - k_z * x * x
 				}
 
-				// calculate threshold
-				const threshold = index * SPINNER_CONTAINER_HEIGHT / this.PETAL_COUNT
-
 				return {
 					position,
 					rotateZ,
-					threshold,
 				}
 			})
 		},
@@ -89,6 +86,19 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 
 		// Render
 		renderSpinner(deltaHeight){
+			// the petal index of the current spinner head
+			let headIndex = ~~ (deltaHeight / this.THRESHOLD_DELTA)
+			let opacityArray = _.map(_.range(this.PETAL_COUNT), v=>0)
+
+			// calulate the color of each petal
+			if (true) {
+				// when petal march
+				_.each(_.range(6), v => {
+					const index = headIndex - v < this.PARABOLIC_PETAL_COUNT ? headIndex - v : this.PARABOLIC_PETAL_COUNT + (headIndex - v - this.PARABOLIC_PETAL_COUNT) % 12
+					opacityArray[index] = 0.6 * v * 0.1
+				})
+			}
+
 			return <div className={styles.spinnerContainer}
 				style={{
 					top: -deltaHeight,	
@@ -106,6 +116,7 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 								top: v.position[1],
 								transform: `rotateZ(${v.rotateZ}deg)`,
 								WebkitTransform: `rotateZ(${v.rotateZ}deg)`,
+								opacity: opacityArray[k],
 							}}
 						>
 						</div>
