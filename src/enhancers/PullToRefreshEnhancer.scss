@@ -3,4 +3,13 @@
 	top: 0;
 	left: 0;
 	height: auto;
+	overflow: hidden;
+
+	:local(.spinnerPetal){
+		position: absolute;
+		width: 0.15em;
+		height: 0.4em;
+		border-radius: 2px;
+		background-color: rgba(0, 0, 0, 0.3);
+	}
 }
