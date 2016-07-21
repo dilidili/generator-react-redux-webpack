@@ -25,6 +25,7 @@ module.exports = {
             "vars": "all",
             "args": "none"
         }],
+        "comma-dangle": "off",
         "no-cond-assign": "off",
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error",
