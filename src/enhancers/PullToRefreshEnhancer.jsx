@@ -103,15 +103,23 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 		},
 		handleTouchMove(evt){
 			evt.preventDefault()
+			const currentTouchY = evt.touches[0].clientY
+			// debounce by distance delta
+			if (Math.abs(currentTouchY - this._lastTouchY) < 10) return
 
-			if (evt.touches[0].clientY - this._lastTouchY > 10 && !this.props.isLoading) {
-				this.setState({
-					pullDistance: SPINNER_CONTAINER_HEIGHT,
-				})
+			this.setState({
+				pullDistance: Math.max(this.state.pullDistance + (currentTouchY - this._lastTouchY)/2, 0),
+			})
+			this._lastTouchY = currentTouchY
 
-				this._loadingTimelineToken = Date.now()
-				this.props.fetchTweetDetailTimeline(this._loadingTimelineToken)
-			}
+			// if (evt.touches[0].clientY - this._lastTouchY > 10 && !this.props.isLoading) {
+			// 	this.setState({
+			// 		pullDistance: SPINNER_CONTAINER_HEIGHT,
+			// 	})
+
+			// 	this._loadingTimelineToken = Date.now()
+			// 	this.props.fetchTweetDetailTimeline(this._loadingTimelineToken)
+			// }
 		},
 		handleTouchEnd(evt){
 			// this.setState({
