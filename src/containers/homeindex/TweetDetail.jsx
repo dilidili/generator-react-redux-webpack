@@ -3,6 +3,7 @@ import styles from './TweetDetail.scss'
 import {connect} from 'react-redux'
 import {getTweetDetail} from '../../reducer/tweet'
 import PullToRefreshEnhancer from '../../enhancers/PullToRefreshEnhancer' 
+import ReplyTimelineComponent from '../../components/homeindex/ReplyTimelineComponent'
 import {VelocityComponent} from 'velocity-react'
 import moment from 'moment'
 import _ from 'underscore'
@@ -133,6 +134,6 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 export default PullToRefreshEnhancer(
-	null,
+	ReplyTimelineComponent,
 	connect(mapStateToProps, mapDispatchToProps)(TweetDetail)
 )

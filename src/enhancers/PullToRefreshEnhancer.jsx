@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import styles from './PullToRefreshEnhancer.scss'
@@ -16,10 +16,19 @@ const SPINNER_RADIUS = SPINNER_CONTAINER_HEIGHT / 4
  */
 export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteComponent){
 	const EnhanciveComponent = React.createClass({
+		propTypes: {
+			style: PropTypes.object,
+			className: PropTypes.string,
+		},
+		getDefaultProps(){
+			style: PropTypes.object,
+			className: PropTypes.string,
+		},
 		getInitialState(){
 			return {
 				pullDistance: 0, // The distance of the ConcreteCompoment moves down
 				loadingSpinnerCounter: 0, // Refer to componentWillReceiveProps
+				isSpinning: false, // Spinner is spinning
 			}
 		},
 		_lastTouchY: 0,
@@ -76,9 +85,10 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 			if (!this.props.isLoading && nextProps.isLoading) {
 				this.setState({
 					loadingSpinnerCounter: 0,
+					isSpinning: true,
 				})
 
-				// start loading, move the spinner petal moves forward with a certain frequency.
+				// Start loading, move the spinner petal moves forward with a certain frequency.
 				this._intervalId = this.setInterval(function(){
 					this.setState({
 						loadingSpinnerCounter: this.state.loadingSpinnerCounter + 1,
@@ -91,7 +101,7 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 				this.setTimeout(function() {
 					this.clearInterval(this._intervalId)
 					this.setState({
-						pullDistance: 0,
+						isSpinning: false,
 					})
 				}.bind(this), 12 - (6 + this.state.loadingSpinnerCounter) % 12)
 			}
@@ -99,9 +109,13 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 
 		// Handler
 		handleTouchStart(evt){
+			if (this.props.isLoading) return
+
 			this._lastTouchY = evt.touches[0].clientY
 		},
 		handleTouchMove(evt){
+			if (this.props.isLoading) return
+
 			evt.preventDefault()
 			const currentTouchY = evt.touches[0].clientY
 			// debounce by distance delta
@@ -122,9 +136,22 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 			// }
 		},
 		handleTouchEnd(evt){
-			// this.setState({
-			// 	pullDistance: SPINNER_CONTAINER_HEIGHT,
-			// })
+			if (this.props.isLoading) return
+
+			const distance = this.state.pullDistance
+			if (distance < SPINNER_CONTAINER_HEIGHT) {
+				this.setState({
+					pullDistance: 0,
+				})	
+			}else if (distance > SPINNER_CONTAINER_HEIGHT) {
+				this.setState({
+					pullDistance: SPINNER_CONTAINER_HEIGHT,
+				})
+
+				// start loading
+				this._loadingTimelineToken = Date.now()
+				this.props.fetchTweetDetailTimeline(this._loadingTimelineToken)
+			}
 		},
 
 		// Render
@@ -175,28 +202,52 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 
 		render: function(){
 			const {
-				pullDistance
+				pullDistance,
+				style,
+				className,
 			} = this.state
 
+			// Data loaded 
+			if (this._loadingTimelineToken && !this.props.isLoading && this.props.token === this._loadingTimelineToken && !this.state.isSpinning) {
+								// style={{
+								// 	position: 'absolute',
+								// 	bottom: window.contentHeight - this.state.pullDistance,
+								// }}
+				return (
+					<div>
+						<ConcreteComponent {...this.props}
+							style={{
+								top: this.state.pullDistance,
+								overflow: 'scroll',
+								height: window.contentHeight,
+							}}
+						>
+						</ConcreteComponent>
+					</div>
+				)
+			}
+
 			return (
-				<Motion style={{
-					pullDistance: spring(pullDistance)
-				}}>
-					{
-						interpolatingStyle => (
-							<ConcreteComponent {...this.props} 
-								onTouchStart={this.handleTouchStart} 
-								onTouchMove={this.handleTouchMove} 
-								onTouchEnd={this.handleTouchEnd}
-								style={{
-									top: interpolatingStyle.pullDistance,
-								}}
-							>
-								{this.renderSpinner(interpolatingStyle.pullDistance)}
-							</ConcreteComponent>
-						)
-					}
-				</Motion>
+				<div style={style} className={className}>
+					<Motion style={{
+						pullDistance: spring(pullDistance)
+					}}>
+						{
+							interpolatingStyle => (
+								<ConcreteComponent {...this.props} 
+									onTouchStart={this.handleTouchStart} 
+									onTouchMove={this.handleTouchMove} 
+									onTouchEnd={this.handleTouchEnd}
+									style={{
+										top: interpolatingStyle.pullDistance,
+									}}
+								>
+									{this.renderSpinner(interpolatingStyle.pullDistance)}
+								</ConcreteComponent>
+							)
+						}
+					</Motion>
+				</div>
 			)
 		},
 	})
