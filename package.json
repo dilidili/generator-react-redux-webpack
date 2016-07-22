@@ -32,6 +32,7 @@
     "eslint-plugin-react": "^5.2.2",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
+    "gulp": "^3.9.1",
     "image-webpack-loader": "^1.8.0",
     "node-sass": "^3.4.2",
     "postcss-loader": "^0.9.1",
@@ -42,7 +43,8 @@
     "svg-inline-loader": "^0.6.0",
     "transform-loader": "^0.2.3",
     "webpack": "^1.12.14",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+    "yargs": "^4.8.1"
   },
   "dependencies": {
     "axios": "^0.9.1",
