@@ -21,8 +21,10 @@ export default function PullToRefreshEnhancer(DataReceiverComponent, ConcreteCom
 			className: PropTypes.string,
 		},
 		getDefaultProps(){
-			style: PropTypes.object,
-			className: PropTypes.string,
+			return {
+				style: {},
+				className: "",
+			}
 		},
 		getInitialState(){
 			return {

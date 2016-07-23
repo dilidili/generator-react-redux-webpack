@@ -19,7 +19,7 @@ const Tweet = React.createClass({
 	propTypes: {
 		tweet: PropTypes.object.isRequired, // The content of this tweet.
 		style: PropTypes.object.isRequired, // The total style of this component, generated from Tweet.getTweetStyle.
-		push: PropTypes.func.isRequired, // Change the route
+		handleClick: PropTypes.func.isRequired,
 	},
 	mixins: [PureRenderMixin],
 	_touchClick: null, // For identifing the touch click and touch drag.
@@ -64,11 +64,10 @@ const Tweet = React.createClass({
 	},
 	handleTouchEnd(){
 		const timeDelta = Date.now() - this._touchStartTime
-		if (this._touchClick && (timeDelta < 80 || timeDelta > 300)) {
+		if (this._touchClick && timeDelta < 80) {
 			this._touchClick = false
 
-			// Navigate to tweet detail page
-			this.props.push(`/home/tweet/${this.props.tweet.get('id')}`)	
+			this.props.handleClick(this.props.tweet.get('id'))
 		}
 	},
 
@@ -192,4 +191,4 @@ function getLikeStyle(contentStyle){
 	}
 }
 
-export default Tweet 
+export default Tweet

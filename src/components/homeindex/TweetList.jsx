@@ -74,10 +74,20 @@ const TweetList = React.createClass({
 		}
 	},
 
+	handleClickTweet(tid){
+		// Navigate to tweet detail page
+		this.props.push(`/home/tweet/${tid}`)
+	},
+
 	// Render
 	renderTweet: function(index){
 	    return (
-			<Tweet key={index} tweet={this.props.list.get(index)} style={this.state.tweetsStyle.get(index)} push={this.props.push}/>
+			<Tweet 
+				key={index} 
+				tweet={this.props.list.get(index)} 
+				style={this.state.tweetsStyle.get(index)} 
+				handleClick={this.handleClickTweet}
+			/>
 	    )
 	},
 	render: function(){

@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react'
 import styles from './TweetDetail.scss'
 import {connect} from 'react-redux'
 import {getTweetDetail} from '../../reducer/tweet'
-import PullToRefreshEnhancer from '../../enhancers/PullToRefreshEnhancer' 
 import ReplyTimelineComponent from '../../components/homeindex/ReplyTimelineComponent'
 import {VelocityComponent} from 'velocity-react'
 import moment from 'moment'
@@ -48,7 +47,7 @@ const TweetDetail = React.createClass({
 	},
 
 	// Renders
-	renderTimelineEntry(tweet){
+	renderReplyInfo(tweet){
 		if (!tweet) return
 
 		const replyList = tweet.get('tweet').split("//@")
@@ -114,7 +113,7 @@ const TweetDetail = React.createClass({
 					{this.props.children}
 
 					{/* reply timeline entry*/}
-					{this.renderTimelineEntry(tweet)}
+					{this.renderReplyInfo(tweet)}
 
 					{this.renderContent(tweet)}		
 				</div>
@@ -133,7 +132,5 @@ function mapDispatchToProps(dispatch) {
 
 	}
 }
-export default PullToRefreshEnhancer(
-	ReplyTimelineComponent,
-	connect(mapStateToProps, mapDispatchToProps)(TweetDetail)
-)
+
+export default connect(mapStateToProps, mapDispatchToProps)(TweetDetail)
