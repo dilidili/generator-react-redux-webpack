@@ -107,6 +107,7 @@ var ListView = React.createClass({
     var options = {
       scrollingX: false,
       scrollingY: true,
+      bouncing: false,
       decelerationRate: this.props.scrollingDeceleration,
       penetrationAcceleration: this.props.scrollingPenetrationAcceleration,
     };

@@ -55,18 +55,13 @@ const Tweet = React.createClass({
 	},
 
 	// Hanlder
-	handleTouchStart(){
-		this._touchClick = true
-		this._touchStartTime = Date.now()
+	handleTouchStart(evt){
+		this._touchStartClientY = evt.touches[0].clientY
+		this._touchStartTime = evt.timeStamp
 	},
-	handleTouchMove(){
-		this._touchClick = false
-	},
-	handleTouchEnd(){
-		const timeDelta = Date.now() - this._touchStartTime
-		if (this._touchClick && timeDelta < 80) {
-			this._touchClick = false
-
+	handleTouchEnd(evt) {
+		const timeDelta = evt.timeStamp - this._touchStartTime
+		if (timeDelta < 100 && this._touchStartClientY === evt.changedTouches[0].clientY) {
 			this.props.handleClick(this.props.tweet.get('id'))
 		}
 	},
