@@ -10,7 +10,6 @@ window.innerWidth = Math.min(window.innerWidth, 414)
 // get rid of header and footer
 window.contentHeight = ~~(window.innerHeight - 8.2*window.fontSize)
 
-
 const AppComponent = React.createClass({
 	render: function(){
 		return (
