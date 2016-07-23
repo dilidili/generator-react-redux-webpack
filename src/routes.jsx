@@ -8,14 +8,17 @@ import {ReduxRouter} from 'redux-router'
 
 const routes = <ReduxRouter>
 	<Route path="/" component={AppContainer}>
-		<Route path="home" component={HomeContainer}>
-			<IndexRoute component={HomeIndexContainer}></IndexRoute>
-			<Route path="tweet/:tid" component={HomeIndexContainer}></Route>
+		<Route component={HomeContainer}>
+			<Route path="home">
+				<IndexRoute component={HomeIndexContainer}></IndexRoute>
+				<Route path="tweet/:tid" component={HomeIndexContainer}></Route>
+			</Route>
+			<Route path="notification"></Route>
+			<Route path="message"></Route>
+			<Route path="profile"></Route>
+			<Route path="test"></Route>
 		</Route>
-		<Route path="notification" component={HomeContainer}></Route>
-		<Route path="message" component={HomeContainer}></Route>
-		<Route path="profile" component={HomeContainer}></Route>
-		<Route path="test" component={TestContainer}></Route>
+
 	</Route>
 </ReduxRouter>
 
