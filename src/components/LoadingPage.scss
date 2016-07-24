@@ -1,0 +1,12 @@
+@import '~common.scss';
+
+:local(.container){
+	background-color: $blue; 
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	svg{
+		height: 21vw;
+		width: 21vw;
+	}
+}

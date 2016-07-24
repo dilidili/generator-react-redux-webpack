@@ -18,7 +18,6 @@ const routes = <ReduxRouter>
 			<Route path="profile"></Route>
 			<Route path="test"></Route>
 		</Route>
-
 	</Route>
 </ReduxRouter>
 
