@@ -1,3 +1,6 @@
+import {initialAuth, fetchAccessToken} from 'auth'
+initialAuth()
+
 import 'common.scss' 
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -18,17 +21,17 @@ require.ensure([], ()=>{
 	const i18n = require('i18n').default
 	i18n()
 
-	// Replace the LoadingPage with the whole web app
-	ReactDOM.render(<LoadingPage isLoaded={true} loadedCallback={()=>{
-		const store = createMyStore(reducer)
+	new Promise(fetchAccessToken).then(()=>{
+		// Replace the LoadingPage with the whole web app
+		ReactDOM.render(<LoadingPage isLoaded={true} loadedCallback={()=>{
+			const store = createMyStore(reducer)
 
-		ReactDOM.render(
-			<Provider store={store}>
-				{routes}
-			</Provider>,
-			document.getElementById(rootContainerId)
-		)	
-	}}></LoadingPage>, document.getElementById(rootContainerId))
-
-	
+			ReactDOM.render(
+				<Provider store={store}>
+					{routes}
+				</Provider>,
+				document.getElementById(rootContainerId)
+			)	
+		}}></LoadingPage>, document.getElementById(rootContainerId))
+	})
 })
