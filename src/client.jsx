@@ -15,8 +15,8 @@ require.ensure([], ()=>{
 	const createMyStore = require('./store').createMyStore	
 	const routes = require('./routes').default
 	const Provider = require('react-redux').Provider
-	const i18n = require('i18n').default
-	i18n()
+	require('i18n').default()
+	require('touch-emulator')()
 
 	// Replace the LoadingPage with the whole web app
 	ReactDOM.render(<LoadingPage isLoaded={true} loadedCallback={()=>{
@@ -29,6 +29,4 @@ require.ensure([], ()=>{
 			document.getElementById(rootContainerId)
 		)	
 	}}></LoadingPage>, document.getElementById(rootContainerId))
-
-	
 })
