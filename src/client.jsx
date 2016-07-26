@@ -1,6 +1,5 @@
 import {initialAuth, fetchAccessToken} from 'auth'
 initialAuth()
-
 import 'common.scss' 
 import React from 'react'
 import ReactDOM from 'react-dom'

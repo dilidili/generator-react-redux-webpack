@@ -31,7 +31,7 @@ export function fetchAccessToken(resolve, reject){
 	// })
 	axios({
 		method: 'post',
-		url: 'http://localhost:3154/auth/accessToken',
+		url: 'http://120.55.67.18:3154/auth/accessToken',
 		data: {
 			client_id: 1776573903,
 			client_secret: '7ce9d028bef1e3c82f73f9dd3156c558',
