@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
+import WBAuthEnhancer from '../enhancers/WBAuthEnhancer'
 
 // initialize some necessary constants for react-canvas layout
 window.fontSize = window.innerHeight > 570 ? (window.innerHeight < 670 ? 16 : 18) : 13
@@ -30,4 +31,4 @@ function mapDispatchToProps(dispatch){
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppComponent)
+export default WBAuthEnhancer(connect(mapStateToProps, mapDispatchToProps)(AppComponent))

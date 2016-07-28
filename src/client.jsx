@@ -1,3 +1,5 @@
+require('auth').initialAuth()
+
 import 'common.scss' 
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -6,6 +8,7 @@ import 'velocity-animate/velocity.ui'
 import LoadingPage from './components/LoadingPage' 
 
 const rootContainerId = 'react-root'
+// Loading Page
 ReactDOM.render(<LoadingPage></LoadingPage>, document.getElementById(rootContainerId))
 
 // Loading all other lib resouces
