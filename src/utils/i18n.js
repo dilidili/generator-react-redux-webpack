@@ -4,7 +4,7 @@ export default function i18n() {
 	moment.locale('zh', {
 		relativeTime: {
 			future: "in %s",
-			past: "%s前",
+			past: "刚刚",
 			s: "秒",
 			m: "一分钟",
 			mm: "%d分钟",

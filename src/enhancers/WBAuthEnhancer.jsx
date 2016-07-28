@@ -21,7 +21,7 @@ export default function WBAuthEnhancer(Component){
 				token,
 			} = this.props
 
-			return token?<Component></Component>:null
+			return token?<Component {...this.props}></Component>:null
 		}
 	})
 

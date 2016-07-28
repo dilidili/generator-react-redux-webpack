@@ -14,7 +14,6 @@
 
 var core = require('./Animate');
 var Scroller;
-
 (function() {
 	var NOOP = function(){};
 
@@ -68,9 +67,6 @@ var Scroller;
 				when to fade out a scrollbar. */
 			scrollingComplete: NOOP,
 
-			/** Increase or decrease the amount of friction applied to deceleration **/
-			decelerationRate: 0.95,
-			
 			/** This configures the amount of change applied to deceleration when reaching boundaries  **/
             penetrationDeceleration : 0.03,
 
@@ -599,7 +595,9 @@ var Scroller;
 			}
 
 			// Publish new values
-			self.__publish(left, top, zoom, animate);
+			if (!self.__isTracking) {
+        self.__publish(left, top, zoom, animate);
+      }
 
 		},
 
@@ -961,14 +959,6 @@ var Scroller;
 						startPos = i;
 					}
 
-					// If we haven't received consecutive touchmove events within a 100ms
-					// timeframe, attempt a best-effort based on the first position. This
-					// typically happens when an expensive operation occurs on the main
-					// thread during scrolling, such as image decoding.
-					if (startPos === endPos && positions.length > 5) {
-						startPos = 2;
-					}
-
 					// If start and stop position is identical in a 100ms timeframe,
 					// we cannot compute any useful deceleration.
 					if (startPos !== endPos) {
@@ -992,6 +982,8 @@ var Scroller;
 							if (!self.__refreshActive) {
 								self.__startDeceleration(timeStamp);
 							}
+						} else {
+							self.options.scrollingComplete();
 						}
 					} else {
 						self.options.scrollingComplete();
@@ -1207,7 +1199,7 @@ var Scroller;
 			};
 
 			// How much velocity is required to keep the deceleration running
-			var minVelocityToKeepDecelerating = self.options.snapping ? 4 : 0.1;
+			var minVelocityToKeepDecelerating = self.options.snapping ? 4 : 0.001;
 
 			// Detect whether it's still worth to continue animating steps
 			// If we are already slow enough to not being user perceivable anymore, we stop the whole process here.
@@ -1301,7 +1293,7 @@ var Scroller;
 				// This is the factor applied to every iteration of the animation
 				// to slow down the process. This should emulate natural behavior where
 				// objects slow down when the initiator of the movement is removed
-				var frictionFactor = self.options.decelerationRate;
+				var frictionFactor = 0.95;
 
 				self.__decelerationVelocityX *= frictionFactor;
 				self.__decelerationVelocityY *= frictionFactor;
@@ -1319,8 +1311,8 @@ var Scroller;
 				var scrollOutsideY = 0;
 
 				// This configures the amount of change applied to deceleration/acceleration when reaching boundaries
-				var penetrationDeceleration = self.options.penetrationDeceleration; 
-				var penetrationAcceleration = self.options.penetrationAcceleration; 
+				var penetrationDeceleration = self.options.penetrationDeceleration;
+				var penetrationAcceleration = self.options.penetrationAcceleration;
 
 				// Check limits
 				if (scrollLeft < self.__minDecelerationScrollLeft) {
@@ -1360,5 +1352,5 @@ var Scroller;
 		Scroller.prototype[key] = members[key];
 	}
 
-	module.exports = Scroller;
+	module.exports = Scroller
 })();

@@ -13,7 +13,7 @@ const TWEET_VIEW = "TWEET_VIEW"
 
 const HomeIndexComponent = React.createClass({
 	componentDidMount(){
-		this.props.fetchTweet()
+		this.props.fetchTweet(this.props.token)
 	},
 	render: function(){
 		const {
@@ -45,6 +45,7 @@ function mapStateToProps(state){
 
 	return {
 		tweet: state.getIn(['tweet', 'list']),
+		token: state.getIn(['user', 'token']),
 		currentView, // as [THE_PRESENT_VIEW, data]
     }
 }

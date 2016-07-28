@@ -6,7 +6,7 @@ const isProduction = process.env.NODE_ENV === "production"
 
 const config = _.extend({
 	debug: !isProduction,
-	serverURL: isProduction ? 'http://isomorphic-wb.oss-cn-hangzhou.aliyuncs.com' : "http://localhost:3154",
+	serverURL: isProduction ? 'http://isomorphic-wb.oss-cn-hangzhou.aliyuncs.com' : "http://192.168.1.102:3154",
 }, isProduction ? {} : {
 	token: "2.00EXkndCnB1OwB4454f329dcCLyALC",
 })

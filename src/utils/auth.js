@@ -6,7 +6,7 @@ import config from '../config'
 export function initialAuth() {
 	if (config.debug) return
 
-	const isCodeRedirect = ~window.location.href.indexOf('auth?code=')
+	const isCodeRedirect = ~window.location.href.indexOf('?code=')
 
 	if (!localStorage.getItem("token") && !isCodeRedirect) {
 		// Unauthorized 

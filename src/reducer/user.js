@@ -1,8 +1,9 @@
 import {Map, List} from 'immutable'
 import {QUERY_TOKEN} from '../actions/user'
+import config from '../config'
 
 const initialState = Map({
-	token: localStorage.getItem('token'),
+	token: config.token || localStorage.getItem('token'),
 })
 
 export default (state = initialState, action) => {

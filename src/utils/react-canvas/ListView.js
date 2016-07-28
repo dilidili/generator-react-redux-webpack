@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react');
-var Scroller = require('scroller');
+var Scroller = require('../Scroller');
 var Group = require('./Group');
 import _ from 'underscore'
 import PureRenderMixin from 'react/lib/ReactComponentWithPureRenderMixin'
@@ -54,7 +54,7 @@ var ListView = React.createClass({
   },
 
   renderItem: function (itemIndex) {
-    var item = this.props.itemGetter(itemIndex, this.state.scrollTop);
+    var item = this.props.itemGetter(itemIndex);
     var itemHeight = this.props.itemHeightArray[itemIndex];
     var style = {
       top: 0,
@@ -107,11 +107,12 @@ var ListView = React.createClass({
     var options = {
       scrollingX: false,
       scrollingY: true,
-      bouncing: false,
+      bouncing: true,
       decelerationRate: this.props.scrollingDeceleration,
       penetrationAcceleration: this.props.scrollingPenetrationAcceleration,
     };
     this.scroller = new Scroller(this.handleScroll, options);
+    this.scroller.activatePullToRefresh(this.props.height*0.2)
   },
 
   updateScrollingDimensions: function () {
