@@ -14,7 +14,8 @@ var ListView = React.createClass({
     itemGetter: React.PropTypes.func.isRequired,
     scrollingDeceleration: React.PropTypes.number,
     scrollingPenetrationAcceleration: React.PropTypes.number,
-    onScroll: React.PropTypes.func
+    onScroll: React.PropTypes.func,
+    activatePullToRefresh: React.PropTypes.array, // Refer to utils/Scroller.js#activatePullToRefresh
   },
 
   mixins: [PureRenderMixin],
@@ -23,7 +24,8 @@ var ListView = React.createClass({
     return {
       style: { left: 0, top: 0, width: 0, height: 0 },
       scrollingDeceleration: 0.95,
-      scrollingPenetrationAcceleration: 0.08
+      scrollingPenetrationAcceleration: 0.08,
+      activatePullToRefresh: [],
     };
   },
 
@@ -37,6 +39,14 @@ var ListView = React.createClass({
     this.createScroller();
     this.updateScrollingDimensions();
     this.updateScrollTopFrameArray();
+  },
+
+  componentWillReceiveProps(){
+    this.updateScrollingDimensions()
+    this.updateScrollTopFrameArray()
+    this.setState({
+      scrollTop: 0,
+    })
   },
 
   render: function () {
@@ -112,7 +122,7 @@ var ListView = React.createClass({
       penetrationAcceleration: this.props.scrollingPenetrationAcceleration,
     };
     this.scroller = new Scroller(this.handleScroll, options);
-    this.scroller.activatePullToRefresh(this.props.height*0.2)
+    this.scroller.activatePullToRefresh(...this.props.activatePullToRefresh)
   },
 
   updateScrollingDimensions: function () {

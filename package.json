@@ -38,6 +38,7 @@
     "react-hot-loader": "^1.3.0",
     "resolve-url": "^0.2.1",
     "sass-loader": "^4.0.0",
+    "spin.js": "^2.3.2",
     "style-loader": "^0.13.0",
     "transform-loader": "^0.2.3",
     "webpack": "^1.12.14",

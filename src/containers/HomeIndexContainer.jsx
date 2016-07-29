@@ -15,16 +15,27 @@ const HomeIndexComponent = React.createClass({
 	componentDidMount(){
 		this.props.fetchTweet(this.props.token)
 	},
+
+	// Handler
+	handleFetchTop(){
+		this.props.fetchTweet(this.props.token)
+	},
+
+	// Render
 	render: function(){
 		const {
-			currentView
+			currentView,
+			isSpinningTop,
+			fetchTweet,
+			push,
+			tweet,
 		} = this.props
 
 		return (
 			<div>
 				<Header></Header>
 				<div style={{height: window.contentHeight, position: 'relative'}}>
-					<TweetList list={this.props.tweet} push={this.props.push} isPresent={currentView[0]===LIST_VIEW}></TweetList>
+					<TweetList list={tweet} push={push} isPresent={currentView[0]===LIST_VIEW} handleFetchTop={this.handleFetchTop} isSpinningTop={isSpinningTop}></TweetList>
 					<TweetDetail tid={currentView[1]} isPresent={currentView[0]===TWEET_VIEW}></TweetDetail>
 				</div>
 			</div>
@@ -46,6 +57,7 @@ function mapStateToProps(state){
 	return {
 		tweet: state.getIn(['tweet', 'list']),
 		token: state.getIn(['user', 'token']),
+		isSpinningTop: state.getIn(['tweet', 'isListTopLoading']),
 		currentView, // as [THE_PRESENT_VIEW, data]
     }
 }

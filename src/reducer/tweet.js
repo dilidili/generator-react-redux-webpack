@@ -4,20 +4,29 @@ import {LOAD_TWEET_DETAIL_TIMELINE} from '../actions/tweet'
 
 const initialState = Map({
     list: List([]),
+    isListTopLoading: false,
+    isListBottomLoading: false,
+
     loadingDetailTimeline: Map({
         isLoading: false,
         token: 0,
     }),
 })
 
+function sortByTimeline(a, b) {
+    return new Date(b.get('timestamp')) - new Date(a.get('timestamp'))
+}
+
 export default (state = initialState, action) => {
     switch (action.type) {
+        case LOAD_TWEET[0]:
+            return state.set(action.isFetchingTopTweet ? 'isListTopLoading' : 'isListBottomLoading', true)
         case LOAD_TWEET[1]:
-            if (action.response.status === 200) {
-                // Add new tweets to list
-                return state.update('list', list => list.mergeDeepWith((prev, next) => next, formatTweetList(action.response.data.statuses)))
-            }
-            return state
+            // Add new tweets to list
+            return state.update('list', list => list.concat(formatTweetList(action.response.data.statuses)).sort(sortByTimeline))
+                .set(action.isFetchingTopTweet ? 'isListTopLoading' : 'isListBottomLoading', false)
+        case LOAD_TWEET[2]:
+            return state.set(action.isFetchingTopTweet ? 'isListTopLoading' : 'isListBottomLoading', false)
 
         case LOAD_TWEET_DETAIL_TIMELINE[0]:
             return state.setIn(['loadingDetailTimeline', 'isLoading'], true).setIn(['loadingDetailTimeline', 'token'], action.token)
@@ -35,11 +44,12 @@ export function getTweetDetail(list, tid){
 }
 
 function formatTweetList(rawData) {
-    return List(rawData).map(v => formatTweet(v))
+    return List(rawData).filter(v => v && !v.deleted).map(v => formatTweet(v))
 }
 
 function formatTweet(v) {
-    if (!v) return null
+    // recursion formate retweeted tweet
+    if (!v || v.deleted) return null
 
     return Map({
         user: v.user.name,

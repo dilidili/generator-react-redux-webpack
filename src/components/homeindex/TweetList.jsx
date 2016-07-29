@@ -5,6 +5,8 @@ import _ from 'underscore'
 import Surface from 'react-canvas/Surface' 
 import ListView from 'react-canvas/ListView' 
 import {VelocityComponent} from 'velocity-react'
+import Spinner from '../common/Spinner'
+import styles from './TweetList.scss'
 
 // const defaultList = {
 // 	list: _.map(_.range(50), () => ({
@@ -43,13 +45,16 @@ const TweetList = React.createClass({
 	// Lifecycle
 	propTypes: {
 		push: PropTypes.func.isRequired,
+		handleFetchTop: PropTypes.func.isRequired,
 		list: PropTypes.object,
 		isPresent: PropTypes.bool, 
+		isSpinningTop: PropTypes.bool,
 	},
 	getDefaultProps: function(){
 		return {
 			list: [],
 			isPresent: true,
+			isSpinningTop: false,
 		}
 	},
 	getInitialState: function(){
@@ -74,9 +79,15 @@ const TweetList = React.createClass({
 		}
 	},
 
+	// Handler
 	handleClickTweet(tid){
 		// Navigate to tweet detail page
 		this.props.push(`/home/tweet/${tid}`)
+	},
+	handleRefreshActivate(){},
+	handleRefreshDeactivate(){},
+	handleRefreshStart(){
+		this.props.handleFetchTop()
 	},
 
 	// Render
@@ -107,12 +118,23 @@ const TweetList = React.createClass({
 						<div style={{backgroundColor: "black", position:"absolute", top:0, left:0, display: isPresent?'none':'block'}}></div>
 					</VelocityComponent>
 
+					{/* Spinner on the top banner */}
+					<Spinner className={styles.spinner} stopped={!this.props.isSpinningTop}></Spinner>
+
 					<Surface  {...this._canvasFrame}>
 						<ListView
 							style={this._canvasFrame}
-							numberOfItems={this.props.list.size}
+							numberOfItems={list.size}
 							itemHeightArray={_.map(this.state.tweetsStyle.toArray(), v=>Math.round(v.containerStyle.height))}
 							itemGetter={this.renderTweet}
+							activatePullToRefresh = {
+								[
+									window.fontSize * 3.2,
+									this.handleRefreshActivate,
+									this.handleRefreshDeactivate,
+									this.handleRefreshStart,
+								]
+							}
 						>
 						</ListView>
 					</Surface>

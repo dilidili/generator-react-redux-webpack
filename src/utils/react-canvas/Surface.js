@@ -7,6 +7,7 @@ var RenderLayer = require('./RenderLayer');
 var FrameUtils = require('./FrameUtils');
 var DrawingUtils = require('./DrawingUtils');
 var hitTest = require('./hitTest');
+import _ from 'underscore'
 
 /**
  * Surface is a standard React component and acts as the main drawing canvas.
@@ -25,11 +26,13 @@ var Surface = React.createClass({
     scale: React.PropTypes.number.isRequired,
     enableCSSLayout: React.PropTypes.bool,
     children: React.PropTypes.element.isRequired,
+    style: React.PropTypes.object,
   },
 
   getDefaultProps: function () {
     return {
-      scale: window.devicePixelRatio || 1
+      scale: window.devicePixelRatio || 1,
+      style: {},
     };
   },
 
@@ -90,11 +93,11 @@ var Surface = React.createClass({
     // Scale the drawing area to match DPI.
     var width = this.props.width * this.props.scale;
     var height = this.props.height * this.props.scale;
-    var style = {
+    var style = _.extend({
       width: this.props.width,
       height: this.props.height
-    };
-
+    }, this.props.style);
+    
     return (
       React.createElement('canvas', {
         ref: 'canvas',
