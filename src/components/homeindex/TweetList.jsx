@@ -87,7 +87,7 @@ const TweetList = React.createClass({
 	handleRefreshActivate(){},
 	handleRefreshDeactivate(){},
 	handleRefreshStart(){
-		this.props.handleFetchTop()
+		// this.props.handleFetchTop()
 	},
 
 	// Render
@@ -105,6 +105,7 @@ const TweetList = React.createClass({
 		const {
 			list,
 			isPresent,
+			isSpinningTop,
 		} = this.props
 		if (list.size<=0) return null
 
@@ -119,7 +120,7 @@ const TweetList = React.createClass({
 					</VelocityComponent>
 
 					{/* Spinner on the top banner */}
-					<Spinner className={styles.spinner} stopped={!this.props.isSpinningTop}></Spinner>
+					<Spinner className={styles.spinner} stopped={!isSpinningTop}></Spinner>
 
 					<Surface  {...this._canvasFrame}>
 						<ListView
@@ -127,6 +128,7 @@ const TweetList = React.createClass({
 							numberOfItems={list.size}
 							itemHeightArray={_.map(this.state.tweetsStyle.toArray(), v=>Math.round(v.containerStyle.height))}
 							itemGetter={this.renderTweet}
+							isSpinningTop={isSpinningTop}
 							activatePullToRefresh = {
 								[
 									window.fontSize * 3.2,

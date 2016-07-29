@@ -16,6 +16,7 @@ var ListView = React.createClass({
     scrollingPenetrationAcceleration: React.PropTypes.number,
     onScroll: React.PropTypes.func,
     activatePullToRefresh: React.PropTypes.array, // Refer to utils/Scroller.js#activatePullToRefresh
+    isSpinningTop: React.PropTypes.bool,
   },
 
   mixins: [PureRenderMixin],
@@ -26,6 +27,7 @@ var ListView = React.createClass({
       scrollingDeceleration: 0.95,
       scrollingPenetrationAcceleration: 0.08,
       activatePullToRefresh: [],
+      isSpinningTop: false,
     };
   },
 
@@ -37,13 +39,17 @@ var ListView = React.createClass({
 
   componentWillMount: function () {
     this.createScroller();
-    this.updateScrollingDimensions();
-    this.updateScrollTopFrameArray();
+    this.updateScrollingDimensions(this.props);
+    this.updateScrollTopFrameArray(this.props);
   },
 
-  componentWillReceiveProps(){
-    this.updateScrollingDimensions()
-    this.updateScrollTopFrameArray()
+  componentWillReceiveProps(nextProps){
+    if (this.props.isSpinningTop && !nextProps.isSpinningTop) {
+      this.scroller.finishPullToRefresh() 
+    }
+
+    this.updateScrollingDimensions(nextProps)
+    this.updateScrollTopFrameArray(nextProps)
     this.setState({
       scrollTop: 0,
     })
@@ -125,18 +131,18 @@ var ListView = React.createClass({
     this.scroller.activatePullToRefresh(...this.props.activatePullToRefresh)
   },
 
-  updateScrollingDimensions: function () {
-    var width = this.props.style.width;
-    var height = this.props.style.height;
+  updateScrollingDimensions: function(props) {
+    var width = props.style.width;
+    var height = props.style.height;
     var scrollWidth = width;
-    var scrollHeight = _.reduce(this.props.itemHeightArray, (memo, num)=>memo+num, 0);
+    var scrollHeight = _.reduce(props.itemHeightArray, (memo, num) => memo + num, 0);
     this.scroller.setDimensions(width, height, scrollWidth, scrollHeight);
   },
 
-  updateScrollTopFrameArray(){
+  updateScrollTopFrameArray(props) {
     // Calculate the scrollTop of every item. 
     let temp = 0
-    return this._accumulateToScrollTop = _.map(this.props.itemHeightArray, v => {
+    return this._accumulateToScrollTop = _.map(props.itemHeightArray, v => {
       temp += v
       return temp - v
     })
