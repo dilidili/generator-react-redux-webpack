@@ -5,6 +5,7 @@ var Scroller = require('../Scroller');
 var Group = require('./Group');
 import _ from 'underscore'
 import PureRenderMixin from 'react/lib/ReactComponentWithPureRenderMixin'
+import DrawingUtils from './DrawingUtils'
 
 var ListView = React.createClass({
   propTypes: {
@@ -48,11 +49,14 @@ var ListView = React.createClass({
       this.scroller.finishPullToRefresh() 
     }
 
-    this.updateScrollingDimensions(nextProps)
-    this.updateScrollTopFrameArray(nextProps)
-    this.setState({
-      scrollTop: 0,
-    })
+    if (!_.isEqual(this.props.itemHeightArray, nextProps.itemHeightArray) || !_.isEqual(this.props.style, nextProps.style)) {
+      DrawingUtils.invalidateAllBackingStores()
+      this.updateScrollingDimensions(nextProps)
+      this.updateScrollTopFrameArray(nextProps)
+      this.setState({
+        scrollTop: 0,
+      })
+    }
   },
 
   render: function () {

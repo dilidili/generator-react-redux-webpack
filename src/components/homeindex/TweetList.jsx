@@ -87,7 +87,7 @@ const TweetList = React.createClass({
 	handleRefreshActivate(){},
 	handleRefreshDeactivate(){},
 	handleRefreshStart(){
-		// this.props.handleFetchTop()
+		this.props.handleFetchTop()
 	},
 
 	// Render

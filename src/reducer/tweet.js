@@ -23,7 +23,7 @@ export default (state = initialState, action) => {
             return state.set(action.isFetchingTopTweet ? 'isListTopLoading' : 'isListBottomLoading', true)
         case LOAD_TWEET[1]:
             // Add new tweets to list
-            return state.update('list', list => list.concat(formatTweetList(action.response.data.statuses)).sort(sortByTimeline))
+        return state.update('list', list => list.concat(formatTweetList(action.response.data.statuses).filter(v => !list.some(w => w.get('id') === v.get('id')))).sort(sortByTimeline))
                 .set(action.isFetchingTopTweet ? 'isListTopLoading' : 'isListBottomLoading', false)
         case LOAD_TWEET[2]:
             return state.set(action.isFetchingTopTweet ? 'isListTopLoading' : 'isListBottomLoading', false)
@@ -63,6 +63,6 @@ function formatTweet(v) {
         like: Map({
             count: v.attitudes_count,
         }),
-        id: v.id,
+        id: v.id + Math.random(),
     })
 }

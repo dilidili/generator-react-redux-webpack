@@ -186,7 +186,7 @@ function drawRenderLayer (ctx, layer) {
 
   // If the layer is bitmap-cacheable, draw in a pooled off-screen canvas.
   // We disable backing stores on pad since we flip there.
-  if (layer.backingStoreId) {
+  if (layer.backingStoreId && getBackingStore(layer.backingStoreId)) {
     drawCacheableRenderLayer(ctx, layer, customDrawFunc);
   } else {
     // Draw default properties, such as background color.
