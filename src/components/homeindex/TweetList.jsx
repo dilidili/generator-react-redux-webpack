@@ -45,16 +45,18 @@ const TweetList = React.createClass({
 	// Lifecycle
 	propTypes: {
 		push: PropTypes.func.isRequired,
-		handleFetchTop: PropTypes.func.isRequired,
+		handleFetchTweet: PropTypes.func.isRequired,
 		list: PropTypes.object,
 		isPresent: PropTypes.bool, 
 		isSpinningTop: PropTypes.bool,
+		isSpinningBottom: PropTypes.bool,
 	},
 	getDefaultProps: function(){
 		return {
 			list: [],
 			isPresent: true,
 			isSpinningTop: false,
+			isSpinningBottom: false,
 		}
 	},
 	getInitialState: function(){
@@ -85,23 +87,24 @@ const TweetList = React.createClass({
 		this.props.push(`/home/tweet/${tid}`)
 	},
 	handleRefreshActivate(){
-		console.log('upActivate')
+		// console.log('upActivate')
 	},
 	handleRefreshDeactivate(){
-		console.log('upDeactivate')
+		// console.log('upDeactivate')
 	},
 	handleRefreshStart(){
-		console.log('upStart')
-		// this.props.handleFetchTop()
+		// console.log('upStart')
+		this.props.handleFetchTweet(true)
 	},
 	handleRefreshActivateBottom(){
-		console.log('bottomActivate')
+		// console.log('bottomActivate')
 	},
 	handleRefreshDeactivateBottom(){
-		console.log('bottomDeactivate')
+		// console.log('bottomDeactivate')
 	},
 	handleRefreshStartBottom(){
-		console.log('bottomStart')
+		// console.log('bottomStart')
+		this.props.handleFetchTweet(false)
 	},
 
 	// Render
@@ -120,6 +123,7 @@ const TweetList = React.createClass({
 			list,
 			isPresent,
 			isSpinningTop,
+			isSpinningBottom,
 		} = this.props
 		if (list.size<=0) return null
 
@@ -143,6 +147,7 @@ const TweetList = React.createClass({
 							itemHeightArray={_.map(this.state.tweetsStyle.toArray(), v=>Math.round(v.containerStyle.height))}
 							itemGetter={this.renderTweet}
 							isSpinningTop={isSpinningTop}
+							isSpinningBottom={isSpinningBottom}
 							activatePullToRefresh = {
 								[
 									window.fontSize * 3.2,
@@ -157,6 +162,9 @@ const TweetList = React.createClass({
 						>
 						</ListView>
 					</Surface>
+
+					{/* Spinner on the top banner */}
+					<Spinner className={styles.spinnerBottom} stopped={!isSpinningBottom}></Spinner>
 				</div>
 			</VelocityComponent>
 		)

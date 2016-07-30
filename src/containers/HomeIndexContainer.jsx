@@ -17,10 +17,16 @@ const HomeIndexComponent = React.createClass({
 	},
 
 	// Handler
-	handleFetchTop(){
-		this.props.fetchTweet(this.props.token, {
-			since_id: this.props.tweet.get(0).get('id')
-		})
+	handleFetchTweet(isFetchTop = true) {
+		if (isFetchTop) {
+			this.props.fetchTweet(this.props.token, {
+				since_id: this.props.tweet.get(0).get('id')
+			})
+		}else{
+			this.props.fetchTweet(this.props.token, {
+				max_id: this.props.tweet.last().get('id')
+			})
+		}
 	},
 
 	// Render
@@ -28,6 +34,7 @@ const HomeIndexComponent = React.createClass({
 		const {
 			currentView,
 			isSpinningTop,
+			isSpinningBottom,
 			fetchTweet,
 			push,
 			tweet,
@@ -37,7 +44,7 @@ const HomeIndexComponent = React.createClass({
 			<div>
 				<Header></Header>
 				<div style={{height: window.contentHeight, position: 'relative'}}>
-					<TweetList list={tweet} push={push} isPresent={currentView[0]===LIST_VIEW} handleFetchTop={this.handleFetchTop} isSpinningTop={isSpinningTop}></TweetList>
+					<TweetList list={tweet} push={push} isPresent={currentView[0]===LIST_VIEW} handleFetchTweet={this.handleFetchTweet} isSpinningTop={isSpinningTop} isSpinningBottom={isSpinningBottom}></TweetList>
 					<TweetDetail tid={currentView[1]} isPresent={currentView[0]===TWEET_VIEW}></TweetDetail>
 				</div>
 			</div>
@@ -60,6 +67,7 @@ function mapStateToProps(state){
 		tweet: state.getIn(['tweet', 'list']),
 		token: state.getIn(['user', 'token']),
 		isSpinningTop: state.getIn(['tweet', 'isListTopLoading']),
+		isSpinningBottom: state.getIn(['tweet', 'isListBottomLoading']),
 		currentView, // as [THE_PRESENT_VIEW, data]
     }
 }

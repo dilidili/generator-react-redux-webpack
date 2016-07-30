@@ -397,7 +397,6 @@ var Scroller;
 		 * Signalizes that pull-to-refresh is finished.
 		 */
 		finishPullToRefresh: function() {
-
 			var self = this;
 
 			if (self.__refreshActive) {

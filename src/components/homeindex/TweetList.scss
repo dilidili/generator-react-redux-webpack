@@ -6,3 +6,12 @@
 	height: 0;
 	z-index: 1;
 }
+
+:local(.spinnerBottom){
+	position: absolute;
+	bottom: 1.5em;
+	left: 0;
+	width: 100%;
+	height: 0;
+	z-index: 1;
+}

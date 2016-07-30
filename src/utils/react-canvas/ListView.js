@@ -18,6 +18,7 @@ var ListView = React.createClass({
     onScroll: React.PropTypes.func,
     activatePullToRefresh: React.PropTypes.array, // Refer to utils/Scroller.js#activatePullToRefresh
     isSpinningTop: React.PropTypes.bool,
+    isSpinningBottom: React.PropTypes.bool,
   },
 
   mixins: [PureRenderMixin],
@@ -29,6 +30,7 @@ var ListView = React.createClass({
       scrollingPenetrationAcceleration: 0.08,
       activatePullToRefresh: [],
       isSpinningTop: false,
+      isSpinningBottom: false,
     };
   },
 
@@ -48,6 +50,9 @@ var ListView = React.createClass({
     if (this.props.isSpinningTop && !nextProps.isSpinningTop) {
       this.scroller.finishPullToRefresh()
     }
+    if (this.props.isSpinningBottom && !nextProps.isSpinningBottom) {
+      this.scroller.finishPullToRefresh()
+    }
 
     if (!_.isEqual(this.props.itemHeightArray, nextProps.itemHeightArray) || !_.isEqual(this.props.style, nextProps.style)) {
       DrawingUtils.invalidateAllBackingStores()
@@ -55,7 +60,11 @@ var ListView = React.createClass({
       this.updateScrollTopFrameArray(nextProps)
 
       // scroll to the position where triggered pull-to-update event
-      this.scroller.scrollTo(0, this._accumulateToScrollTop[nextProps.itemHeightArray.length - this.props.itemHeightArray.length] + this.state.scrollTop)
+      if (this.props.isSpinningTop) {
+        this.scroller.scrollTo(0, this._accumulateToScrollTop[nextProps.itemHeightArray.length - this.props.itemHeightArray.length] + this.state.scrollTop)
+      }else{
+        this.scroller.scrollTo(0, this.state.scrollTop)
+      }
     }
   },
 
