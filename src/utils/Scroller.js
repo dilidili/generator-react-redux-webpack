@@ -15,7 +15,7 @@
 var core = require('./Animate');
 var Scroller;
 (function() {
-	var NOOP = function(){};
+	var NOOP = function() {};
 
 	/**
 	 * A pure logic 'component' for 'virtual' scrolling/zooming.
@@ -68,10 +68,10 @@ var Scroller;
 			scrollingComplete: NOOP,
 
 			/** This configures the amount of change applied to deceleration when reaching boundaries  **/
-            penetrationDeceleration : 0.03,
+			penetrationDeceleration: 0.03,
 
-            /** This configures the amount of change applied to acceleration when reaching boundaries  **/
-            penetrationAcceleration : 0.08
+			/** This configures the amount of change applied to acceleration when reaching boundaries  **/
+			penetrationAcceleration: 0.08
 
 		};
 
@@ -87,14 +87,14 @@ var Scroller;
 
 	/**
 	 * @param pos {Number} position between 0 (start of effect) and 1 (end of effect)
-	**/
+	 **/
 	var easeOutCubic = function(pos) {
 		return (Math.pow((pos - 1), 3) + 1);
 	};
 
 	/**
 	 * @param pos {Number} position between 0 (start of effect) and 1 (end of effect)
-	**/
+	 **/
 	var easeInOutCubic = function(pos) {
 		if ((pos /= 0.5) < 1) {
 			return 0.5 * Math.pow(pos, 3);
@@ -183,14 +183,26 @@ var Scroller;
 		/** {Boolean} Whether the refresh process is enabled when the event is released now */
 		__refreshActive: false,
 
+		/** {Boolean} Whether the refresh process is enabled when the event is released now */
+		__refreshActiveBottom: false,
+
 		/** {Function} Callback to execute on activation. This is for signalling the user about a refresh is about to happen when he release */
 		__refreshActivate: null,
+
+		/** {Function} Callback to execute on activation. This is for signalling the user about a refresh is about to happen when he release */
+		__refreshActivateBottom: null,
 
 		/** {Function} Callback to execute on deactivation. This is for signalling the user about the refresh being cancelled */
 		__refreshDeactivate: null,
 
+		/** {Function} Callback to execute on deactivation. This is for signalling the user about the refresh being cancelled */
+		__refreshDeactivateBottom: null,
+
 		/** {Function} Callback to execute to start the actual refresh. Call {@link #refreshFinish} when done */
 		__refreshStart: null,
+
+		/** {Function} Callback to execute to start the actual refresh. Call {@link #refreshFinish} when done */
+		__refreshStartBottom: null,
 
 		/** {Number} Zoom level */
 		__zoomLevel: 1,
@@ -352,20 +364,23 @@ var Scroller;
 		 * @param deactivateCallback {Function} Callback to execute on deactivation. This is for signalling the user about the refresh being cancelled.
 		 * @param startCallback {Function} Callback to execute to start the real async refresh action. Call {@link #finishPullToRefresh} after finish of refresh.
 		 */
-		activatePullToRefresh: function(height, activateCallback, deactivateCallback, startCallback) {
-
+		activatePullToRefresh: function(height, activateCallback, deactivateCallback, startCallback, activateCallbackBottom, deactivateCallbackBottom, startCallbackBottom) {
 			var self = this;
 
 			self.__refreshHeight = height;
+
 			self.__refreshActivate = activateCallback;
 			self.__refreshDeactivate = deactivateCallback;
 			self.__refreshStart = startCallback;
 
+			self.__refreshActivateBottom = activateCallbackBottom;
+			self.__refreshDeactivateBottom = deactivateCallbackBottom;
+			self.__refreshStartBottom = startCallbackBottom;
 		},
 
 
 		/**
-		 * Starts pull-to-refresh manually.
+		 * Starts pull-to-refresh on the top manually.
 		 */
 		triggerPullToRefresh: function() {
 			// Use publish instead of scrollTo to allow scrolling to out of boundary position
@@ -385,13 +400,17 @@ var Scroller;
 
 			var self = this;
 
-			self.__refreshActive = false;
-			if (self.__refreshDeactivate) {
-				self.__refreshDeactivate();
+			if (self.__refreshActive) {
+				self.__refreshActive = false
+				self.__refreshDeactivate && self.__refreshDeactivate()
+			}
+
+			if (self.__refreshActiveBottom) {
+				self.__refreshActiveBottom = false
+				self.__refreshDeactivateBottom && self.__refreshDeactivateBottom()
 			}
 
 			self.scrollTo(self.__scrollLeft, self.__scrollTop, true);
-
 		},
 
 
@@ -449,7 +468,7 @@ var Scroller;
 			}
 
 			// Add callback if exists
-			if(callback) {
+			if (callback) {
 				self.__zoomComplete = callback;
 			}
 
@@ -596,8 +615,8 @@ var Scroller;
 
 			// Publish new values
 			if (!self.__isTracking) {
-        self.__publish(left, top, zoom, animate);
-      }
+				self.__publish(left, top, zoom, animate);
+			}
 
 		},
 
@@ -815,7 +834,7 @@ var Scroller;
 						// Slow down on the edges
 						if (self.options.bouncing) {
 
-							scrollLeft += (moveX / 2  * this.options.speedMultiplier);
+							scrollLeft += (moveX / 2 * this.options.speedMultiplier);
 
 						} else if (scrollLeft > maxScrollLeft) {
 
@@ -833,6 +852,7 @@ var Scroller;
 				if (self.__enableScrollY) {
 
 					scrollTop -= moveY * this.options.speedMultiplier;
+
 					var maxScrollTop = self.__maxScrollTop;
 
 					if (scrollTop > maxScrollTop || scrollTop < 0) {
@@ -844,7 +864,9 @@ var Scroller;
 
 							// Support pull-to-refresh (only when only y is scrollable)
 							if (!self.__enableScrollX && self.__refreshHeight != null) {
+								var scrollBottom = self.__clientHeight - self.__contentHeight + scrollTop
 
+								// pull-to-refresh from the top
 								if (!self.__refreshActive && scrollTop <= -self.__refreshHeight) {
 
 									self.__refreshActive = true;
@@ -852,14 +874,27 @@ var Scroller;
 										self.__refreshActivate();
 									}
 
-								} else if (self.__refreshActive && scrollTop > -self.__refreshHeight) {
+								} else if (self.__refreshActive && scrollTop > -self.__refreshHeight) { // pull-to-refresh from the bottom
 
 									self.__refreshActive = false;
 									if (self.__refreshDeactivate) {
 										self.__refreshDeactivate();
 									}
 
+								} else if (!self.__refreshActiveBottom && scrollBottom >= self.__refreshHeight) {
+
+									self.__refreshActiveBottom = true;
+									if (self.__refreshActivateBottom) {
+										self.__refreshActivateBottom();
+									}
+								} else if (self.__refreshActiveBottom && scrollBottom < self.__refreshHeight) {
+
+									self.__refreshActiveBottom = false;
+									if (self.__refreshDeactivateBottom) {
+										self.__refreshDeactivateBottom();
+									}
 								}
+
 							}
 
 						} else if (scrollTop > maxScrollTop) {
@@ -885,7 +920,7 @@ var Scroller;
 				// Sync scroll position
 				self.__publish(scrollLeft, scrollTop, level);
 
-			// Otherwise figure out whether we are switching into dragging mode now.
+				// Otherwise figure out whether we are switching into dragging mode now.
 			} else {
 
 				var minimumTrackingForScroll = self.options.locking ? 3 : 0;
@@ -979,7 +1014,7 @@ var Scroller;
 						if (Math.abs(self.__decelerationVelocityX) > minVelocityToStartDeceleration || Math.abs(self.__decelerationVelocityY) > minVelocityToStartDeceleration) {
 
 							// Deactivate pull-to-refresh when decelerating
-							if (!self.__refreshActive) {
+							if (!self.__refreshActive && !self.__refreshActiveBottom) {
 								self.__startDeceleration(timeStamp);
 							}
 						} else {
@@ -990,7 +1025,7 @@ var Scroller;
 					}
 				} else if ((timeStamp - self.__lastTouchMove) > 100) {
 					self.options.scrollingComplete();
-	 			}
+				}
 			}
 
 			// If this was a slower move it is per default non decelerated, but this
@@ -1010,6 +1045,16 @@ var Scroller;
 						self.__refreshStart();
 					}
 
+				} else if (self.__refreshActiveBottom && self.__refreshStartBottom) {
+
+					// Use publish instead of scrollTo to allow scrolling to out of boundary position
+					// We don't need to normalize scrollLeft, zoomLevel, etc. here because we only y-scrolling when pull-to-refresh is enabled
+					self.__publish(self.__scrollLeft, self.__contentHeight - self.__clientHeight + self.__refreshHeight, self.__zoomLevel, true);
+
+					if (self.__refreshStartBottom) {
+						self.__refreshStartBottom();
+					}
+
 				} else {
 
 					if (self.__interruptedAnimation || self.__isDragging) {
@@ -1025,6 +1070,11 @@ var Scroller;
 							self.__refreshDeactivate();
 						}
 
+					}
+
+					if (self.__refreshActiveBottom) {
+						self.__refreshActiveBottom = false
+						self.__refreshDeactivateBottom && self.__refreshDeactivateBottom()
 					}
 				}
 			}
@@ -1105,7 +1155,7 @@ var Scroller;
 
 					if (self.options.zooming) {
 						self.__computeScrollMax();
-						if(self.__zoomComplete) {
+						if (self.__zoomComplete) {
 							self.__zoomComplete();
 							self.__zoomComplete = null;
 						}
@@ -1129,7 +1179,7 @@ var Scroller;
 				// Fix max scroll ranges
 				if (self.options.zooming) {
 					self.__computeScrollMax();
-					if(self.__zoomComplete) {
+					if (self.__zoomComplete) {
 						self.__zoomComplete();
 						self.__zoomComplete = null;
 					}

@@ -84,10 +84,24 @@ const TweetList = React.createClass({
 		// Navigate to tweet detail page
 		this.props.push(`/home/tweet/${tid}`)
 	},
-	handleRefreshActivate(){},
-	handleRefreshDeactivate(){},
+	handleRefreshActivate(){
+		console.log('upActivate')
+	},
+	handleRefreshDeactivate(){
+		console.log('upDeactivate')
+	},
 	handleRefreshStart(){
-		this.props.handleFetchTop()
+		console.log('upStart')
+		// this.props.handleFetchTop()
+	},
+	handleRefreshActivateBottom(){
+		console.log('bottomActivate')
+	},
+	handleRefreshDeactivateBottom(){
+		console.log('bottomDeactivate')
+	},
+	handleRefreshStartBottom(){
+		console.log('bottomStart')
 	},
 
 	// Render
@@ -135,6 +149,9 @@ const TweetList = React.createClass({
 									this.handleRefreshActivate,
 									this.handleRefreshDeactivate,
 									this.handleRefreshStart,
+									this.handleRefreshActivateBottom,
+									this.handleRefreshDeactivateBottom,
+									this.handleRefreshStartBottom,
 								]
 							}
 						>

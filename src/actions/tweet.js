@@ -1,10 +1,11 @@
 import config from '../config'
 import axios from 'axios'
+import _ from 'underscore'
 
 export const LOAD_TWEET = ['LOAD_TWEET_REQUEST', 'LOAD_TWEET_SUCCESS', 'LOAD_TWEET_FAILURE'] 
 export const LOAD_TWEET_DETAIL_TIMELINE = ['LOAD_TWEET_DETAIL_TIMELINE_REQUEST', 'LOAD_TWEET_DETAIL_TIMELINE_SUCCESS', 'LOAD_TWEET_DETAIL_TIMELINE_FAILURE'] 
 
-export function fetchTweet(token, params={}, isFetchingTopTweet=true) {
+export function fetchTweet(token, params={}) {
     return {
         types: LOAD_TWEET,
         callAPI: () => axios.get(`${config.serverURL}/tweet/${token}/follow`, {
@@ -12,7 +13,7 @@ export function fetchTweet(token, params={}, isFetchingTopTweet=true) {
         }),
         payload: {
             timestamp: Date.now(),
-            isFetchingTopTweet,
+            isFetchingTopTweet: _.has(params, 'since_id'),
         },
     }
 }

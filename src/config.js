@@ -8,7 +8,7 @@ const config = _.extend({
 	debug: !isProduction,
 	serverURL: isProduction ? 'http://isomorphic-wb.oss-cn-hangzhou.aliyuncs.com' : "http://localhost:3154",
 }, isProduction ? {} : {
-	token: "2.00EXkndCnB1OwB4454f329dcCLyALC",
+	token: "2.00EXkndCCY6kPEe126ddd16avqo8PC",
 })
 
 export default config

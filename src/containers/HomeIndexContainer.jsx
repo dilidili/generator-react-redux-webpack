@@ -18,7 +18,9 @@ const HomeIndexComponent = React.createClass({
 
 	// Handler
 	handleFetchTop(){
-		this.props.fetchTweet(this.props.token)
+		this.props.fetchTweet(this.props.token, {
+			since_id: this.props.tweet.get(0).get('id')
+		})
 	},
 
 	// Render
