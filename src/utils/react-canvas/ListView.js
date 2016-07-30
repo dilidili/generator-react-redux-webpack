@@ -46,16 +46,16 @@ var ListView = React.createClass({
 
   componentWillReceiveProps(nextProps){
     if (this.props.isSpinningTop && !nextProps.isSpinningTop) {
-      this.scroller.finishPullToRefresh() 
+      this.scroller.finishPullToRefresh()
     }
 
     if (!_.isEqual(this.props.itemHeightArray, nextProps.itemHeightArray) || !_.isEqual(this.props.style, nextProps.style)) {
       DrawingUtils.invalidateAllBackingStores()
       this.updateScrollingDimensions(nextProps)
       this.updateScrollTopFrameArray(nextProps)
-      this.setState({
-        scrollTop: 0,
-      })
+
+      // scroll to the position where triggered pull-to-update event
+      this.scroller.scrollTo(0, this._accumulateToScrollTop[nextProps.itemHeightArray.length - this.props.itemHeightArray.length] + this.state.scrollTop)
     }
   },
 

@@ -63,6 +63,6 @@ function formatTweet(v) {
         like: Map({
             count: v.attitudes_count,
         }),
-        id: v.id + Math.random(),
+        id: v.id,
     })
 }
