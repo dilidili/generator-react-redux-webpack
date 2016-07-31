@@ -14,7 +14,9 @@ const TWEET_VIEW = "TWEET_VIEW"
 
 const HomeIndexComponent = React.createClass({
 	componentDidMount(){
-		this.props.fetchTweet(this.props.token)
+		if (!this.props.tweet.size) {
+			this.props.fetchTweet(this.props.token)
+		}
 	},
 
 	// Handler
