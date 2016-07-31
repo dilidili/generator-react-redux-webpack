@@ -83,7 +83,7 @@ var ListView = React.createClass({
   },
 
   renderItem: function (itemIndex) {
-    var item = this.props.itemGetter(itemIndex);
+    var item = this.props.itemGetter(itemIndex, this.state.scrollTop);
     var itemHeight = this.props.itemHeightArray[itemIndex];
     var style = {
       top: 0,

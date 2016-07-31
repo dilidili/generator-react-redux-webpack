@@ -1,10 +1,9 @@
 import React, {PropTypes} from 'react'
 import styles from './LoadingPage.scss'
 import {Logo} from 'svg'
-import {VelocityComponent} from 'velocity-react'
-import {velocityHelpers} from 'velocity-react'
+import {VelocityComponent, velocityHelpers} from 'velocity-react'
 
-const aniamtions = {
+const animation = {
 	loaded: velocityHelpers.registerEffect({
 		calls: [
 			[{
@@ -39,7 +38,7 @@ const LoadingComponent = React.createClass({
 		} = this.props
 
 		return <div className={styles.container}>
-			<VelocityComponent animation={isLoaded ? aniamtions.loaded : {}} complete={()=>{isLoaded && loadedCallback && loadedCallback()}}>
+			<VelocityComponent animation={isLoaded ? animation.loaded : {}} complete={()=>{isLoaded && loadedCallback && loadedCallback()}}>
 				<Logo fillColor='#fff'></Logo>				
 			</VelocityComponent>
 		</div>

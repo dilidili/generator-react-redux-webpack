@@ -7,13 +7,14 @@ const Image = React.createClass({
 		src: PropTypes.string.isRequired,
 		width: PropTypes.number,	
 		height: PropTypes.number,	
-		className: PropTypes.string,
+		useGray: PropTypes.bool,
 	},
 	getDefaultProps(){
 		return {
 			src: '',
 			width: 200,
 			height: 200,
+			useGray: true,
 		}
 	},
 	getInitialState(){
@@ -48,6 +49,7 @@ const Image = React.createClass({
 			left: -(scaledFrame[0]-this.props.width)/2,
 			width: scaledFrame[0],
 			height: scaledFrame[1],
+			opacity: 0,
 		}
 	},
 	getGrayStuffAnimation() {
@@ -74,15 +76,18 @@ const Image = React.createClass({
 			src,
 			width,
 			height,
+			useGray,
 		} = this.props
 		const imageStyle = this.getImageStyle()	
 
 		return (
-			<div className={this.props.className} style={{width: width, height: height, position: 'relative', overflow: 'hidden'}}>
+			<div style={{width: width, height: height, position: 'relative', overflow: 'hidden'}}>
 				{/* a gray div stuffs the contianer when image is unloaded */}
-				<VelocityComponent {...this.getGrayStuffAnimation()}>
-					<div className={this.props.className} style={{backgroundColor: '#efefef', position: 'absolute', zIndex:2}}></div>
-				</VelocityComponent>
+				{useGray?(
+					<VelocityComponent {...this.getGrayStuffAnimation()}>
+						<div style={{backgroundColor: '#efefef', position: 'absolute', zIndex:2}}></div>
+					</VelocityComponent>
+				):null}
 				<VelocityComponent {...this.getImageAnimation()}>
 					<img 
 						src={src} 
@@ -90,7 +95,6 @@ const Image = React.createClass({
 						height={height}
 						onLoad={this.handleLoad}
 						style={imageStyle}
-						className={this.props.className}
 					>
 					</img>
 				</VelocityComponent>

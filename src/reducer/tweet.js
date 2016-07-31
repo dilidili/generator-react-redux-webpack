@@ -57,6 +57,11 @@ function formatTweet(v) {
         timestamp: new Date(v.created_at),
         avatar: v.user.profile_image_url,
         retweeted: formatTweet(v.retweeted_status),
+        illustrations: (v.pic_urls && v.pic_urls.map(w => ({
+            thumb: w.thumbnail_pic,
+            middle: w.thumbnail_pic.replace('/thumbnail/', '/bmiddle/'),
+            origin: w.thumbnail_pic.replace('/thumbnail/', '/large/'),
+        }))) || [],
         retweet: Map({
             count: v.reposts_count,
         }),

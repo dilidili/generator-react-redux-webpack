@@ -17,9 +17,11 @@ const FONT_NORMAL = FontFace('Helvetica, sans-serif', null, {weight: 300})
 
 const Tweet = React.createClass({
 	propTypes: {
+		index: PropTypes.number.isRequired,
 		tweet: PropTypes.object.isRequired, // The content of this tweet.
 		style: PropTypes.object.isRequired, // The total style of this component, generated from Tweet.getTweetStyle.
 		handleClick: PropTypes.func.isRequired,
+		handleClickIllustration: PropTypes.func.isRequired,
 	},
 	mixins: [PureRenderMixin],
 	_touchClick: null, // For identifing the touch click and touch drag.
@@ -35,9 +37,10 @@ const Tweet = React.createClass({
 			const userNameStyle = getUserNameStyle(contentStyle)
 			const dateTimeStyle = getDateTimeStyle(contentStyle, presentTweet.get('timestamp'))
 			const tweetStyle = getTweetStyle(userNameStyle, contentStyle, presentTweet.get('tweet'))
+			const illustrationStyle = getIllustrationStyle(tweetStyle, contentStyle, presentTweet.get('illustrations'))
 
 			// compute container height, coz the height of textarea element needs metric to know their height.
-			contentStyle.height = tweetStyle.top + tweetStyle.height
+			contentStyle.height = illustrationStyle.top + illustrationStyle.height
 			const likeStyle = getLikeStyle(contentStyle)
 			containerStyle.height = likeStyle.top + likeStyle.height - 0.5*em
 
@@ -48,6 +51,7 @@ const Tweet = React.createClass({
 				userNameStyle,
 				dateTimeStyle,
 				tweetStyle,
+				illustrationStyle,
 				likeStyle,
 				retweetLabelStyle,
 			}
@@ -65,13 +69,43 @@ const Tweet = React.createClass({
 			this.props.handleClick(this.props.tweet.get('id'))
 		}
 	},
+	handleClickIllustration(illStyle, illustrations, illustrationIndex) {
+		const {
+			contentStyle
+		} = this.props.style
+
+		this.props.handleClickIllustration && this.props.handleClickIllustration({
+			top: contentStyle.translateY + illStyle.top,
+			left: contentStyle.translateX + illStyle.left,
+			width: illStyle.width,
+			height: illStyle.height,
+		}, this.props.index, illustrations, illustrationIndex)
+	},
 
 	// Render
+	renderIllustrations(illustrations){
+		const illStyle = this.props.style.illustrationStyle
+		switch(illustrations.length){
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+				return <Image style={illStyle} src={illustrations[0].thumb} onTouchStart={this.handleClickIllustration.bind(this, illStyle, illustrations, 0)}></Image>	
+			default:
+				return null
+		}
+	},
 	render: function(){
 		const {
 			style,
 			tweet,
 		} = this.props
+
 		// When there is a Tweet that retweet another Tweet, show the one retweeted.
 		const isRetweeted = !!tweet.get('retweeted')
 		const presentTweet = isRetweeted?tweet.get('retweeted'):tweet
@@ -82,6 +116,8 @@ const Tweet = React.createClass({
 	        	<Text style={style.userNameStyle}>{presentTweet.get('user')}</Text>
 	        	<Text style={style.dateTimeStyle}>{moment(tweet.get('timestamp')).fromNow()}</Text>
 	        	<Text style={style.tweetStyle}>{presentTweet.get('tweet')}</Text>
+
+		        {this.renderIllustrations(presentTweet.get('illustrations'))}
 	        </Group>
 	        <SpriteImage style={style.likeStyle} src={likeImage} frameCount={29} useBackingStore={true}></SpriteImage>
 		</Group>
@@ -174,6 +210,17 @@ function getTweetStyle(userNameStyle, contentStyle, tweet){
 		fontFace: FONT_NORMAL,
 		fontSize,
 		lineHeight,
+	}
+}
+function getIllustrationStyle(tweetStyle, contentStyle, illustrations){
+	return {
+		top: tweetStyle.top + tweetStyle.height + 0.6 * em,
+		left: 0,
+		width: contentStyle.width,
+		height: illustrations.length ? 10 * em : 0,
+		backgroundColor: "#eee",
+		borderRadius: 5,
+		borderColor: "#eee",
 	}
 }
 function getLikeStyle(contentStyle){

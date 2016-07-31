@@ -7,6 +7,7 @@ import ListView from 'react-canvas/ListView'
 import {VelocityComponent} from 'velocity-react'
 import Spinner from '../common/Spinner'
 import styles from './TweetList.scss'
+import ImageViewer from './ImageViewer'
 
 // const defaultList = {
 // 	list: _.map(_.range(50), () => ({
@@ -60,7 +61,9 @@ const TweetList = React.createClass({
 		}
 	},
 	getInitialState: function(){
-		return this.computeStyleFromProps(this.props)
+		return _.extend(this.computeStyleFromProps(this.props), {
+			imageViewerStyle: null, // imageViewerStyle's existing indicates to render an ImageViewer for some pictures
+		})
 	},
 	componentWillReceiveProps(nextProps){
 		this.setState(this.computeStyleFromProps(nextProps))
@@ -73,6 +76,7 @@ const TweetList = React.createClass({
 			height: window.contentHeight,
 		}
 	},
+	_scrollTop: 0,
 
 	// Utils
 	computeStyleFromProps(props){
@@ -106,15 +110,31 @@ const TweetList = React.createClass({
 		// console.log('bottomStart')
 		this.props.handleFetchTweet(false)
 	},
+	handleClickIllustration(frameTweet, index, src, defaultSrcIndex){
+		this.setState({
+			imageViewerStyle: {
+				top: frameTweet.top - this._scrollTop + _.reduce(_.range(index).map(v => this.state.tweetsStyle.get(v).containerStyle.height), (memo, num) => (memo + num), 0),
+				left: frameTweet.left,
+				width: frameTweet.width,
+				height: frameTweet.height,
+				defaultSrcIndex,
+				src,
+			},
+		})
+	},
 
 	// Render
-	renderTweet: function(index){
+	renderTweet: function(index, scrollTop){
+		this._scrollTop = scrollTop
+
 	    return (
 			<Tweet 
 				key={index} 
+				index={index} 
 				tweet={this.props.list.get(index)} 
 				style={this.state.tweetsStyle.get(index)} 
 				handleClick={this.handleClickTweet}
+				handleClickIllustration={this.handleClickIllustration}
 			/>
 	    )
 	},
@@ -165,6 +185,8 @@ const TweetList = React.createClass({
 
 					{/* Spinner on the top banner */}
 					<Spinner className={styles.spinnerBottom} stopped={!isSpinningBottom}></Spinner>
+
+					{this.state.imageViewerStyle?<ImageViewer style={this.state.imageViewerStyle}></ImageViewer>:null}
 				</div>
 			</VelocityComponent>
 		)

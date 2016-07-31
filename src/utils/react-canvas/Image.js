@@ -47,7 +47,8 @@ var Image = React.createClass({
     style: React.PropTypes.object,
     useBackingStore: React.PropTypes.bool,
     fadeIn: React.PropTypes.bool,
-    fadeInDuration: React.PropTypes.number
+    fadeInDuration: React.PropTypes.number,
+    onTouchStart: React.PropTypes.func,
   },
 
   getInitialState: function () {
@@ -119,7 +120,7 @@ var Image = React.createClass({
     backgroundStyle.alpha = clamp(1 - this.state.imageAlpha, 0, 1);
 
     return (
-      React.createElement(Group, {ref: 'main', style: style},
+      React.createElement(Group, {ref: 'main', style: style, onTouchStart: this.props.onTouchStart},
         React.createElement(Layer, {ref: 'background', style: backgroundStyle}),
         React.createElement(RawImage, {ref: 'image', src: this.props.src, style: imageStyle, useBackingStore: useBackingStore})
       )
