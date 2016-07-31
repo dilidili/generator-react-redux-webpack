@@ -1,12 +1,13 @@
 import React from 'react'
 import styles from './Header.scss'
-import {Logo} from 'svg'
 
 const Header = React.createClass({
 	render: function(){
 		return (
 			<div className={styles.container}>
-				<Logo></Logo>
+				{this.props.renderHeaderLeft('headerLeft')}
+				{this.props.renderHeaderCenter('headerCenter')}
+				<span></span>
 			</div>
 		)
 	},

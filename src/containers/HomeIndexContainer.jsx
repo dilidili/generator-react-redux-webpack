@@ -6,6 +6,7 @@ import Header from '../components/homeindex/Header'
 import TweetList from '../components/homeindex/TweetList'
 import TweetDetail from '../containers/homeindex/TweetDetail'
 import {push} from 'redux-router'
+import {Logo, Back} from 'svg'
 import _ from 'underscore'
 
 const LIST_VIEW = "LIST_VIEW"
@@ -30,6 +31,24 @@ const HomeIndexComponent = React.createClass({
 	},
 
 	// Render
+	renderHeaderCenter(className){
+		switch(this.props.currentView[0]){
+			case TWEET_VIEW:
+				return <p className={className}>Tweet</p>
+			case LIST_VIEW:
+				return <Logo className={className}></Logo>
+			default:
+				return <span></span>
+		}
+	},
+	renderHeaderLeft(className){
+		switch(this.props.currentView[0]){
+			case TWEET_VIEW:
+				return <span onTouchStart={()=>{this.props.push('/home')}}><Back className={className}></Back></span>
+			default:
+				return <span></span>
+		}
+	},
 	render: function(){
 		const {
 			currentView,
@@ -42,7 +61,7 @@ const HomeIndexComponent = React.createClass({
 
 		return (
 			<div>
-				<Header></Header>
+				<Header renderHeaderLeft={this.renderHeaderLeft} renderHeaderCenter={this.renderHeaderCenter}></Header>
 				<div style={{height: window.contentHeight, position: 'relative'}}>
 					<TweetList list={tweet} push={push} isPresent={currentView[0]===LIST_VIEW} handleFetchTweet={this.handleFetchTweet} isSpinningTop={isSpinningTop} isSpinningBottom={isSpinningBottom}></TweetList>
 					<TweetDetail tid={currentView[1]} isPresent={currentView[0]===TWEET_VIEW}></TweetDetail>

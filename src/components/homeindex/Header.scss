@@ -8,11 +8,24 @@
 	border-bottom: $border-dark;
 
 	display: flex;	
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
+	padding: 0 0.6em;
+	padding-top: .2em;
 
-	svg{
+	svg.headerCenter{
 		width: 2.1em;
 		height: 2.1em;
 	}
+	p.headerCenter{
+		@extend .u-bold-font;
+		font-size: 1.3em;
+	}
+
+
+	svg.headerLeft{
+		width: 1.4em;
+		height: 1.4em;
+	}
+
 }
