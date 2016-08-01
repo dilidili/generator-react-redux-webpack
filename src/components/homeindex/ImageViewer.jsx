@@ -2,7 +2,10 @@ import React, {PropTypes} from 'react'
 import styles from './ImageViewer.scss'
 import _ from 'underscore'
 import Image from '../common/Image'
-import {velocityHelpers} from 'velocity-react'
+import {velocityHelpers, VelocityComponent} from 'velocity-react'
+
+// frame of image container
+const IMAGE_CONTAINER_FRAME = [window.innerWidth, window.innerHeight - window.fontSize * 8]
 
 const ImageViwer = React.createClass({
 	propTypes: {
@@ -10,29 +13,32 @@ const ImageViwer = React.createClass({
 		srcList: PropTypes.object.isRequired,
 		defaultIndex: PropTypes.number.isRequired,
 	},
+	getInitialState(){
+		return {
+			isPresent: false,
+		}
+	},
 
 	// Getter
 	getLoadedAnimation(imageWidth, imageHeight, imageLeft, imageTop){
 		const {appearFrame} = this.props
 		let imageTransformation
-		// const deltaTop = window.innerWidth / 2 - appearFrame.get('left') - imageWidth / 2
-		// const deltaLeft = window.innerHeight / 2 - appearFrame.get('top') - imageHeight / 2
 
-		if (imageWidth > imageHeight) {
-			const scale = window.innerWidth / imageWidth
+		if (imageWidth / imageHeight > IMAGE_CONTAINER_FRAME[0] / IMAGE_CONTAINER_FRAME[1]) {
+			const scale = IMAGE_CONTAINER_FRAME[0] / imageWidth
 			imageTransformation = {
-				width: window.innerWidth,
+				width: IMAGE_CONTAINER_FRAME[0],
 				height: scale * imageHeight,
-				top: window.innerHeight / 2 - scale * imageHeight / 2,
+				top: IMAGE_CONTAINER_FRAME[1] / 2 - scale * imageHeight / 2,
 				left: 0,
 			}
 		} else {
-			const scale = window.innerHeight / imageHeight
+			const scale = IMAGE_CONTAINER_FRAME[1] / imageHeight
 			imageTransformation = {
-				height: window.innerHeight,
-				width: window.innerWidth * scale,
+				height: IMAGE_CONTAINER_FRAME[1],
+				width: imageWidth * scale,
 				top: 0,
-				left: window.innerWidth / 2 - scale * imageWidth / 2,
+				left: IMAGE_CONTAINER_FRAME[0] / 2 - scale * imageWidth / 2,
 			}
 		}
 
@@ -57,15 +63,25 @@ const ImageViwer = React.createClass({
 	getContainerLoadedAnimation(){
 		return {
 			animation: {
+				top: window.innerHeight/2 - IMAGE_CONTAINER_FRAME[1]/2,
 				left: 0,
-				top: 0,
-				width: window.innerWidth,
-				height: window.innerHeight,
+				width: IMAGE_CONTAINER_FRAME[0],
+				height: IMAGE_CONTAINER_FRAME[1],
 			},
 			duration: 350,
 			delay: 300,
 			runOnMount: true,
 		}
+	},
+	getBackgroundColorAnimation() {
+		return this.state.isPresent ? {
+			animation: {
+				opacity: 1,
+			},
+			duration: 250,
+			delay: 200,
+			runOnMount: true,
+		} : null
 	},
 
 	// Renderer
@@ -78,17 +94,22 @@ const ImageViwer = React.createClass({
 
 		return (
 			// Full screen image viewer
-			<div className={styles.container} style={{top:-window.headerHeight, left:0, width: window.innerWidth, height: window.innerHeight}}>
-				<Image 
-					src={srcList.getIn([defaultIndex, 'middle'])} 
-					width={appearFrame.get('width')} 
-					height={appearFrame.get('height')} 
-					useGray={false} 
-					style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
-					getLoadedAnimation={this.getLoadedAnimation}	
-					getContainerLoadedAnimation={this.getContainerLoadedAnimation}
-				/>
-			</div>
+				<div className={styles.container} style={{top:-window.headerHeight, left:0, width: window.innerWidth, height: window.innerHeight}}>
+					<VelocityComponent {...this.getBackgroundColorAnimation()}>
+						<div className={styles.blackOverlay}></div>
+					</VelocityComponent>
+
+					<Image 
+						src={srcList.getIn([defaultIndex, 'middle'])} 
+						width={appearFrame.get('width')} 
+						height={appearFrame.get('height')} 
+						useGray={false} 
+						style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
+						getLoadedAnimation={this.getLoadedAnimation}	
+						getContainerLoadedAnimation={this.getContainerLoadedAnimation}
+						handleLoad={()=>{this.setState({isPresent:true})}}
+					/>
+				</div>
 		)
 	},
 })

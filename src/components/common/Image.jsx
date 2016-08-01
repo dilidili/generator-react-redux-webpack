@@ -11,6 +11,7 @@ const Image = React.createClass({
 		style: PropTypes.object,
 		getLoadedAnimation: PropTypes.func,
 		getContainerLoadedAnimation: PropTypes.func,
+		handleLoad: PropTypes.func,
 	},
 	getDefaultProps(){
 		return {
@@ -33,6 +34,8 @@ const Image = React.createClass({
 	handleLoad(evt){
 		this._naturalWidth = evt.target.naturalWidth
 		this._naturalHeight = evt.target.naturalHeight
+
+		this.props.handleLoad && this.props.handleLoad()
 		this.setState({
 			imageLoaded: true,
 		})
