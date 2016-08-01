@@ -2,11 +2,13 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {fetchTweet} from '../actions/tweet'
+import {viewImage} from '../actions/homeindex'
 import Header from '../components/homeindex/Header'
 import TweetList from '../components/homeindex/TweetList'
 import TweetDetail from '../containers/homeindex/TweetDetail'
 import {push} from 'redux-router'
 import {Logo, Back} from 'svg'
+import ImageViewer from '../components/homeindex/ImageViewer'
 import _ from 'underscore'
 
 const LIST_VIEW = "LIST_VIEW"
@@ -59,14 +61,16 @@ const HomeIndexComponent = React.createClass({
 			fetchTweet,
 			push,
 			tweet,
+			imageViewerData,
+			viewImage,
 		} = this.props
-
 		return (
 			<div>
 				<Header renderHeaderLeft={this.renderHeaderLeft} renderHeaderCenter={this.renderHeaderCenter}></Header>
 				<div style={{height: window.contentHeight, position: 'relative'}}>
-					<TweetList list={tweet} push={push} isPresent={currentView[0]===LIST_VIEW} handleFetchTweet={this.handleFetchTweet} isSpinningTop={isSpinningTop} isSpinningBottom={isSpinningBottom}></TweetList>
+					<TweetList list={tweet} push={push} isPresent={currentView[0]===LIST_VIEW} handleFetchTweet={this.handleFetchTweet} isSpinningTop={isSpinningTop} isSpinningBottom={isSpinningBottom} viewImage={viewImage}></TweetList>
 					<TweetDetail tid={currentView[1]} isPresent={currentView[0]===TWEET_VIEW}></TweetDetail>
+					{imageViewerData.get('srcList').size?<ImageViewer appearFrame={imageViewerData.get('frame')} srcList={imageViewerData.get('srcList')} defaultIndex={imageViewerData.get('defaultIndex')}></ImageViewer>:null}
 				</div>
 			</div>
 		)
@@ -89,6 +93,7 @@ function mapStateToProps(state){
 		token: state.getIn(['user', 'token']),
 		isSpinningTop: state.getIn(['tweet', 'isListTopLoading']),
 		isSpinningBottom: state.getIn(['tweet', 'isListBottomLoading']),
+		imageViewerData: state.getIn(['homeindex', 'imageViewerData']),
 		currentView, // as [THE_PRESENT_VIEW, data]
     }
 }
@@ -96,6 +101,7 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch){
     return {
 		fetchTweet: bindActionCreators(fetchTweet, dispatch),
+		viewImage: bindActionCreators(viewImage, dispatch),
 		push: bindActionCreators(push, dispatch),
     }
 }

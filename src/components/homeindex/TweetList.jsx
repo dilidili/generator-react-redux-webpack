@@ -7,7 +7,6 @@ import ListView from 'react-canvas/ListView'
 import {VelocityComponent} from 'velocity-react'
 import Spinner from '../common/Spinner'
 import styles from './TweetList.scss'
-import ImageViewer from './ImageViewer'
 
 // const defaultList = {
 // 	list: _.map(_.range(50), () => ({
@@ -48,9 +47,10 @@ const TweetList = React.createClass({
 		push: PropTypes.func.isRequired,
 		handleFetchTweet: PropTypes.func.isRequired,
 		list: PropTypes.object,
-		isPresent: PropTypes.bool, 
+		isPresent: PropTypes.bool,
 		isSpinningTop: PropTypes.bool,
 		isSpinningBottom: PropTypes.bool,
+		viewImage: PropTypes.func.isRequired,
 	},
 	getDefaultProps: function(){
 		return {
@@ -61,9 +61,7 @@ const TweetList = React.createClass({
 		}
 	},
 	getInitialState: function(){
-		return _.extend(this.computeStyleFromProps(this.props), {
-			imageViewerStyle: null, // imageViewerStyle's existing indicates to render an ImageViewer for some pictures
-		})
+		return this.computeStyleFromProps(this.props)
 	},
 	componentWillReceiveProps(nextProps){
 		this.setState(this.computeStyleFromProps(nextProps))
@@ -111,15 +109,15 @@ const TweetList = React.createClass({
 		this.props.handleFetchTweet(false)
 	},
 	handleClickIllustration(frameTweet, index, src, defaultSrcIndex){
-		this.setState({
-			imageViewerStyle: {
+		this.props.viewImage({
+			frame: {
 				top: frameTweet.top - this._scrollTop + _.reduce(_.range(index).map(v => this.state.tweetsStyle.get(v).containerStyle.height), (memo, num) => (memo + num), 0),
 				left: frameTweet.left,
 				width: frameTweet.width,
 				height: frameTweet.height,
-				defaultSrcIndex,
-				src,
 			},
+			srcList: src,
+			defaultIndex: defaultSrcIndex,
 		})
 	},
 
@@ -185,8 +183,6 @@ const TweetList = React.createClass({
 
 					{/* Spinner on the top banner */}
 					<Spinner className={styles.spinnerBottom} stopped={!isSpinningBottom}></Spinner>
-
-					{this.state.imageViewerStyle?<ImageViewer style={this.state.imageViewerStyle}></ImageViewer>:null}
 				</div>
 			</VelocityComponent>
 		)

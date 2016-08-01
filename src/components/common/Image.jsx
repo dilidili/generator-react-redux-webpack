@@ -8,6 +8,9 @@ const Image = React.createClass({
 		width: PropTypes.number,	
 		height: PropTypes.number,	
 		useGray: PropTypes.bool,
+		style: PropTypes.object,
+		getLoadedAnimation: PropTypes.func,
+		getContainerLoadedAnimation: PropTypes.func,
 	},
 	getDefaultProps(){
 		return {
@@ -15,6 +18,7 @@ const Image = React.createClass({
 			width: 200,
 			height: 200,
 			useGray: true,
+			style: {},
 		}
 	},
 	getInitialState(){
@@ -25,6 +29,7 @@ const Image = React.createClass({
 	_natrualWidth: 0,
 	_natrualHeight: 0,
 
+	// Handler
 	handleLoad(evt){
 		this._naturalWidth = evt.target.naturalWidth
 		this._naturalHeight = evt.target.naturalHeight
@@ -35,6 +40,7 @@ const Image = React.createClass({
 	getImageStyle(){
 		if (!this.state.imageLoaded) {
 			return {
+				opacity: 0,
 				display: 'hidden'
 			}
 		}
@@ -61,8 +67,8 @@ const Image = React.createClass({
 			runOnMount: true,
 		} : null
 	},
-	getImageAnimation() {
-		return this.state.imageLoaded ? {
+	getImageAnimation(imageStyle) {
+		return this.state.imageLoaded ? this.props.getLoadedAnimation && this.props.getLoadedAnimation(imageStyle.width, imageStyle.height, imageStyle.left, imageStyle.top) || {
 			animation: {
 				opacity: [1, 0],
 			},
@@ -70,35 +76,42 @@ const Image = React.createClass({
 			runOnMount: true,
 		} : null
 	},
-
+	getContainerLoadedAnimation() {
+		return this.state.imageLoaded ? this.props.getContainerLoadedAnimation && this.props.getContainerLoadedAnimation() || null : null
+	},
+	
+	// Renderer
 	render(){
 		const {
 			src,
 			width,
 			height,
 			useGray,
+			style,
 		} = this.props
-		const imageStyle = this.getImageStyle()	
+		const imageStyle = this.getImageStyle()
 
 		return (
-			<div style={{width: width, height: height, position: 'relative', overflow: 'hidden'}}>
-				{/* a gray div stuffs the contianer when image is unloaded */}
-				{useGray?(
-					<VelocityComponent {...this.getGrayStuffAnimation()}>
-						<div style={{backgroundColor: '#efefef', position: 'absolute', zIndex:2}}></div>
+			<VelocityComponent {...this.getContainerLoadedAnimation()}>
+				<div style={_.extend({width: width, height: height, position: 'relative', overflow: 'hidden', margin:0}, style)}>
+					{/* a gray div stuffs the contianer when image is unloaded */}
+					{useGray?(
+						<VelocityComponent {...this.getGrayStuffAnimation()}>
+							<div style={{backgroundColor: '#efefef', position: 'absolute', zIndex:2}}></div>
+						</VelocityComponent>
+					):null}
+					<VelocityComponent {...this.getImageAnimation(imageStyle)}>
+						<img 
+							src={src} 
+							width={width} 
+							height={height}
+							onLoad={this.handleLoad}
+							style={imageStyle}
+						>
+						</img>
 					</VelocityComponent>
-				):null}
-				<VelocityComponent {...this.getImageAnimation()}>
-					<img 
-						src={src} 
-						width={width} 
-						height={height}
-						onLoad={this.handleLoad}
-						style={imageStyle}
-					>
-					</img>
-				</VelocityComponent>
-			</div>
+				</div>
+			</VelocityComponent>
 		)
 	},
 })

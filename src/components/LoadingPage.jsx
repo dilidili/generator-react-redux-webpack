@@ -38,7 +38,7 @@ const LoadingComponent = React.createClass({
 		} = this.props
 
 		return <div className={styles.container}>
-			<VelocityComponent animation={isLoaded ? animation.loaded : {}} complete={()=>{isLoaded && loadedCallback && loadedCallback()}}>
+			<VelocityComponent animation={isLoaded ? animation.loaded : null} complete={()=>{isLoaded && loadedCallback && loadedCallback()}}>
 				<Logo fillColor='#fff'></Logo>				
 			</VelocityComponent>
 		</div>
