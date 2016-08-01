@@ -23,10 +23,27 @@
     -webkit-font-smoothing: antialiased;
 }
 
+.Icon--like:before{
+    content: "\f148";
+}
+
+
+.Icon--other:before{
+    content: "\f150";
+}
+
 .Icon--retweet:before{
     content: "\f152";
 }
 
+.Icon--reply:before{
+    content: "\f151";
+}
+
 .Icon--follow:before{
     content: "\f175";
+}
+
+.Icon--close:before{
+    content: "\f045";
 }

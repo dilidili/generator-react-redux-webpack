@@ -4,9 +4,11 @@ import {VelocityComponent} from 'velocity-react'
 
 const Image = React.createClass({
 	propTypes: {
+		// Base
 		src: PropTypes.string.isRequired,
 		width: PropTypes.number,	
 		height: PropTypes.number,	
+
 		useGray: PropTypes.bool,
 		style: PropTypes.object,
 		getLoadedAnimation: PropTypes.func,

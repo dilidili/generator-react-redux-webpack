@@ -12,6 +12,7 @@ const ImageViwer = React.createClass({
 		appearFrame: PropTypes.object.isRequired,
 		srcList: PropTypes.object.isRequired,
 		defaultIndex: PropTypes.number.isRequired,
+		handClose: PropTypes.func.isRequired,
 	},
 	getInitialState(){
 		return {
@@ -42,7 +43,7 @@ const ImageViwer = React.createClass({
 			}
 		}
 
-		return {
+		return this.state.isPresent?{
 			animation: velocityHelpers.registerEffect({
 				calls: [
 					// appear from invisibility 
@@ -58,18 +59,41 @@ const ImageViwer = React.createClass({
 				],
 			}),
 			runOnMount: true,
+		}: {
+			animation: {
+				width: imageWidth,
+				height: imageHeight,
+				left: imageLeft,
+				top: imageTop,
+			},
+			runOnMount: true,
+			duration: 350,
+
+			// Close the image viewer
+			complete: () => {
+				this.props.handClose()
+			},
 		}
 	},
 	getContainerLoadedAnimation(){
-		return {
+		return this.state.isPresent ? {
 			animation: {
-				top: window.innerHeight/2 - IMAGE_CONTAINER_FRAME[1]/2,
+				top: window.innerHeight / 2 - IMAGE_CONTAINER_FRAME[1] / 2,
 				left: 0,
 				width: IMAGE_CONTAINER_FRAME[0],
 				height: IMAGE_CONTAINER_FRAME[1],
 			},
 			duration: 350,
 			delay: 300,
+			runOnMount: true,
+		} : {
+			animation: {
+				top: this.props.appearFrame.get('top') + window.headerHeight,
+				left: this.props.appearFrame.get('left'),
+				width: this.props.appearFrame.get('width'),
+				height: this.props.appearFrame.get('height'),
+			},
+			duration: 350,
 			runOnMount: true,
 		}
 	},
@@ -81,7 +105,21 @@ const ImageViwer = React.createClass({
 			duration: 250,
 			delay: 200,
 			runOnMount: true,
-		} : null
+		} : {
+			animation: {
+				opacity: 0,
+			},
+			duration: 250,
+			delay: 200,
+			runOnMount: true,
+		}
+	},
+
+	// Handler
+	handleClose(){
+		this.setState({
+			isPresent: false,
+		})
 	},
 
 	// Renderer
@@ -94,22 +132,36 @@ const ImageViwer = React.createClass({
 
 		return (
 			// Full screen image viewer
-				<div className={styles.container} style={{top:-window.headerHeight, left:0, width: window.innerWidth, height: window.innerHeight}}>
-					<VelocityComponent {...this.getBackgroundColorAnimation()}>
-						<div className={styles.blackOverlay}></div>
-					</VelocityComponent>
+			<div className={styles.container}
+				style={{top:-window.headerHeight, left:0, width: window.innerWidth, height: window.innerHeight}}
+				onTouchStart={this.handleTouchStart}
+				onTouchMove={this.handleTouchMove}
+				onTouchEnd={this.handleTouchEnd}
+			>
+				<VelocityComponent {...this.getBackgroundColorAnimation()}>
+					<div className={styles.blackOverlay}>
+						<span className={`Icon--close Icon ${styles.close}`} onClick={this.handleClose}></span>	
 
-					<Image 
-						src={srcList.getIn([defaultIndex, 'middle'])} 
-						width={appearFrame.get('width')} 
-						height={appearFrame.get('height')} 
-						useGray={false} 
-						style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
-						getLoadedAnimation={this.getLoadedAnimation}	
-						getContainerLoadedAnimation={this.getContainerLoadedAnimation}
-						handleLoad={()=>{this.setState({isPresent:true})}}
-					/>
-				</div>
+						<div className={styles.footerButton}>
+							<span className={`Icon--reply Icon`}></span>	
+							<span className={`Icon--retweet Icon`}></span>	
+							<span className={`Icon--like Icon`}></span>	
+							<span className={`Icon--other Icon`}></span>	
+						</div>
+					</div>
+				</VelocityComponent>
+
+				<Image 
+					src={srcList.getIn([defaultIndex, 'middle'])} 
+					width={appearFrame.get('width')} 
+					height={appearFrame.get('height')} 
+					useGray={false} 
+					style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
+					getLoadedAnimation={this.getLoadedAnimation}	
+					getContainerLoadedAnimation={this.getContainerLoadedAnimation}
+					handleLoad={()=>{this.setState({isPresent:true})}}
+				/>
+			</div>
 		)
 	},
 })

@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {fetchTweet} from '../actions/tweet'
-import {viewImage} from '../actions/homeindex'
+import {viewImage, closeImage} from '../actions/homeindex'
 import Header from '../components/homeindex/Header'
 import TweetList from '../components/homeindex/TweetList'
 import TweetDetail from '../containers/homeindex/TweetDetail'
@@ -63,6 +63,7 @@ const HomeIndexComponent = React.createClass({
 			tweet,
 			imageViewerData,
 			viewImage,
+			handCloseImageViewer,
 		} = this.props
 		return (
 			<div>
@@ -70,7 +71,7 @@ const HomeIndexComponent = React.createClass({
 				<div style={{height: window.contentHeight, position: 'relative'}}>
 					<TweetList list={tweet} push={push} isPresent={currentView[0]===LIST_VIEW} handleFetchTweet={this.handleFetchTweet} isSpinningTop={isSpinningTop} isSpinningBottom={isSpinningBottom} viewImage={viewImage}></TweetList>
 					<TweetDetail tid={currentView[1]} isPresent={currentView[0]===TWEET_VIEW}></TweetDetail>
-					{imageViewerData.get('srcList').size?<ImageViewer appearFrame={imageViewerData.get('frame')} srcList={imageViewerData.get('srcList')} defaultIndex={imageViewerData.get('defaultIndex')}></ImageViewer>:null}
+					{imageViewerData.get('srcList').size?<ImageViewer appearFrame={imageViewerData.get('frame')} srcList={imageViewerData.get('srcList')} defaultIndex={imageViewerData.get('defaultIndex')} handClose={handCloseImageViewer}></ImageViewer>:null}
 				</div>
 			</div>
 		)
@@ -103,6 +104,7 @@ function mapDispatchToProps(dispatch){
 		fetchTweet: bindActionCreators(fetchTweet, dispatch),
 		viewImage: bindActionCreators(viewImage, dispatch),
 		push: bindActionCreators(push, dispatch),
+		handCloseImageViewer: bindActionCreators(closeImage, dispatch),
     }
 }
 
