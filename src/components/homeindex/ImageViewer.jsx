@@ -65,6 +65,7 @@ const ImageViwer = React.createClass({
 				height: imageHeight,
 				left: imageLeft,
 				top: imageTop,
+				opacity: 0,
 			},
 			runOnMount: true,
 			duration: 350,
@@ -84,7 +85,7 @@ const ImageViwer = React.createClass({
 				height: IMAGE_CONTAINER_FRAME[1],
 			},
 			duration: 350,
-			delay: 300,
+			delay: 100,
 			runOnMount: true,
 		} : {
 			animation: {
@@ -103,14 +104,13 @@ const ImageViwer = React.createClass({
 				opacity: 1,
 			},
 			duration: 250,
-			delay: 200,
+			delay: 100,
 			runOnMount: true,
 		} : {
 			animation: {
 				opacity: 0,
 			},
 			duration: 250,
-			delay: 200,
 			runOnMount: true,
 		}
 	},
