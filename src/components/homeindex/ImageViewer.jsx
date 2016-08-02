@@ -119,6 +119,44 @@ const ImageViwer = React.createClass({
 	},
 
 	// Renderer
+	renderImageGallery(){
+		const defaultIndex = this.props.defaultIndex
+
+		return <div className={styles.imageGallery} style={{width: window.innerWidth * srcList.size, height: window.innerHeight}}>
+			{this.props.srcList.map((srcList, index)=>{
+				// the entry image
+				if (index === defaultIndex) {
+					return <div style={{width: window.innerWidth, height: window.innerHeight, position: 'absolute', top: 0, left: }}>
+						<Image 
+							src={srcList.getIn([index, 'middle'])} 
+							width={appearFrame.get('width')} 
+							height={appearFrame.get('height')} 
+							useGray={false} 
+							style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
+							getLoadedAnimation={this.getLoadedAnimation}	
+							getContainerLoadedAnimation={this.getContainerLoadedAnimation}
+							handleLoad={()=>{this.setState({isPresent:true})}}
+						/>
+					</div>
+				}else{
+					return <div style={{width: window.innerWidth, height: window.innerHeight}}>
+						<Image
+							src={srcList.getIn([index, 'middle'])} 
+							width={appearFrame.get('width')} 
+							height={appearFrame.get('height')} 
+							useGray={false} 
+							style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
+							getLoadedAnimation={this.getLoadedAnimation}	
+							getContainerLoadedAnimation={this.getContainerLoadedAnimation}
+							handleLoad={()=>{this.setState({isPresent:true})}}
+						>
+						</Image> 
+					</div>
+				}
+			})}	
+		</div>	
+	},
+
 	render: function() {
 		const {
 			appearFrame,
@@ -147,6 +185,7 @@ const ImageViwer = React.createClass({
 					</div>
 				</VelocityComponent>
 
+				{this.renderImageGallery()}
 				<Image 
 					src={srcList.getIn([defaultIndex, 'middle'])} 
 					width={appearFrame.get('width')} 
