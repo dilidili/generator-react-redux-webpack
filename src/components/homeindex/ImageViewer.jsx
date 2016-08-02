@@ -117,44 +117,76 @@ const ImageViwer = React.createClass({
 			isPresent: false,
 		})
 	},
+	handleImageLoaded(){
+		this.setState({
+			isPresent: true
+		})
+	},
+	handleTouchOverlayStart(evt){
+		console.log('touch start')
+		this.setState({
+			touchStartX: evt.touches[0].clientX,
+		})
+	},
+	handleTouchOverlayMove(evt){
+		console.log('touch move')
+	},
+	handleTouchOverlayEnd(evt){
+		console.log('touch end')
+	},
 
 	// Renderer
 	renderImageGallery(){
-		const defaultIndex = this.props.defaultIndex
+		const {
+			defaultIndex,
+			srcList,
+			appearFrame,
+		} = this.props
 
-		return <div className={styles.imageGallery} style={{width: window.innerWidth * srcList.size, height: window.innerHeight}}>
-			{this.props.srcList.map((srcList, index)=>{
-				// the entry image
-				if (index === defaultIndex) {
-					return <div style={{width: window.innerWidth, height: window.innerHeight, position: 'absolute', top: 0, left: }}>
-						<Image 
-							src={srcList.getIn([index, 'middle'])} 
-							width={appearFrame.get('width')} 
-							height={appearFrame.get('height')} 
-							useGray={false} 
-							style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
-							getLoadedAnimation={this.getLoadedAnimation}	
-							getContainerLoadedAnimation={this.getContainerLoadedAnimation}
-							handleLoad={()=>{this.setState({isPresent:true})}}
-						/>
-					</div>
-				}else{
-					return <div style={{width: window.innerWidth, height: window.innerHeight}}>
-						<Image
-							src={srcList.getIn([index, 'middle'])} 
-							width={appearFrame.get('width')} 
-							height={appearFrame.get('height')} 
-							useGray={false} 
-							style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
-							getLoadedAnimation={this.getLoadedAnimation}	
-							getContainerLoadedAnimation={this.getContainerLoadedAnimation}
-							handleLoad={()=>{this.setState({isPresent:true})}}
-						>
-						</Image> 
-					</div>
-				}
-			})}	
-		</div>	
+		return (
+			<div 
+				className={styles.imageGallery} 
+				style={{width: window.innerWidth * srcList.size, height: 0}}
+				onTouchStart={this.handleTouchOverlayStart}
+				onTouchMove={this.handleTouchOverlayMove}
+				onTouchEnd={this.handleTouchOverlayEnd}
+			>
+				{srcList.map((src, index)=>{
+					// the entry image
+					if (index === defaultIndex) {
+						return <div key={index} style={{width: 0, height: 0, position: 'absolute', top: 0, left: 0}}>
+							<Image 
+								src={src.get('middle')} 
+								width={appearFrame.get('width')} 
+								height={appearFrame.get('height')} 
+								useGray={false} 
+								style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
+								getLoadedAnimation={this.getLoadedAnimation}	
+								getContainerLoadedAnimation={this.getContainerLoadedAnimation}
+								handleLoad={this.handleImageLoaded}
+								toggleRender={this.state.isPresent}
+							/>
+						</div>
+					}else{
+						return <div key={index} style={{width: 0, height: 0, position: 'absolute', top: 0, left: (index-defaultIndex)*window.innerWidth}}>
+							<Image
+								src={src.get('middle')} 
+								width={appearFrame.get('width')} 
+								height={appearFrame.get('height')} 
+								useGray={false} 
+								style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
+								getLoadedAnimation={this.getLoadedAnimation}	
+								getContainerLoadedAnimation={this.getContainerLoadedAnimation}
+								handleLoad={()=>{this.setState({isPresent:true})}}
+								toggleRender={this.state.isPresent}
+							>
+							</Image> 
+						</div>
+						return null
+					}
+				})}	
+			</div>	
+		)
 	},
 
 	render: function() {
@@ -173,7 +205,9 @@ const ImageViwer = React.createClass({
 				onTouchEnd={this.handleTouchEnd}
 			>
 				<VelocityComponent {...this.getBackgroundColorAnimation()}>
-					<div className={styles.blackOverlay}>
+					<div 
+						className={styles.blackOverlay}
+					>
 						<span className={`Icon--close Icon ${styles.close}`} onClick={this.handleClose}></span>	
 
 						<div className={styles.footerButton}>
@@ -186,16 +220,6 @@ const ImageViwer = React.createClass({
 				</VelocityComponent>
 
 				{this.renderImageGallery()}
-				<Image 
-					src={srcList.getIn([defaultIndex, 'middle'])} 
-					width={appearFrame.get('width')} 
-					height={appearFrame.get('height')} 
-					useGray={false} 
-					style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
-					getLoadedAnimation={this.getLoadedAnimation}	
-					getContainerLoadedAnimation={this.getContainerLoadedAnimation}
-					handleLoad={()=>{this.setState({isPresent:true})}}
-				/>
 			</div>
 		)
 	},

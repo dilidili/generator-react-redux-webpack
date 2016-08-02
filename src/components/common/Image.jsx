@@ -1,8 +1,10 @@
 import React, {PropTypes} from 'react'
 import _ from 'underscore'
 import {VelocityComponent} from 'velocity-react'
+// import PureRenderMixin from 'react/lib/ReactComponentWithPureRenderMixin'
 
 const Image = React.createClass({
+	// mixins: [PureRenderMixin],
 	propTypes: {
 		// Base
 		src: PropTypes.string.isRequired,
@@ -14,6 +16,7 @@ const Image = React.createClass({
 		getLoadedAnimation: PropTypes.func,
 		getContainerLoadedAnimation: PropTypes.func,
 		handleLoad: PropTypes.func,
+		toggleRender: PropTypes.bool, // trigger rerender from outside.
 	},
 	getDefaultProps(){
 		return {
@@ -27,6 +30,14 @@ const Image = React.createClass({
 	getInitialState(){
 		return {
 			imageLoaded: false,
+		}
+	},
+	shouldComponentUpdate: function(nextProps, nextState){
+		// Prevent outside caused rerender action.
+		if (this.state.imageLoaded !== nextState.imageLoaded || this.props.toggleRender !== nextProps.toggleRender) {
+			return true
+		} else {
+			return false
 		}
 	},
 	_natrualWidth: 0,
