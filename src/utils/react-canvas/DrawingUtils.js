@@ -223,13 +223,23 @@ function drawBaseRenderLayer (ctx, layer) {
 
   // Border radius:
   if (layer.borderRadius) {
-    ctx.beginPath();
-    ctx.moveTo(frame.x + layer.borderRadius, frame.y);
-    ctx.arcTo(frame.x + frame.width, frame.y, frame.x + frame.width, frame.y + frame.height, layer.borderRadius);
-    ctx.arcTo(frame.x + frame.width, frame.y + frame.height, frame.x, frame.y + frame.height, layer.borderRadius);
-    ctx.arcTo(frame.x, frame.y + frame.height, frame.x, frame.y, layer.borderRadius);
-    ctx.arcTo(frame.x, frame.y, frame.x + frame.width, frame.y, layer.borderRadius);
-    ctx.closePath();
+    if (typeof layer.borderRadius === 'number') {
+      ctx.beginPath();
+      ctx.moveTo(frame.x + layer.borderRadius, frame.y);
+      ctx.arcTo(frame.x + frame.width, frame.y, frame.x + frame.width, frame.y + frame.height, layer.borderRadius);
+      ctx.arcTo(frame.x + frame.width, frame.y + frame.height, frame.x, frame.y + frame.height, layer.borderRadius);
+      ctx.arcTo(frame.x, frame.y + frame.height, frame.x, frame.y, layer.borderRadius);
+      ctx.arcTo(frame.x, frame.y, frame.x + frame.width, frame.y, layer.borderRadius);
+      ctx.closePath();
+    } else if (typeof layer.borderRadius === 'object') {
+      ctx.beginPath();
+      ctx.moveTo(frame.x + layer.borderRadius[0], frame.y);
+      ctx.arcTo(frame.x + frame.width, frame.y, frame.x + frame.width, frame.y + frame.height, layer.borderRadius[1]);
+      ctx.arcTo(frame.x + frame.width, frame.y + frame.height, frame.x, frame.y + frame.height, layer.borderRadius[2]);
+      ctx.arcTo(frame.x, frame.y + frame.height, frame.x, frame.y, layer.borderRadius[3]);
+      ctx.arcTo(frame.x, frame.y, frame.x + frame.width, frame.y, layer.borderRadius[0]);
+      ctx.closePath();
+    }
 
     // Create a clipping path when drawing an image or using border radius.
     if (layer.type === 'image') {

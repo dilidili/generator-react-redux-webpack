@@ -91,11 +91,13 @@ const Tweet = React.createClass({
 			case 2:
 				// two grids layout
 				const grid2_0 = _.extend({}, illStyle, {
-					width: illStyle.width / 2 - IMAGE_PADDING
+					width: illStyle.width / 2 - IMAGE_PADDING,
+					borderRadius: [5, 0, 0, 5],
 				})
 				const grid2_1 = _.extend({}, illStyle, {
 					left: illStyle.left + illStyle.width / 2 + IMAGE_PADDING,
-					width: illStyle.width / 2 - IMAGE_PADDING
+					width: illStyle.width / 2 - IMAGE_PADDING,
+					borderRadius: [0, 5, 5, 0],
 				})
 
 				return (
@@ -110,23 +112,27 @@ const Tweet = React.createClass({
 				const gridHeight = illStyle.height / 2 - IMAGE_PADDING
 				const grid4_0 = _.extend({}, illStyle, {
 					width: gridWidth,
-					height: gridHeight
+					height: gridHeight,
+					borderRadius: [5, 0, 0, 0],
 				})
 				const grid4_1 = _.extend({}, illStyle, {
 					left: illStyle.left + gridWidth + 2 * IMAGE_PADDING,
 					width: gridWidth,
-					height: gridHeight
+					height: gridHeight,
+					borderRadius: [0, 5, 0, 0],
 				})
 				const grid4_2 = _.extend({}, illStyle, {
 					top: illStyle.top + gridHeight + 2 * IMAGE_PADDING,
 					width: gridWidth,
-					height: gridHeight
+					height: gridHeight,
+					borderRadius: [0, 0, 0, 5],
 				})
 				const grid4_3 = _.extend({}, illStyle, {
 					top: illStyle.top + gridHeight + 2 * IMAGE_PADDING,
 					left: illStyle.left + gridWidth + 2 * IMAGE_PADDING,
 					width: gridWidth,
-					height: gridHeight
+					height: gridHeight,
+					borderRadius: [0, 0, 5, 0],
 				})
 
 				return (

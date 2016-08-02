@@ -17,6 +17,7 @@ const ImageViwer = React.createClass({
 	getInitialState(){
 		return {
 			isPresent: false,
+			touchTranlationX: 0, // user slide the screen to view all images. 
 		}
 	},
 
@@ -123,13 +124,16 @@ const ImageViwer = React.createClass({
 		})
 	},
 	handleTouchOverlayStart(evt){
-		console.log('touch start')
+		this._touchStart = evt.touches[0]
 		this.setState({
-			touchStartX: evt.touches[0].clientX,
+			touchTranlationX: 0,
 		})
 	},
 	handleTouchOverlayMove(evt){
-		console.log('touch move')
+		this.setState({
+			touchTranlationX: this.state.touchTranlationX + evt.touches[0].clientX - this._touchStart.clientX,
+		})
+		this._touchStart = evt.touches[0]
 	},
 	handleTouchOverlayEnd(evt){
 		console.log('touch end')
@@ -142,11 +146,12 @@ const ImageViwer = React.createClass({
 			srcList,
 			appearFrame,
 		} = this.props
+		console.log(this.state.touchTranlationX)
 
 		return (
 			<div 
 				className={styles.imageGallery} 
-				style={{width: window.innerWidth * srcList.size, height: 0}}
+				style={{width: window.innerWidth * srcList.size, height: 0, left: this.state.touchTranlationX}}
 				onTouchStart={this.handleTouchOverlayStart}
 				onTouchMove={this.handleTouchOverlayMove}
 				onTouchEnd={this.handleTouchOverlayEnd}
