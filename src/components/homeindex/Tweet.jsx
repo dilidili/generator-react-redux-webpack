@@ -9,11 +9,13 @@ import measureText from 'react-canvas/measureText'
 import FontFace from 'react-canvas/FontFace'
 import SpriteImage from 'react-canvas/SpriteImage'
 import PureRenderMixin from 'react/lib/ReactComponentWithPureRenderMixin'
+import _ from 'underscore'
 
 const em = window.fontSize
 const PADDING = 0.7 * em
 const FONT_BOLD = FontFace('Helvetica, sans-serif', null, {weight: 500})
 const FONT_NORMAL = FontFace('Helvetica, sans-serif', null, {weight: 300})
+const IMAGE_PADDING = 0.1 * em
 
 const Tweet = React.createClass({
 	propTypes: {
@@ -86,10 +88,57 @@ const Tweet = React.createClass({
 	renderIllustrations(illustrations){
 		const illStyle = this.props.style.illustrationStyle
 		switch(illustrations.length){
-			case 1:
 			case 2:
-			case 3:
+				// two grids layout
+				const grid2_0 = _.extend({}, illStyle, {
+					width: illStyle.width / 2 - IMAGE_PADDING
+				})
+				const grid2_1 = _.extend({}, illStyle, {
+					left: illStyle.left + illStyle.width / 2 + IMAGE_PADDING,
+					width: illStyle.width / 2 - IMAGE_PADDING
+				})
+
+				return (
+					<Group>
+						<Image style={grid2_0} src={illustrations[0].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid2_0, illustrations, 0)}></Image>	
+						<Image style={grid2_1} src={illustrations[1].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid2_1, illustrations, 1)}></Image>	
+					</Group>
+				)
 			case 4:
+				// four grids layout
+				const gridWidth = illStyle.width / 2 - IMAGE_PADDING
+				const gridHeight = illStyle.height / 2 - IMAGE_PADDING
+				const grid4_0 = _.extend({}, illStyle, {
+					width: gridWidth,
+					height: gridHeight
+				})
+				const grid4_1 = _.extend({}, illStyle, {
+					left: illStyle.left + gridWidth + 2 * IMAGE_PADDING,
+					width: gridWidth,
+					height: gridHeight
+				})
+				const grid4_2 = _.extend({}, illStyle, {
+					top: illStyle.top + gridHeight + 2 * IMAGE_PADDING,
+					width: gridWidth,
+					height: gridHeight
+				})
+				const grid4_3 = _.extend({}, illStyle, {
+					top: illStyle.top + gridHeight + 2 * IMAGE_PADDING,
+					left: illStyle.left + gridWidth + 2 * IMAGE_PADDING,
+					width: gridWidth,
+					height: gridHeight
+				})
+
+				return (
+					<Group>
+						<Image style={grid4_0} src={illustrations[0].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid4_0, illustrations, 0)}></Image>	
+						<Image style={grid4_1} src={illustrations[1].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid4_1, illustrations, 1)}></Image>	
+						<Image style={grid4_2} src={illustrations[2].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid4_2, illustrations, 2)}></Image>	
+						<Image style={grid4_3} src={illustrations[3].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid4_3, illustrations, 3)}></Image>	
+					</Group>
+				)
+			case 1:
+			case 3:
 			case 5:
 			case 6:
 			case 7:

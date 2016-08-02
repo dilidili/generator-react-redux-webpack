@@ -49,13 +49,9 @@ const ImageViwer = React.createClass({
 					// appear from invisibility 
 					[{
 						opacity: [1, 0],
-					}, 0.3, {
-						easing: 'ease-in',
-					}],
+					}, 0.3],
 					// scale to suitable size and move to centre of screen
-					[_.extend(imageTransformation), 0.35, {
-						easing: 'ease-out',
-					}]
+					[_.extend(imageTransformation), 0.35]
 				],
 			}),
 			runOnMount: true,
@@ -85,7 +81,7 @@ const ImageViwer = React.createClass({
 				height: IMAGE_CONTAINER_FRAME[1],
 			},
 			duration: 350,
-			delay: 100,
+			delay: 300,
 			runOnMount: true,
 		} : {
 			animation: {
