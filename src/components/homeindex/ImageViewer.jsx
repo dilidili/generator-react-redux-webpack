@@ -8,6 +8,7 @@ import {Motion, spring} from 'react-motion'
 // frame of image container
 const IMAGE_CONTAINER_FRAME = [window.innerWidth, window.innerHeight - window.fontSize * 8]
 const IMAGE_SWITCH_CURVE = window.fontSize * 3
+const IMAGE_PADDING = window.fontSize
 
 const ImageViwer = React.createClass({
 	propTypes: {
@@ -128,14 +129,19 @@ const ImageViwer = React.createClass({
 		})
 	},
 	handleTouchOverlayStart(evt){
-		this._touchStart = evt.touches[0]
-		this._touchRecorded = evt.touches[0]
+		this._touchStart = this._touchRecorded = {
+			clientX: evt.touches[0].clientX,
+			clientY: evt.touches[0].clientY,
+		}
 	},
 	handleTouchOverlayMove(evt){
 		this.setState({
 			touchTranslationX: this.state.touchTranslationX + (evt.touches[0].clientX - this._touchRecorded.clientX)/2,
 		})
-		this._touchRecorded = evt.touches[0]
+		this._touchRecorded = {
+			clientX: evt.touches[0].clientX,
+			clientY: evt.touches[0].clientY,
+		}
 	},
 	handleTouchOverlayEnd(evt){
 		const delta = (this._touchRecorded.clientX - this._touchStart.clientX)/2
