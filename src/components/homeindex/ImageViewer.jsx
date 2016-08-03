@@ -128,13 +128,19 @@ const ImageViwer = React.createClass({
 			isPresent: true,
 		})
 	},
-	handleTouchOverlayStart(evt){
+	handleTouchOverlayStart(evt) {
+		evt.preventDefault()
+		evt.stopPropagation()
+
 		this._touchStart = this._touchRecorded = {
 			clientX: evt.touches[0].clientX,
 			clientY: evt.touches[0].clientY,
 		}
 	},
 	handleTouchOverlayMove(evt){
+		evt.preventDefault()
+		evt.stopPropagation()
+
 		this.setState({
 			touchTranslationX: this.state.touchTranslationX + (evt.touches[0].clientX - this._touchRecorded.clientX)/2,
 		})
@@ -144,6 +150,9 @@ const ImageViwer = React.createClass({
 		}
 	},
 	handleTouchOverlayEnd(evt){
+		evt.preventDefault()
+		evt.stopPropagation()
+
 		const delta = (this._touchRecorded.clientX - this._touchStart.clientX)/2
 
 		if (Math.abs(delta) < IMAGE_SWITCH_CURVE) {
