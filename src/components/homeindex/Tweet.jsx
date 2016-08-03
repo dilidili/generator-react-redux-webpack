@@ -169,6 +169,10 @@ const Tweet = React.createClass({
 				return null
 		}
 	},
+	renderTweetContent(content){
+		console.log(content)
+		return <Text style={this.props.style.tweetStyle}>{content}</Text>
+	},
 	render: function(){
 		const {
 			style,
@@ -184,7 +188,7 @@ const Tweet = React.createClass({
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{presentTweet.get('user')}</Text>
 	        	<Text style={style.dateTimeStyle}>{moment(tweet.get('timestamp')).fromNow()}</Text>
-	        	<Text style={style.tweetStyle}>{presentTweet.get('tweet')}</Text>
+	        	{this.renderTweetContent(presentTweet.get('tweet'))}
 
 		        {this.renderIllustrations(presentTweet.get('illustrations'))}
 	        </Group>

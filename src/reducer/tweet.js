@@ -53,7 +53,8 @@ function formatTweet(v) {
 
     return Map({
         user: v.user.name,
-        tweet: v.text,
+        // remove some meta text
+        tweet: v.text.replace('...在线：', ' ').replace('...全文：', ' '),
         timestamp: new Date(v.created_at),
         avatar: v.user.profile_image_url,
         retweeted: formatTweet(v.retweeted_status),
