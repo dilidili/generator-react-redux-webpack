@@ -53,8 +53,8 @@ function formatTweet(v) {
 
     return Map({
         user: v.user.name,
-        // remove some meta text
-        tweet: v.text.replace('...在线：', ' ').replace('...全文：', ' '),
+        // remove some meta text and link
+        tweet: v.text.replace('...在线：', ' ').replace('...全文：', ' ').replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig, ''),
         timestamp: new Date(v.created_at),
         avatar: v.user.profile_image_url,
         retweeted: formatTweet(v.retweeted_status),

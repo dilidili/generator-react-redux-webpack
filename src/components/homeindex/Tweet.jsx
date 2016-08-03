@@ -170,7 +170,6 @@ const Tweet = React.createClass({
 		}
 	},
 	renderTweetContent(content){
-		console.log(content)
 		return <Text style={this.props.style.tweetStyle}>{content}</Text>
 	},
 	render: function(){

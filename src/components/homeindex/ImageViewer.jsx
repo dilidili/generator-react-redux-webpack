@@ -7,7 +7,8 @@ import {Motion, spring} from 'react-motion'
 
 // frame of image container
 const IMAGE_CONTAINER_FRAME = [window.innerWidth, window.innerHeight - window.fontSize * 8]
-const IMAGE_SWITCH_CURVE = window.fontSize * 3
+const IMAGE_SWITCH_CURVE_X = window.fontSize * 3
+const IMAGE_SWITCH_CURVE_Y = window.innerHeight / 3
 const IMAGE_PADDING = window.fontSize
 
 const ImageViwer = React.createClass({
@@ -22,7 +23,10 @@ const ImageViwer = React.createClass({
 			isPresent: false,
 			// user slide the screen to view all images. 
 			touchTranslationX: 0,
+			touchTranslationY: 0,
 			currentPresentIndex: this.props.defaultIndex,
+
+			hideToolkit: false,
 		}
 	},
 
@@ -116,6 +120,32 @@ const ImageViwer = React.createClass({
 			runOnMount: true,
 		}
 	},
+	getUpperToolkitAnimation() {
+		return this.state.hideToolkit ? {
+			animation: {
+				top: -2 * window.fontSize,
+			},
+			duration: 250,
+		} : {
+			animation: {
+				top: 0.3 * window.fontSize,
+			},
+			duration: 250,
+		}
+	},
+	getBottomToolkitAnimation(){
+		return this.state.hideToolkit ? {
+			animation: {
+				bottom: -2 * window.fontSize,
+			},
+			duration: 250,
+		} : {
+			animation: {
+				bottom: 0.8 * window.fontSize,
+			},
+			duration: 250,
+		}	
+	},
 
 	// Handler
 	handleClose(){
@@ -136,14 +166,33 @@ const ImageViwer = React.createClass({
 			clientX: evt.touches[0].clientX,
 			clientY: evt.touches[0].clientY,
 		}
+		this._controlDirection = -1 // 0 for translating in X axis, 1 for translating in Y axis.
 	},
 	handleTouchOverlayMove(evt){
 		evt.preventDefault()
 		evt.stopPropagation()
 
-		this.setState({
-			touchTranslationX: this.state.touchTranslationX + (evt.touches[0].clientX - this._touchRecorded.clientX)/2,
-		})
+		const deltaX = evt.touches[0].clientX - this._touchRecorded.clientX
+		const deltaY = evt.touches[0].clientY - this._touchRecorded.clientY
+
+		// first touch move event
+		if (this._controlDirection === -1) {
+			this._controlDirection = Math.abs(deltaX) > Math.abs(deltaY) ? 0 : 1
+			this.setState({
+				hideToolkit: this._controlDirection === 1 ? true : false,
+			})
+		}
+
+		if (this._controlDirection === 0) {
+			this.setState({
+				touchTranslationX: this.state.touchTranslationX + deltaX,
+			})
+		} else if (this._controlDirection === 1) {
+			this.setState({
+				touchTranslationY: this.state.touchTranslationY + deltaY,
+			})
+		}
+
 		this._touchRecorded = {
 			clientX: evt.touches[0].clientX,
 			clientY: evt.touches[0].clientY,
@@ -153,24 +202,40 @@ const ImageViwer = React.createClass({
 		evt.preventDefault()
 		evt.stopPropagation()
 
-		const delta = (this._touchRecorded.clientX - this._touchStart.clientX)/2
+		if (this._controlDirection === 0) {
+			const delta = this._touchRecorded.clientX - this._touchStart.clientX
 
-		if (Math.abs(delta) < IMAGE_SWITCH_CURVE) {
-			this.setState({
-				touchTranslationX: this.state.touchTranslationX - delta,
-			})
-		} else {
-			// Slide Limit check
-			const nextPresentIndex = this.state.currentPresentIndex - (delta > 0 ? (delta === 0 ? 0 : 1) : -1)
-
-			if (nextPresentIndex >= 0 && nextPresentIndex < this.props.srcList.size) {
+			if (Math.abs(delta) < IMAGE_SWITCH_CURVE_X) {
 				this.setState({
-					touchTranslationX: this.state.touchTranslationX - delta + (delta > 0 ? (delta === 0 ? 0 : 1) : -1) * (window.innerWidth),
-					currentPresentIndex: nextPresentIndex,
+					touchTranslationX: this.state.touchTranslationX - delta,
+				})
+			} else {
+				// Slide Limit check
+				const nextPresentIndex = this.state.currentPresentIndex - (delta > 0 ? (delta === 0 ? 0 : 1) : -1)
+
+				if (nextPresentIndex >= 0 && nextPresentIndex < this.props.srcList.size) {
+					this.setState({
+						touchTranslationX: this.state.touchTranslationX - delta + (delta > 0 ? (delta === 0 ? 0 : 1) : -1) * (window.innerWidth),
+						currentPresentIndex: nextPresentIndex,
+					})
+				} else {
+					this.setState({
+						touchTranslationX: this.state.touchTranslationX - delta,
+					})
+				}
+			}
+		}else if (this._controlDirection === 1) {
+			const delta = this._touchRecorded.clientY - this._touchStart.clientY
+
+			if (Math.abs(delta) < IMAGE_SWITCH_CURVE_Y) {
+				this.setState({
+					touchTranslationY: this.state.touchTranslationY - delta,
+					hideToolkit: false,
 				})
 			} else {
 				this.setState({
-					touchTranslationX: this.state.touchTranslationX - delta,
+					touchTranslationY: this.state.touchTranslationY + delta,
+					isPresent: false,
 				})
 			}
 		}
@@ -185,11 +250,11 @@ const ImageViwer = React.createClass({
 		} = this.props
 
 		return (
-			<Motion style={{left: spring(this.state.touchTranslationX)}}>
+			<Motion style={{left: spring(this.state.touchTranslationX), top: spring(this.state.touchTranslationY)}}>
 				{interpolatingStyle=>(
 					<div 
 						className={styles.imageGallery} 
-						style={{width: window.innerWidth * srcList.size, height: 0, left: interpolatingStyle.left}}
+						style={{width: window.innerWidth * srcList.size, height: 0, left: interpolatingStyle.left, top: interpolatingStyle.top}}
 						onTouchStart={this.handleTouchOverlayStart}
 						onTouchMove={this.handleTouchOverlayMove}
 						onTouchEnd={this.handleTouchOverlayEnd}
@@ -253,14 +318,18 @@ const ImageViwer = React.createClass({
 					<div 
 						className={styles.blackOverlay}
 					>
-						<span className={`Icon--close Icon ${styles.close}`} onClick={this.handleClose}></span>	
+						<VelocityComponent {...this.getUpperToolkitAnimation()}>
+							<span className={`Icon--close Icon ${styles.close}`} onClick={this.handleClose}></span>	
+						</VelocityComponent>
 
-						<div className={styles.footerButton}>
-							<span className={`Icon--reply Icon`}></span>	
-							<span className={`Icon--retweet Icon`}></span>	
-							<span className={`Icon--like Icon`}></span>	
-							<span className={`Icon--other Icon`}></span>	
-						</div>
+						<VelocityComponent {...this.getBottomToolkitAnimation()}>
+							<div className={styles.footerButton}>
+								<span className={`Icon--reply Icon`}></span>	
+								<span className={`Icon--retweet Icon`}></span>	
+								<span className={`Icon--like Icon`}></span>	
+								<span className={`Icon--other Icon`}></span>	
+							</div>
+						</VelocityComponent>
 					</div>
 				</VelocityComponent>
 
