@@ -1,13 +1,11 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import FootTabContainer from './FootTabContainer'
 
 const HomeComponent = React.createClass({
 	render: function(){
 		return <div>
 			{this.props.children}
-			<FootTabContainer></FootTabContainer>
 		</div>
 	},
 })
