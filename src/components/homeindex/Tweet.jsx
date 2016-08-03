@@ -61,27 +61,41 @@ const Tweet = React.createClass({
 	},
 
 	// Hanlder
+
+	// Touch on tweet area
 	handleTouchStart(evt){
 		this._touchStartClientY = evt.touches[0].clientY
 		this._touchStartTime = evt.timeStamp
+		this._preventClickTweet = false
 	},
 	handleTouchEnd(evt) {
 		const timeDelta = evt.timeStamp - this._touchStartTime
-		if (timeDelta < 100 && this._touchStartClientY === evt.changedTouches[0].clientY) {
-			this.props.handleClick(this.props.tweet.get('id'))
+		if (timeDelta < 120 && this._touchStartClientY === evt.changedTouches[0].clientY) {
+			!this._preventClickTweet && this.props.handleClick(this.props.tweet.get('id'))
 		}
 	},
-	handleClickIllustration(illStyle, illustrations, illustrationIndex) {
-		const {
-			contentStyle
-		} = this.props.style
 
-		this.props.handleClickIllustration && this.props.handleClickIllustration({
-			top: contentStyle.translateY + illStyle.top,
-			left: contentStyle.translateX + illStyle.left,
-			width: illStyle.width,
-			height: illStyle.height,
-		}, this.props.index, illustrations, illustrationIndex)
+	// Touch on illustrations area
+	handleTouchImageStart(evt) {
+		this._touchImageStartClientY = evt.touches[0].clientY
+		this._touchImageStartTime = evt.timeStamp
+	},
+	handleTouchImageEnd(illStyle, illustrations, illustrationIndex, evt) {
+		const timeDelta = evt.timeStamp - this._touchImageStartTime
+		if (timeDelta < 120 && this._touchImageStartClientY === evt.changedTouches[0].clientY) {
+			this._preventClickTweet = true
+
+			const {
+				contentStyle
+			} = this.props.style
+
+			this.props.handleClickIllustration && this.props.handleClickIllustration({
+				top: contentStyle.translateY + illStyle.top,
+				left: contentStyle.translateX + illStyle.left,
+				width: illStyle.width,
+				height: illStyle.height,
+			}, this.props.index, illustrations, illustrationIndex)
+		}
 	},
 
 	// Render
@@ -102,11 +116,16 @@ const Tweet = React.createClass({
 
 				return (
 					<Group>
-						<Image style={grid2_0} src={illustrations[0].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid2_0, illustrations, 0)}></Image>	
-						<Image style={grid2_1} src={illustrations[1].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid2_1, illustrations, 1)}></Image>	
+						<Image style={grid2_0} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid2_0, illustrations, 0)}></Image>	
+						<Image style={grid2_1} src={illustrations[1].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid2_1, illustrations, 1)}></Image>	
 					</Group>
 				)
 			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
 				// four grids layout
 				const gridWidth = illStyle.width / 2 - IMAGE_PADDING
 				const gridHeight = illStyle.height / 2 - IMAGE_PADDING
@@ -137,20 +156,15 @@ const Tweet = React.createClass({
 
 				return (
 					<Group>
-						<Image style={grid4_0} src={illustrations[0].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid4_0, illustrations, 0)}></Image>	
-						<Image style={grid4_1} src={illustrations[1].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid4_1, illustrations, 1)}></Image>	
-						<Image style={grid4_2} src={illustrations[2].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid4_2, illustrations, 2)}></Image>	
-						<Image style={grid4_3} src={illustrations[3].thumb} onTouchStart={this.handleClickIllustration.bind(this, grid4_3, illustrations, 3)}></Image>	
+						<Image style={grid4_0} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid4_0, illustrations, 0)}></Image>	
+						<Image style={grid4_1} src={illustrations[1].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid4_1, illustrations, 1)}></Image>	
+						<Image style={grid4_2} src={illustrations[2].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid4_2, illustrations, 2)}></Image>	
+						<Image style={grid4_3} src={illustrations[3].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid4_3, illustrations, 3)}></Image>	
 					</Group>
 				)
 			case 1:
 			case 3:
-			case 5:
-			case 6:
-			case 7:
-			case 8:
-			case 9:
-				return <Image style={illStyle} src={illustrations[0].thumb} onTouchStart={this.handleClickIllustration.bind(this, illStyle, illustrations, 0)}></Image>	
+				return <Image style={illStyle} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle, illustrations, 0)}></Image>	
 			default:
 				return null
 		}
