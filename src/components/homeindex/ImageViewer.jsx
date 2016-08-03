@@ -3,9 +3,11 @@ import styles from './ImageViewer.scss'
 import _ from 'underscore'
 import Image from '../common/Image'
 import {velocityHelpers, VelocityComponent} from 'velocity-react'
+import {Motion, spring} from 'react-motion'
 
 // frame of image container
 const IMAGE_CONTAINER_FRAME = [window.innerWidth, window.innerHeight - window.fontSize * 8]
+const IMAGE_SWITCH_CURVE = window.fontSize * 3
 
 const ImageViwer = React.createClass({
 	propTypes: {
@@ -14,10 +16,12 @@ const ImageViwer = React.createClass({
 		defaultIndex: PropTypes.number.isRequired,
 		handClose: PropTypes.func.isRequired,
 	},
-	getInitialState(){
+	getInitialState() {
 		return {
 			isPresent: false,
-			touchTranlationX: 0, // user slide the screen to view all images. 
+			// user slide the screen to view all images. 
+			touchTranslationX: 0,
+			currentPresentIndex: this.props.defaultIndex,
 		}
 	},
 
@@ -120,23 +124,41 @@ const ImageViwer = React.createClass({
 	},
 	handleImageLoaded(){
 		this.setState({
-			isPresent: true
+			isPresent: true,
 		})
 	},
 	handleTouchOverlayStart(evt){
 		this._touchStart = evt.touches[0]
-		this.setState({
-			touchTranlationX: 0,
-		})
+		this._touchRecorded = evt.touches[0]
 	},
 	handleTouchOverlayMove(evt){
 		this.setState({
-			touchTranlationX: this.state.touchTranlationX + evt.touches[0].clientX - this._touchStart.clientX,
+			touchTranslationX: this.state.touchTranslationX + (evt.touches[0].clientX - this._touchRecorded.clientX)/2,
 		})
-		this._touchStart = evt.touches[0]
+		this._touchRecorded = evt.touches[0]
 	},
 	handleTouchOverlayEnd(evt){
-		console.log('touch end')
+		const delta = (this._touchRecorded.clientX - this._touchStart.clientX)/2
+
+		if (Math.abs(delta) < IMAGE_SWITCH_CURVE) {
+			this.setState({
+				touchTranslationX: this.state.touchTranslationX - delta,
+			})
+		} else {
+			// Slide Limit check
+			const nextPresentIndex = this.state.currentPresentIndex - (delta > 0 ? (delta === 0 ? 0 : 1) : -1)
+
+			if (nextPresentIndex >= 0 && nextPresentIndex < this.props.srcList.size) {
+				this.setState({
+					touchTranslationX: this.state.touchTranslationX - delta + (delta > 0 ? (delta === 0 ? 0 : 1) : -1) * (window.innerWidth),
+					currentPresentIndex: nextPresentIndex,
+				})
+			} else {
+				this.setState({
+					touchTranslationX: this.state.touchTranslationX - delta,
+				})
+			}
+		}
 	},
 
 	// Renderer
@@ -146,51 +168,54 @@ const ImageViwer = React.createClass({
 			srcList,
 			appearFrame,
 		} = this.props
-		console.log(this.state.touchTranlationX)
 
 		return (
-			<div 
-				className={styles.imageGallery} 
-				style={{width: window.innerWidth * srcList.size, height: 0, left: this.state.touchTranlationX}}
-				onTouchStart={this.handleTouchOverlayStart}
-				onTouchMove={this.handleTouchOverlayMove}
-				onTouchEnd={this.handleTouchOverlayEnd}
-			>
-				{srcList.map((src, index)=>{
-					// the entry image
-					if (index === defaultIndex) {
-						return <div key={index} style={{width: 0, height: 0, position: 'absolute', top: 0, left: 0}}>
-							<Image 
-								src={src.get('middle')} 
-								width={appearFrame.get('width')} 
-								height={appearFrame.get('height')} 
-								useGray={false} 
-								style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
-								getLoadedAnimation={this.getLoadedAnimation}	
-								getContainerLoadedAnimation={this.getContainerLoadedAnimation}
-								handleLoad={this.handleImageLoaded}
-								toggleRender={this.state.isPresent}
-							/>
-						</div>
-					}else{
-						return <div key={index} style={{width: 0, height: 0, position: 'absolute', top: 0, left: (index-defaultIndex)*window.innerWidth}}>
-							<Image
-								src={src.get('middle')} 
-								width={appearFrame.get('width')} 
-								height={appearFrame.get('height')} 
-								useGray={false} 
-								style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
-								getLoadedAnimation={this.getLoadedAnimation}	
-								getContainerLoadedAnimation={this.getContainerLoadedAnimation}
-								handleLoad={()=>{this.setState({isPresent:true})}}
-								toggleRender={this.state.isPresent}
-							>
-							</Image> 
-						</div>
-						return null
-					}
-				})}	
-			</div>	
+			<Motion style={{left: spring(this.state.touchTranslationX)}}>
+				{interpolatingStyle=>(
+					<div 
+						className={styles.imageGallery} 
+						style={{width: window.innerWidth * srcList.size, height: 0, left: interpolatingStyle.left}}
+						onTouchStart={this.handleTouchOverlayStart}
+						onTouchMove={this.handleTouchOverlayMove}
+						onTouchEnd={this.handleTouchOverlayEnd}
+					>
+						{srcList.map((src, index)=>{
+							// the entry image
+							if (index === defaultIndex) {
+								return <div key={index} style={{width: 0, height: 0, position: 'absolute', top: 0, left: 0}}>
+									<Image 
+										src={src.get('middle')} 
+										width={appearFrame.get('width')} 
+										height={appearFrame.get('height')} 
+										useGray={false} 
+										style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
+										getLoadedAnimation={this.getLoadedAnimation}	
+										getContainerLoadedAnimation={this.getContainerLoadedAnimation}
+										handleLoad={this.handleImageLoaded}
+										toggleRender={this.state.isPresent}
+									/>
+								</div>
+							}else{
+								return <div key={index} style={{width: 0, height: 0, position: 'absolute', top: 0, left: (index-defaultIndex)*window.innerWidth}}>
+									<Image
+										src={src.get('middle')} 
+										width={appearFrame.get('width')} 
+										height={appearFrame.get('height')} 
+										useGray={false} 
+										style={{borderRadius:5, top: appearFrame.get('top')+window.headerHeight, left: appearFrame.get('left')}}
+										getLoadedAnimation={this.getLoadedAnimation}	
+										getContainerLoadedAnimation={this.getContainerLoadedAnimation}
+										handleLoad={()=>{this.setState({isPresent:true})}}
+										toggleRender={this.state.isPresent}
+									>
+									</Image> 
+								</div>
+								return null
+							}
+						})}	
+					</div>	
+				)}
+			</Motion>
 		)
 	},
 
