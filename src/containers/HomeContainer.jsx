@@ -21,7 +21,7 @@ const HomeComponent = React.createClass({
 function mapStateToProps(state) {
 	const route = state.get('route')
 	let currentView
-	if (!~route.location.pathname.indexOf("home")) {
+	if (~route.location.pathname.indexOf("home")) {
 		// showing the home index view
 		currentView = HOME_INDEX_VIEW
 	} else {

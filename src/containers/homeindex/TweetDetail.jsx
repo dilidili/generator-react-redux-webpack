@@ -99,7 +99,6 @@ const TweetDetail = React.createClass({
 		} = this.props
 		const tid = this.state.tid
 		const tweet = getTweetDetail(list, tid)
-
 		return (
 			<VelocityComponent animation={isPresent?presentAnimation:hideAnimation} duration={300}>
 				{/* hide the detail page initially, thus set the opacity of it to 0 */}
