@@ -1,23 +1,41 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
+import HomeIndexContainer from './HomeIndexContainer'
+
+const HOME_INDEX_VIEW = "HOME_INDEX_VIEW"
+const PROFILE_VIEW = "PROFILE_VIEW"
 
 const HomeComponent = React.createClass({
 	render: function(){
+		const {
+			currentView
+		} = this.props
+
 		return <div>
-			{this.props.children}
+			<HomeIndexContainer isPresent={currentView===HOME_INDEX_VIEW}></HomeIndexContainer>
 		</div>
 	},
 })
 
 function mapStateToProps(state) {
+	const route = state.get('route')
+	let currentView
+	if (!~route.location.pathname.indexOf("home")) {
+		// showing the home index view
+		currentView = HOME_INDEX_VIEW
+	} else {
+		// showing the user profile view
+		currentView = PROFILE_VIEW
+	}
+
 	return {
+		currentView,
 	}
 }
 
 function mapDispatchToProps(dispatch) {
-	return {
-	}
+	return {}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeComponent)

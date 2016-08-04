@@ -11,7 +11,8 @@
 	align-items: center;
 	padding: 0 0.6em;
 	padding-top: .2em;
-
+	
+	// center part
 	svg.headerCenter{
 		width: 2.1em;
 		height: 2.1em;
@@ -21,10 +22,18 @@
 		font-size: 1.3em;
 	}
 
-
+	// left part
 	svg.headerLeft{
 		width: 1.4em;
 		height: 1.4em;
 	}
 
+	// right part
+	span.headerRight{
+		width: 1.4em;	
+		height: 1.4em;	
+		font-size: 1.4em;
+		color: $blue;
+		padding-top: 0.1em;
+	}
 }

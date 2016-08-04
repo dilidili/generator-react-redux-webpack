@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {fetchTweet} from '../actions/tweet'
@@ -7,6 +7,7 @@ import Header from '../components/homeindex/Header'
 import TweetList from '../components/homeindex/TweetList'
 import TweetDetail from '../containers/homeindex/TweetDetail'
 import {push} from 'redux-router'
+import {VelocityComponent} from 'velocity-react'
 import {Logo, Back} from 'svg'
 import ImageViewer from '../components/homeindex/ImageViewer'
 import _ from 'underscore'
@@ -14,7 +15,23 @@ import _ from 'underscore'
 const LIST_VIEW = "LIST_VIEW"
 const TWEET_VIEW = "TWEET_VIEW"
 
+const presentAnimation = {
+	translateY: 0.8 * window.innerHeight,
+}
+const hideAnimation = {
+	translateY: 0,
+}
+
 const HomeIndexComponent = React.createClass({
+	propTypes: {
+		isPresent: PropTypes.bool,
+	},
+	getDefaultProps() {
+		return {
+			isPresent: true,
+		}
+	},
+
 	componentDidMount(){
 		if (!this.props.tweet.size) {
 			this.props.fetchTweet(this.props.token)
@@ -53,6 +70,9 @@ const HomeIndexComponent = React.createClass({
 				return <span></span>
 		}
 	},
+	renderHeaderRight(className){
+		return <span className={`Icon--other Icon ${className}`} onClick={()=>{this.props.push('/profile')}}></span>
+	},
 	render: function(){
 		const {
 			currentView,
@@ -64,17 +84,20 @@ const HomeIndexComponent = React.createClass({
 			imageViewerData,
 			viewImage,
 			handCloseImageViewer,
+			isPresent,
 		} = this.props
 		return (
-			<div>
-				<Header renderHeaderLeft={this.renderHeaderLeft} renderHeaderCenter={this.renderHeaderCenter}></Header>
-				<div style={{height: window.contentHeight, position: 'relative'}}>
-					<TweetList list={tweet} push={push} isPresent={currentView[0]===LIST_VIEW} handleFetchTweet={this.handleFetchTweet} isSpinningTop={isSpinningTop} isSpinningBottom={isSpinningBottom} viewImage={viewImage}></TweetList>
-					<TweetDetail tid={currentView[1]} isPresent={currentView[0]===TWEET_VIEW}></TweetDetail>
-					
-					{imageViewerData.get('srcList').size?<ImageViewer appearFrame={imageViewerData.get('frame')} srcList={imageViewerData.get('srcList')} defaultIndex={imageViewerData.get('defaultIndex')} handClose={handCloseImageViewer}></ImageViewer>:null}
+			<VelocityComponent animation={isPresent?presentAnimation:hideAnimation} duration={300}>
+				<div>
+					<Header renderHeaderLeft={this.renderHeaderLeft} renderHeaderCenter={this.renderHeaderCenter} renderHeaderRight={this.renderHeaderRight}></Header>
+					<div style={{height: window.contentHeight, position: 'relative'}}>
+						<TweetList list={tweet} push={push} isPresent={currentView[0]===LIST_VIEW} handleFetchTweet={this.handleFetchTweet} isSpinningTop={isSpinningTop} isSpinningBottom={isSpinningBottom} viewImage={viewImage}></TweetList>
+						<TweetDetail tid={currentView[1]} isPresent={currentView[0]===TWEET_VIEW}></TweetDetail>
+						
+						{imageViewerData.get('srcList').size?<ImageViewer appearFrame={imageViewerData.get('frame')} srcList={imageViewerData.get('srcList')} defaultIndex={imageViewerData.get('defaultIndex')} handClose={handCloseImageViewer}></ImageViewer>:null}
+					</div>
 				</div>
-			</div>
+			</VelocityComponent>
 		)
 	},
 })
