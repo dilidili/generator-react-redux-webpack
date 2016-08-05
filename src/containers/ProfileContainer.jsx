@@ -19,17 +19,21 @@ const ProfileComponent = React.createClass({
 			scrollTop: 0,
 		}
 	},
+	componentWillMount(){
+			
+	},
 
 	render: function() {
 		return <div className={styles.container}>
 			<Surface {...this._canvasFrame}>
 				{/* Gradient area on the top */}
 				<Gradient style={this.getGradientStyle()}
-							colorStops={[
-								{color: "#2a6488", position: 0},	
-								{color: "#3881b2", position: 1},	
-							]}
-				></Gradient>
+					colorStops={[
+						{color: "#2a6488", position: 0},	
+						{color: "#3881b2", position: 1},	
+					]}
+				>
+				</Gradient>
 
 			</Surface>
 		</div>
