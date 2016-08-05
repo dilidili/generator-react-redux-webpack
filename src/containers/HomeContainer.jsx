@@ -2,6 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import HomeIndexContainer from './HomeIndexContainer'
+import ProfileContainer from './ProfileContainer'
 
 const HOME_INDEX_VIEW = "HOME_INDEX_VIEW"
 const PROFILE_VIEW = "PROFILE_VIEW"
@@ -14,6 +15,7 @@ const HomeComponent = React.createClass({
 
 		return <div>
 			<HomeIndexContainer isPresent={currentView===HOME_INDEX_VIEW}></HomeIndexContainer>
+			<ProfileContainer isPresent={currentView===PROFILE_VIEW}></ProfileContainer>
 		</div>
 	},
 })
