@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
+import {fetchAuthInfo} from '../actions/user'
 import WBAuthEnhancer from '../enhancers/WBAuthEnhancer'
 
 // initialize some necessary constants for react-canvas layout
@@ -13,6 +14,10 @@ window.contentHeight = ~~(window.innerHeight - 4 * window.fontSize)
 window.headerHeight = 4 * window.fontSize
 
 const AppComponent = React.createClass({
+	componentWillMount(){
+		this.props.fetchAuthInfo()
+	},
+
 	render: function(){
 		return (
 			<div>
@@ -29,6 +34,7 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch){
     return {
+    	fetchAuthInfo: bindActionCreators(fetchAuthInfo, dispatch),
     }
 }
 

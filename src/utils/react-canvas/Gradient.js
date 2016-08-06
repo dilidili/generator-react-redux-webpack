@@ -20,7 +20,7 @@ var Gradient = createComponent('Gradient', LayerMixin, {
   },
 
   receiveComponent: function (nextComponent, transaction, context) {
-    var props = nextComponent.propsReact;
+    var props = nextComponent.props;
     this.applyGradientProps({}, props);
     this._currentElement = nextComponent;
     this.node.invalidateLayout();
