@@ -4,11 +4,14 @@ import {bindActionCreators} from 'redux'
 import styles from './ProfileContainer.scss'
 import Surface from 'react-canvas/Surface' 
 import Gradient from 'react-canvas/Gradient'
+import {measureText} from 'font'
 import Group from 'react-canvas/Group'
 import Text from 'react-canvas/Text'
 import Image from 'react-canvas/Image'
 import FontFace from 'react-canvas/FontFace'
 import Scroller from 'Scroller'
+import {NORMAL_BOLD_FONT, NORMAL_NORMAL_FONT} from 'font'
+import _ from 'underscore'
 
 const em = window.fontSize
 const FULL_HEIGHT = window.innerHeight * 1.3
@@ -109,15 +112,27 @@ const ProfileComponent = React.createClass({
 			return null
 		}
 
+		const followingStyle = this.getFollowingStyle(user.get('friends_count'))
+		const followerStyle = this.getFollowerStyle(user.get('followers_count'), followingStyle.label)
+
 		return (
 			<Group style={this.getMainContentStyle()}>
 				{/* Avatar row */}	
 				<Image style={this.getAvatarStyle()} src={user.get('avatar_large')} fadeIn={true}></Image>
 
+				{/* User information row */}
 				<Group useBackingStore={true}>
 					<Text style={this.nameStyle}>{user.get('name')}</Text>	
 					<Text style={this.descriptionStyle}>{"@"+user.get('description')}</Text>
 					<Text style={this.locationStyle}>{"\uF031 " + user.get('location')}</Text>
+				</Group>
+
+				{/* Follower and folloees */}
+				<Group useBackingStore={true}>
+					<Text style={followingStyle.count}>{""+user.get('friends_count')}</Text>
+					<Text style={followingStyle.label}>关注</Text>
+					<Text style={followerStyle.count}>{""+user.get('followers_count')}</Text>
+					<Text style={followerStyle.label}>粉丝</Text>
 				</Group>
 			</Group>
 		)
@@ -175,6 +190,48 @@ const ProfileComponent = React.createClass({
 			width: Math.max(4.3 * em - AVATAR_SCALE, 4.3 * em - AVATAR_SCALE * scrollTop / GRADIENT_OFFSET),
 			height: Math.max(4.3 * em - AVATAR_SCALE, 4.3 * em - AVATAR_SCALE * scrollTop / GRADIENT_OFFSET),
 			borderRadius: 5,
+		}
+	},
+	getFollowingStyle(cnt) {
+		const countMetrics = measureText(cnt, this._canvasFrame.width, NORMAL_BOLD_FONT)
+		const labelMetrics = measureText('关注', this._canvasFrame.width, NORMAL_NORMAL_FONT)
+
+		const count = _.extend({
+			left: PADDING,
+			width: countMetrics.width,
+			top: this.locationStyle.top + this.locationStyle.height + em,
+		}, NORMAL_BOLD_FONT)
+		const label = _.extend({
+			left: PADDING + countMetrics.width + 0.3 * em,
+			width: labelMetrics.width,
+			top: count.top,
+			color: "#95a3b1",
+		}, NORMAL_NORMAL_FONT)
+
+		return {
+			count,
+			label,
+		}
+	},
+	getFollowerStyle(cnt, prevStyle) {
+		const countMetrics = measureText(cnt, this._canvasFrame.width, NORMAL_BOLD_FONT)
+		const labelMetrics = measureText('粉丝', this._canvasFrame.width, NORMAL_NORMAL_FONT)
+
+		const count = _.extend({
+			left: prevStyle.left + prevStyle.width + 2 * em,
+			width: countMetrics.width,
+			top: this.locationStyle.top + this.locationStyle.height + em,
+		}, NORMAL_BOLD_FONT)
+		const label = _.extend({
+			left: count.left + count.width + 0.3 * em,
+			width: labelMetrics.width,
+			top: count.top,
+			color: "#95a3b1",
+		}, NORMAL_NORMAL_FONT)
+
+		return {
+			count,
+			label,
 		}
 	},
 })
