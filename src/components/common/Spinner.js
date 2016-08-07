@@ -16,7 +16,7 @@ const Spinner = React.createClass({
 				length: 28, // The length of each line
 				width: 14, // The line thickness
 				radius: 42, // The radius of the inner circle
-				scale: 0.2, // Scales overall size of the spinner
+				scale: 0.14, // Scales overall size of the spinner
 				corners: 1, // Corner roundness (0..1)
 				color: '#8899a6', // #rgb or #rrggbb or array of colors
 				opacity: 0.25, // Opacity of the lines

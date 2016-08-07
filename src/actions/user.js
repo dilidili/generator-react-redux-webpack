@@ -16,7 +16,7 @@ export function queryToken(code) {
 export function fetchAuthInfo(){
 	return dispatch	=> {
 		// TODO: deploy token get
-		const token = config.debug ? config.token : ""
+		const token = config.token ? config.token : ""
 		axios.get(`${config.serverURL}/auth/token/${token}/info`).then(tokenInfoRes=>{
 			dispatch({
 				type: UPDATE_TOKEN_INFO,

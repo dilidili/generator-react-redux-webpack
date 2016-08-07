@@ -93,7 +93,7 @@ const HomeIndexComponent = React.createClass({
 		} = this.props
 		return (
 			<VelocityComponent animation={isPresent?presentAnimation:hideAnimation} duration={300}>
-				<div onTouchStart={this.handleClickContainer} style={{position: 'relative', zIndex: 2}}>
+				<div onTouchStart={this.handleClickContainer} style={{position: 'relative', zIndex: 2, backgroundColor: 'white'}}>
 					<Header renderHeaderLeft={this.renderHeaderLeft} renderHeaderCenter={this.renderHeaderCenter} renderHeaderRight={this.renderHeaderRight}></Header>
 						<div style={{height: window.contentHeight, position: 'relative'}}>
 							<TweetList list={tweet} push={push} isPresent={currentView[0]===LIST_VIEW} handleFetchTweet={this.handleFetchTweet} isSpinningTop={isSpinningTop} isSpinningBottom={isSpinningBottom} viewImage={viewImage}></TweetList>

@@ -4,7 +4,7 @@ import config from '../config'
 // Authentication process
 // Refer to https://www.cs.cmu.edu/~lingwang/weiboguide/
 export function initialAuth() {
-	if (config.debug) return
+	if (config.debug || config.token) return
 
 	const isCodeRedirect = ~window.location.href.indexOf('?code=')
 

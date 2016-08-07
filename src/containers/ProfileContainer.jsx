@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import styles from './ProfileContainer.scss'
@@ -12,6 +12,7 @@ import FontFace from 'react-canvas/FontFace'
 import Scroller from 'Scroller'
 import {NORMAL_BOLD_FONT, NORMAL_NORMAL_FONT, NORMAL_LARGE_FONT, NORMAL_VERY_LARGE_FONT} from 'font'
 import _ from 'underscore'
+import {VelocityComponent} from 'velocity-react'
 
 const em = window.fontSize
 const FULL_HEIGHT = window.innerHeight + 14 * em 
@@ -24,13 +25,33 @@ const FONT_NORMAL = FontFace('Helvetica, sans-serif', null, {weight: 300})
 const FONT_ICON = FontFace('rosettaicons', null, {weight: 300})
 const TABS = ['TWEETS', 'MEDIA', 'LIKES']
 
+const presentAnimation = {
+	translateY: 0,
+	translateX: 0,
+	width: window.innerWidth,
+}
+const hideAnimation = {
+	translateY: - 5 * em,
+	translateX: 0.7 * em, 
+	width: window.innerWidth - 1.4 * em,
+}
+
 const ProfileComponent = React.createClass({
+	propTypes: {
+		isPresent: PropTypes.bool.isRequired,
+	},
+
 	componentWillMount(){
 		this._canvasFrame = {
 			top: 0,
 			left: 0,
 			width: window.innerWidth,
 			height: window.innerHeight,
+			style: {
+				zIndex: 2,
+				position: 'relative',
+				backgroundColor: 'white',
+			},
 		}
 		this.nameStyle = {
 			top: 3.3 * em,
@@ -102,7 +123,7 @@ const ProfileComponent = React.createClass({
 			left: 0,
 			textAlign: 'center',
 			color: '#ffffff',
-			zIndex: 4,
+			zIndex: this.state.scrollTop > GRADIENT_OFFSET ? 3 : 0,
 		}, NORMAL_VERY_LARGE_FONT)
 
 		/* Gradient area on the top */
@@ -176,14 +197,19 @@ const ProfileComponent = React.createClass({
 		)
 	},
 	render: function() {
-		return <div className={styles.container}>
-			<Surface {...this._canvasFrame}>
-				<Group style={this._canvasFrame} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} onTouchCancel={this.handleTouchCancel}>
-					{this.renderHeader()}					
-					{this.renderMainContent()}
-				</Group>
-			</Surface>
-		</div>
+		return (
+			<div className={styles.container}>
+				<div className={styles.black}></div>
+				<VelocityComponent animation={this.props.isPresent?presentAnimation:hideAnimation} duration={300}>
+					<Surface {...this._canvasFrame}>
+						<Group style={this._canvasFrame} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} onTouchCancel={this.handleTouchCancel}>
+							{this.renderHeader()}					
+							{this.renderMainContent()}
+						</Group>
+					</Surface>
+				</VelocityComponent>
+			</div>
+		)
 	},
 
 	createScroller() {

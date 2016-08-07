@@ -101,23 +101,13 @@ const Tweet = React.createClass({
 	// Render
 	renderIllustrations(illustrations){
 		const illStyle = this.props.style.illustrationStyle
+
 		switch(illustrations.length){
 			case 2:
-				// two grids layout
-				const grid2_0 = _.extend({}, illStyle, {
-					width: illStyle.width / 2 - IMAGE_PADDING,
-					borderRadius: [5, 0, 0, 5],
-				})
-				const grid2_1 = _.extend({}, illStyle, {
-					left: illStyle.left + illStyle.width / 2 + IMAGE_PADDING,
-					width: illStyle.width / 2 - IMAGE_PADDING,
-					borderRadius: [0, 5, 5, 0],
-				})
-
 				return (
 					<Group>
-						<Image style={grid2_0} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid2_0, illustrations, 0)}></Image>	
-						<Image style={grid2_1} src={illustrations[1].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid2_1, illustrations, 1)}></Image>	
+						<Image style={illStyle.twoGrids[0]} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.twoGrids[0], illustrations, 0)} fadeIn={false}></Image>	
+						<Image style={illStyle.twoGrids[1]} src={illustrations[1].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.twoGrids[1], illustrations, 1)} fadeIn={false}></Image>	
 					</Group>
 				)
 			case 4:
@@ -126,40 +116,12 @@ const Tweet = React.createClass({
 			case 7:
 			case 8:
 			case 9:
-				// four grids layout
-				const gridWidth = illStyle.width / 2 - IMAGE_PADDING
-				const gridHeight = illStyle.height / 2 - IMAGE_PADDING
-				const grid4_0 = _.extend({}, illStyle, {
-					width: gridWidth,
-					height: gridHeight,
-					borderRadius: [5, 0, 0, 0],
-				})
-				const grid4_1 = _.extend({}, illStyle, {
-					left: illStyle.left + gridWidth + 2 * IMAGE_PADDING,
-					width: gridWidth,
-					height: gridHeight,
-					borderRadius: [0, 5, 0, 0],
-				})
-				const grid4_2 = _.extend({}, illStyle, {
-					top: illStyle.top + gridHeight + 2 * IMAGE_PADDING,
-					width: gridWidth,
-					height: gridHeight,
-					borderRadius: [0, 0, 0, 5],
-				})
-				const grid4_3 = _.extend({}, illStyle, {
-					top: illStyle.top + gridHeight + 2 * IMAGE_PADDING,
-					left: illStyle.left + gridWidth + 2 * IMAGE_PADDING,
-					width: gridWidth,
-					height: gridHeight,
-					borderRadius: [0, 0, 5, 0],
-				})
-
 				return (
 					<Group>
-						<Image style={grid4_0} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid4_0, illustrations, 0)}></Image>	
-						<Image style={grid4_1} src={illustrations[1].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid4_1, illustrations, 1)}></Image>	
-						<Image style={grid4_2} src={illustrations[2].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid4_2, illustrations, 2)}></Image>	
-						<Image style={grid4_3} src={illustrations[3].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, grid4_3, illustrations, 3)}></Image>	
+						<Image style={illStyle.fourGrids[0]} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.fourGrids[0], illustrations, 0)} fadeIn={false}></Image>	
+						<Image style={illStyle.fourGrids[1]} src={illustrations[1].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.fourGrids[1], illustrations, 1)} fadeIn={false}></Image>	
+						<Image style={illStyle.fourGrids[2]} src={illustrations[2].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.fourGrids[2], illustrations, 2)} fadeIn={false}></Image>	
+						<Image style={illStyle.fourGrids[3]} src={illustrations[3].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.fourGrids[3], illustrations, 3)} fadeIn={false}></Image>	
 					</Group>
 				)
 			case 1:
@@ -285,7 +247,8 @@ function getTweetStyle(userNameStyle, contentStyle, tweet){
 	}
 }
 function getIllustrationStyle(tweetStyle, contentStyle, illustrations){
-	return {
+	// Single illustration style
+	const illStyle = {
 		top: tweetStyle.top + tweetStyle.height + 0.6 * em,
 		left: 0,
 		width: contentStyle.width,
@@ -294,6 +257,50 @@ function getIllustrationStyle(tweetStyle, contentStyle, illustrations){
 		borderRadius: 5,
 		borderColor: "#eee",
 	}
+
+	// Two illustrations style
+	const grid2_0 = _.extend({}, illStyle, {
+		width: illStyle.width / 2 - IMAGE_PADDING,
+		borderRadius: [5, 0, 0, 5],
+	})
+	const grid2_1 = _.extend({}, illStyle, {
+		left: illStyle.left + illStyle.width / 2 + IMAGE_PADDING,
+		width: illStyle.width / 2 - IMAGE_PADDING,
+		borderRadius: [0, 5, 5, 0],
+	})
+
+	// Four illustrations style
+	const gridWidth = illStyle.width / 2 - IMAGE_PADDING
+	const gridHeight = illStyle.height / 2 - IMAGE_PADDING
+	const grid4_0 = _.extend({}, illStyle, {
+		width: gridWidth,
+		height: gridHeight,
+		borderRadius: [5, 0, 0, 0],
+	})
+	const grid4_1 = _.extend({}, illStyle, {
+		left: illStyle.left + gridWidth + 2 * IMAGE_PADDING,
+		width: gridWidth,
+		height: gridHeight,
+		borderRadius: [0, 5, 0, 0],
+	})
+	const grid4_2 = _.extend({}, illStyle, {
+		top: illStyle.top + gridHeight + 2 * IMAGE_PADDING,
+		width: gridWidth,
+		height: gridHeight,
+		borderRadius: [0, 0, 0, 5],
+	})
+	const grid4_3 = _.extend({}, illStyle, {
+		top: illStyle.top + gridHeight + 2 * IMAGE_PADDING,
+		left: illStyle.left + gridWidth + 2 * IMAGE_PADDING,
+		width: gridWidth,
+		height: gridHeight,
+		borderRadius: [0, 0, 5, 0],
+	})
+
+	illStyle.twoGrids = [grid2_0, grid2_1]
+	illStyle.fourGrids = [grid4_0, grid4_1, grid4_2, grid4_3]
+
+	return illStyle
 }
 function getLikeStyle(contentStyle){
 	return {
