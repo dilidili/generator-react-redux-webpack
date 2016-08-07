@@ -105,7 +105,7 @@ const Tweet = React.createClass({
 		switch(illustrations.length){
 			case 2:
 				return (
-					<Group>
+					<Group useBackingStore={true} style={illStyle}>
 						<Image style={illStyle.twoGrids[0]} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.twoGrids[0], illustrations, 0)} fadeIn={false}></Image>	
 						<Image style={illStyle.twoGrids[1]} src={illustrations[1].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.twoGrids[1], illustrations, 1)} fadeIn={false}></Image>	
 					</Group>
@@ -117,7 +117,7 @@ const Tweet = React.createClass({
 			case 8:
 			case 9:
 				return (
-					<Group>
+					<Group useBackingStore={true} style={illStyle}>
 						<Image style={illStyle.fourGrids[0]} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.fourGrids[0], illustrations, 0)} fadeIn={false}></Image>	
 						<Image style={illStyle.fourGrids[1]} src={illustrations[1].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.fourGrids[1], illustrations, 1)} fadeIn={false}></Image>	
 						<Image style={illStyle.fourGrids[2]} src={illustrations[2].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.fourGrids[2], illustrations, 2)} fadeIn={false}></Image>	
@@ -126,7 +126,7 @@ const Tweet = React.createClass({
 				)
 			case 1:
 			case 3:
-				return <Image style={illStyle} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle, illustrations, 0)}></Image>	
+				return <Image style={illStyle} src={illustrations[0].thumb} useBackingStore={true} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle, illustrations, 0)}></Image>	
 			default:
 				return null
 		}
