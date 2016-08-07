@@ -10,17 +10,19 @@ import Text from 'react-canvas/Text'
 import Image from 'react-canvas/Image'
 import FontFace from 'react-canvas/FontFace'
 import Scroller from 'Scroller'
-import {NORMAL_BOLD_FONT, NORMAL_NORMAL_FONT} from 'font'
+import {NORMAL_BOLD_FONT, NORMAL_NORMAL_FONT, NORMAL_LARGE_FONT, NORMAL_VERY_LARGE_FONT} from 'font'
 import _ from 'underscore'
 
 const em = window.fontSize
-const FULL_HEIGHT = window.innerHeight * 1.3
+const FULL_HEIGHT = window.innerHeight + 14 * em 
+const GRADIENT_HEIGHT = window.innerHeight * 0.18
 const GRADIENT_OFFSET = 3.4 * em
 const PADDING = em
 const AVATAR_SCALE = 1.2 * em
 const FONT_BOLD = FontFace('Helvetica, sans-serif', null, {weight: 500})
 const FONT_NORMAL = FontFace('Helvetica, sans-serif', null, {weight: 300})
 const FONT_ICON = FontFace('rosettaicons', null, {weight: 300})
+const TABS = ['TWEETS', 'MEDIA', 'LIKES']
 
 const ProfileComponent = React.createClass({
 	componentWillMount(){
@@ -65,6 +67,7 @@ const ProfileComponent = React.createClass({
 	getInitialState() {
 		return {
 			scrollTop: 0,
+			currentTab: TABS[0],
 		}
 	},
 
@@ -92,15 +95,28 @@ const ProfileComponent = React.createClass({
 
 	// Render
 	renderHeader(){
+		const gradientStyle = this.getGradientStyle()
+		const labelStyle = _.extend({
+			width: this._canvasFrame.width,
+			top: Math.max(gradientStyle.height + 3.3 * em + GRADIENT_OFFSET - this.state.scrollTop, (GRADIENT_HEIGHT - GRADIENT_OFFSET - NORMAL_VERY_LARGE_FONT.lineHeight)/2),
+			left: 0,
+			textAlign: 'center',
+			color: '#ffffff',
+			zIndex: 4,
+		}, NORMAL_VERY_LARGE_FONT)
+
 		/* Gradient area on the top */
 		return (
-			<Gradient style={this.getGradientStyle()}
-				colorStops={[
-					{color: "#2a6488", position: 0},	
-					{color: "#3881b2", position: 1},	
-				]}
-			>
-			</Gradient>
+			<Group style={gradientStyle}>
+				<Gradient style={gradientStyle}
+					colorStops={[
+						{color: "#2a6488", position: 0},	
+						{color: "#3881b2", position: 1},	
+					]}
+				>
+				</Gradient>
+				<Text style={labelStyle} useBackingStore={true}>XuMM_12</Text>
+			</Group>
 		)
 	},
 	renderMainContent(){
@@ -114,6 +130,14 @@ const ProfileComponent = React.createClass({
 
 		const followingStyle = this.getFollowingStyle(user.get('friends_count'))
 		const followerStyle = this.getFollowerStyle(user.get('followers_count'), followingStyle.label)
+		const tabButtonsStyle = this.getTabButtonsStyle(followingStyle.count)
+		const borderStyle = {
+			top: tabButtonsStyle[0].group.top + tabButtonsStyle[0].group.height + 0.5 * em,
+			left: 0,
+			width: this._canvasFrame.width,
+			height: 1,
+			backgroundColor: "#cdcdcd",
+		}
 
 		return (
 			<Group style={this.getMainContentStyle()}>
@@ -134,6 +158,20 @@ const ProfileComponent = React.createClass({
 					<Text style={followerStyle.count}>{""+user.get('followers_count')}</Text>
 					<Text style={followerStyle.label}>粉丝</Text>
 				</Group>
+
+				{/* Tools box */}
+				<Group style={tabButtonsStyle[0].group} onTouchStart={()=>{this.setState({currentTab:TABS[0]})}}>
+					<Text style={tabButtonsStyle[0].text}>微博</Text>	
+				</Group>	
+				<Group style={tabButtonsStyle[1].group} onTouchStart={()=>{this.setState({currentTab:TABS[1]})}}>
+					<Text style={tabButtonsStyle[1].text}>照片</Text>	
+				</Group>	
+				<Group style={tabButtonsStyle[2].group} onTouchStart={()=>{this.setState({currentTab:TABS[2]})}}>
+					<Text style={tabButtonsStyle[2].text}>赞</Text>	
+				</Group>	
+
+				{/* border */}
+				<Group style={borderStyle}></Group>
 			</Group>
 		)
 	},
@@ -168,7 +206,8 @@ const ProfileComponent = React.createClass({
 			top: 0,
 			left: 0,
 			width: this._canvasFrame.width,
-			height: this._canvasFrame.height * 0.18 - Math.min(scrollTop, GRADIENT_OFFSET) 
+			height:  GRADIENT_HEIGHT - Math.min(scrollTop, GRADIENT_OFFSET),
+			zIndex: 2,
 		}
 	},
 	getMainContentStyle(){
@@ -176,9 +215,10 @@ const ProfileComponent = React.createClass({
 		return {
 			top: 0,
 			left: 0,
-			translateY: gradientStyle.top + gradientStyle.height,
-			height: this._canvasFrame.height - gradientStyle.top - gradientStyle.height,
+			translateY: GRADIENT_HEIGHT - this.state.scrollTop,
+			height: 2 * this._canvasFrame.height,
 			width: this._canvasFrame.width,
+			zIndex: this.state.scrollTop > GRADIENT_OFFSET ? 1 : 2,
 		}
 	},
 	getAvatarStyle() {
@@ -234,6 +274,73 @@ const ProfileComponent = React.createClass({
 			label,
 		}
 	},
+	getTabButtonsStyle(prevStyle){
+		const perWidth = (this._canvasFrame.width - 2 * PADDING) / 3
+		const blueColor = '#21a2eb'
+		const whiteColor = '#ffffff'
+
+		// Tweet button
+		const tweetButtonStyle = {}
+		tweetButtonStyle.group = {
+			left: PADDING,
+			width: perWidth,
+			top: prevStyle.top + prevStyle.height + 1.7 * em,
+			height: 2.2 * em,
+			backgroundColor: this.state.currentTab === TABS[0] ? blueColor : whiteColor,
+			borderWidth: 3,
+			borderColor: blueColor,
+			borderRadius: [5, 0, 0, 5],
+		}
+		tweetButtonStyle.text = _.extend({
+			color: this.state.currentTab === TABS[0] ? whiteColor : blueColor,
+			width: tweetButtonStyle.group.width,
+			left: tweetButtonStyle.group.left,
+			top: tweetButtonStyle.group.top + 0.45 * em,
+			textAlign: 'center',
+		}, NORMAL_LARGE_FONT)
+
+		// Media button
+		const mediaButtonStyle = {}
+		mediaButtonStyle.group = {
+			left: tweetButtonStyle.group.left + tweetButtonStyle.group.width,
+			width: perWidth,
+			top: tweetButtonStyle.group.top,
+			height: tweetButtonStyle.group.height,
+			backgroundColor: this.state.currentTab === TABS[1] ? blueColor : whiteColor,
+			borderWidth: 3,
+			borderColor: blueColor,
+			borderRadius: 0,
+		}
+		mediaButtonStyle.text = _.extend({
+			color: this.state.currentTab === TABS[1] ? whiteColor : blueColor,
+			width: mediaButtonStyle.group.width,
+			left: mediaButtonStyle.group.left,
+			top: mediaButtonStyle.group.top + 0.45 * em,
+			textAlign: 'center',
+		}, NORMAL_LARGE_FONT)
+
+		// Likes button
+		const likeButtonStyle = {}
+		likeButtonStyle.group = {
+			left: mediaButtonStyle.group.left + mediaButtonStyle.group.width,
+			width: perWidth,
+			top: mediaButtonStyle.group.top,
+			height: mediaButtonStyle.group.height,
+			backgroundColor: this.state.currentTab === TABS[2] ? blueColor : whiteColor,
+			borderWidth: 3,
+			borderColor: blueColor,
+			borderRadius: [0, 5, 5, 0],
+		}
+		likeButtonStyle.text = _.extend({
+			color: this.state.currentTab === TABS[2] ? whiteColor : blueColor,
+			width: likeButtonStyle.group.width,
+			left: likeButtonStyle.group.left,
+			top: likeButtonStyle.group.top + 0.45 * em,
+			textAlign: 'center',
+		}, NORMAL_LARGE_FONT)
+
+		return [tweetButtonStyle, mediaButtonStyle, likeButtonStyle]
+	},	
 })
 
 function mapStateToProps(state) {
