@@ -8,6 +8,7 @@ var Canvas = require('./Canvas');
 
 // Global backing store <canvas> cache
 var _backingStores = [];
+var _backingStoresHead = 0;
 for (var i = Canvas.poolSize - 1; i >= 0; i--) {
   // Create a new backing store, we haven't yet reached the pooling limit
   _backingStores.push({
@@ -38,10 +39,11 @@ function getBackingStore (id) {
  *
  * @param {String} id The layer's backingStoreId
  */
-function invalidateBackingStore (id) {
-  for (var i=0, len=_backingStores.length; i < len; i++) {
+function invalidateBackingStore(id) {
+  for (var i = 0, len = _backingStores.length; i < len; i++) {
     if (_backingStores[i].id === id) {
-      _backingStores.splice(i, 1);
+      _backingStores[i].id = null;
+      _backingStores[i].layer = null;
       break;
     }
   }
@@ -51,7 +53,11 @@ function invalidateBackingStore (id) {
  * Purge the entire backing store cache.
  */
 function invalidateAllBackingStores () {
-  _backingStores = [];
+  _backingStores = _backingStores.map((v) => {
+    v.id = null
+    v.layer = null
+    return v
+  })
 }
 
 /**
@@ -298,13 +304,13 @@ function drawCacheableRenderLayer (ctx, layer, customDrawFunc) {
   var backingContext;
   if (!backingStore) {
     // Re-use the oldest backing store once we reach the pooling limit.
-    backingStore = _backingStores[0].canvas;
+    backingStore = _backingStores[_backingStoresHead].canvas;
     Canvas.call(backingStore, layer.frame.width, layer.frame.height, backingStoreScale);
     // Move the re-use canvas to the front of the queue.
-    _backingStores[0].id = layer.backingStoreId;
-    _backingStores[0].canvas = backingStore;
-    _backingStores[0].layer = layer;
-    _backingStores.push(_backingStores.shift());
+    _backingStores[_backingStoresHead].id = layer.backingStoreId;
+    _backingStores[_backingStoresHead].canvas = backingStore;
+    _backingStores[_backingStoresHead].layer = layer;
+    _backingStoresHead = (_backingStoresHead + 1) % Canvas.poolSize
 
     // Draw into the backing <canvas> at (0, 0) - we will later use the
     // <canvas> to draw the layer as an image at the proper coordinates.

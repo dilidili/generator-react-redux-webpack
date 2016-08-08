@@ -175,7 +175,7 @@ var ListView = React.createClass({
       }
 
       // Item is completely off-screen top
-      if (itemScrollTop <= -this.props.style.height) {
+      if (itemScrollTop <= - this.props.style.height) {
         continue;
       }
 

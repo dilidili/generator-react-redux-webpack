@@ -65,7 +65,7 @@ const ProfileComponent = React.createClass({
 		this.descriptionStyle = {
 			top: this.nameStyle.top + this.nameStyle.height + 0.3 * em,
 			left: PADDING,
-			height: 0.8 * em,
+			height: 1 * em,
 			width: this._canvasFrame.width,
 			fontFace: FONT_NORMAL,	
 			lineHeight: 0.8 * em,
@@ -75,7 +75,7 @@ const ProfileComponent = React.createClass({
 		this.locationStyle = {
 			top: this.descriptionStyle.top + this.descriptionStyle.height + em,
 			left: PADDING,
-			height: 0.9 * em,
+			height: 1.1 * em,
 			width: this._canvasFrame.width,
 			fontFace: FONT_ICON,	
 			lineHeight: 0.9 * em,
@@ -163,32 +163,28 @@ const ProfileComponent = React.createClass({
 		return (
 			<Group style={this.getMainContentStyle()}>
 				{/* Avatar row */}	
-				<Image style={this.getAvatarStyle()} src={user.get('avatar_large')} fadeIn={true}></Image>
+				<Image useBackingStore={true} style={this.getAvatarStyle()} src={user.get('avatar_large')} fadeIn={true}></Image>
 
 				{/* User information row */}
-				<Group useBackingStore={true}>
-					<Text style={this.nameStyle}>{user.get('name')}</Text>	
-					<Text style={this.descriptionStyle}>{"@"+user.get('description')}</Text>
-					<Text style={this.locationStyle}>{"\uF031 " + user.get('location')}</Text>
-				</Group>
+				<Text useBackingStore={true} style={this.nameStyle}>{user.get('name')}</Text>	
+				<Text useBackingStore={true} style={this.descriptionStyle}>{"@"+user.get('description')}</Text>
+				<Text useBackingStore={true} style={this.locationStyle}>{"\uF031 " + user.get('location')}</Text>
 
 				{/* Follower and folloees */}
-				<Group useBackingStore={true}>
-					<Text style={followingStyle.count}>{""+user.get('friends_count')}</Text>
-					<Text style={followingStyle.label}>关注</Text>
-					<Text style={followerStyle.count}>{""+user.get('followers_count')}</Text>
-					<Text style={followerStyle.label}>粉丝</Text>
-				</Group>
+				<Text useBackingStore={true} style={followingStyle.count}>{""+user.get('friends_count')}</Text>
+				<Text useBackingStore={true} style={followingStyle.label}>关注</Text>
+				<Text useBackingStore={true} style={followerStyle.count}>{""+user.get('followers_count')}</Text>
+				<Text useBackingStore={true} style={followerStyle.label}>粉丝</Text>
 
 				{/* Tools box */}
 				<Group style={tabButtonsStyle[0].group} onTouchStart={()=>{this.setState({currentTab:TABS[0]})}}>
-					<Text style={tabButtonsStyle[0].text}>微博</Text>	
+					<Text useBackingStore={true} style={tabButtonsStyle[0].text}>微博</Text>	
 				</Group>	
 				<Group style={tabButtonsStyle[1].group} onTouchStart={()=>{this.setState({currentTab:TABS[1]})}}>
-					<Text style={tabButtonsStyle[1].text}>照片</Text>	
+					<Text useBackingStore={true} style={tabButtonsStyle[1].text}>照片</Text>	
 				</Group>	
 				<Group style={tabButtonsStyle[2].group} onTouchStart={()=>{this.setState({currentTab:TABS[2]})}}>
-					<Text style={tabButtonsStyle[2].text}>赞</Text>	
+					<Text useBackingStore={true} style={tabButtonsStyle[2].text}>赞</Text>	
 				</Group>	
 
 				{/* border */}

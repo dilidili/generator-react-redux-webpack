@@ -105,7 +105,7 @@ const Tweet = React.createClass({
 		switch(illustrations.length){
 			case 2:
 				return (
-					<Group useBackingStore={true} style={illStyle}>
+					<Group style={illStyle}>
 						<Image style={illStyle.twoGrids[0]} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.twoGrids[0], illustrations, 0)} fadeIn={false}></Image>	
 						<Image style={illStyle.twoGrids[1]} src={illustrations[1].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.twoGrids[1], illustrations, 1)} fadeIn={false}></Image>	
 					</Group>
@@ -117,7 +117,7 @@ const Tweet = React.createClass({
 			case 8:
 			case 9:
 				return (
-					<Group useBackingStore={true} style={illStyle}>
+					<Group style={illStyle}>
 						<Image style={illStyle.fourGrids[0]} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.fourGrids[0], illustrations, 0)} fadeIn={false}></Image>	
 						<Image style={illStyle.fourGrids[1]} src={illustrations[1].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.fourGrids[1], illustrations, 1)} fadeIn={false}></Image>	
 						<Image style={illStyle.fourGrids[2]} src={illustrations[2].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle.fourGrids[2], illustrations, 2)} fadeIn={false}></Image>	
@@ -146,6 +146,7 @@ const Tweet = React.createClass({
 		return <Group style={style.containerStyle} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd}>
         	{isRetweeted?<Text style={style.retweetLabelStyle} useBackingStore={true}>{isRetweeted?`${String.fromCharCode("0xf152")} 来自${tweet.get('user')}的转发`:""}</Text>:null}
 	        <Image style={style.avatarStyle} src={presentTweet.get('avatar')} useBackingStore={true}/>
+
 	        <Group style={style.contentStyle} useBackingStore={true}>
 	        	<Text style={style.userNameStyle}>{presentTweet.get('user')}</Text>
 	        	<Text style={style.dateTimeStyle}>{moment(tweet.get('timestamp')).fromNow()}</Text>
@@ -153,6 +154,7 @@ const Tweet = React.createClass({
 
 		        {this.renderIllustrations(presentTweet.get('illustrations'))}
 	        </Group>
+	        
 	        <SpriteImage style={style.likeStyle} src={likeImage} frameCount={29} useBackingStore={true}></SpriteImage>
 		</Group>
 	},
