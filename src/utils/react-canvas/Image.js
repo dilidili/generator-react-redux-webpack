@@ -9,6 +9,7 @@ var Group = require('./Group');
 var ImageCache = require('./ImageCache');
 var Easing = require('./Easing');
 var clamp = require('./clamp');
+var DrawingUtils = require('./DrawingUtils')
 
 var FADE_DURATION = 200;
 
@@ -93,7 +94,10 @@ var Image = React.createClass({
       this._animationStartTime = Date.now();
       this._pendingAnimationFrame = requestAnimationFrame(this.stepThroughAnimation);
     }
-    this.setState({ loaded: true, imageAlpha: imageAlpha });
+    this.setState({ loaded: true, imageAlpha: imageAlpha }, ()=>{
+      DrawingUtils.handleImageLoad(this.props.src)
+    });
+
   },
 
   stepThroughAnimation: function () {

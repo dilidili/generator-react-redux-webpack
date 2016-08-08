@@ -126,7 +126,7 @@ const Tweet = React.createClass({
 				)
 			case 1:
 			case 3:
-				return <Image style={illStyle} src={illustrations[0].thumb} useBackingStore={true} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle, illustrations, 0)}></Image>	
+				return <Image style={illStyle} src={illustrations[0].thumb} onTouchStart={this.handleTouchImageStart} onTouchEnd={this.handleTouchImageEnd.bind(this, illStyle, illustrations, 0)}></Image>	
 			default:
 				return null
 		}

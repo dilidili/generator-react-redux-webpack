@@ -112,7 +112,7 @@ function layerContainsFontFace (layer, fontFace) {
  */
 function handleImageLoad (imageUrl) {
   _backingStores.forEach(function (backingStore) {
-    if (layerContainsImage(backingStore.layer, imageUrl)) {
+    if (backingStore.layer && layerContainsImage(backingStore.layer, imageUrl)) {
       invalidateBackingStore(backingStore.id);
     }
   });
@@ -126,7 +126,7 @@ function handleImageLoad (imageUrl) {
  */
 function handleFontLoad (fontFace) {
   _backingStores.forEach(function (backingStore) {
-    if (layerContainsFontFace(backingStore.layer, fontFace)) {
+    if (backingStore.layer && layerContainsFontFace(backingStore.layer, fontFace)) {
       invalidateBackingStore(backingStore.id);
     }
   });
@@ -296,26 +296,15 @@ function drawCacheableRenderLayer (ctx, layer, customDrawFunc) {
   var frameOffsetY = layer.frame.y;
   var frameOffsetX = layer.frame.x;
   var backingContext;
-
   if (!backingStore) {
-    if (_backingStores.length >= Canvas.poolSize) {
-      // Re-use the oldest backing store once we reach the pooling limit.
-      backingStore = _backingStores[0].canvas;
-      Canvas.call(backingStore, layer.frame.width, layer.frame.height, backingStoreScale);
-
-      // Move the re-use canvas to the front of the queue.
-      _backingStores[0].id = layer.backingStoreId;
-      _backingStores[0].canvas = backingStore;
-      _backingStores.push(_backingStores.shift());
-    } else {
-      // Create a new backing store, we haven't yet reached the pooling limit
-      backingStore = new Canvas(layer.frame.width, layer.frame.height, backingStoreScale);
-      _backingStores.push({
-        id: layer.backingStoreId,
-        layer: layer,
-        canvas: backingStore
-      });
-    }
+    // Re-use the oldest backing store once we reach the pooling limit.
+    backingStore = _backingStores[0].canvas;
+    Canvas.call(backingStore, layer.frame.width, layer.frame.height, backingStoreScale);
+    // Move the re-use canvas to the front of the queue.
+    _backingStores[0].id = layer.backingStoreId;
+    _backingStores[0].canvas = backingStore;
+    _backingStores[0].layer = layer;
+    _backingStores.push(_backingStores.shift());
 
     // Draw into the backing <canvas> at (0, 0) - we will later use the
     // <canvas> to draw the layer as an image at the proper coordinates.
